@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\TermsCMS;
 use Illuminate\Database\Seeder;
 
 class create_terms_cms_table_seeder extends Seeder
@@ -13,7 +14,9 @@ class create_terms_cms_table_seeder extends Seeder
      */
     public function run()
     {
-        \App\Models\TermsCMS::insert([
+        TermsCMS::truncate();
+
+        TermsCMS::insert([
             'banner_heading'  => 'Terms & Conditions',
             'banner_image'    => 'assets/images/termsBnnr.jpg',
             'section_heading' => "Terms & Conditions",

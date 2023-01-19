@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\ManufacturerController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\HomePageCMSController; 
+use App\Http\Controllers\Admin\HomePageCMSController;
 use App\Http\Controllers\Front\FrontendController;
 use App\Http\Controllers\Admin\AboutUsCMSController;
 use App\Http\Controllers\Admin\PrivacyPolicyCMSController;
@@ -72,7 +72,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('headercms',HeaderCMSController::class);
     Route::resource('demosessioncms',BookDemoSessionController::class);
     Route::resource('meetings',ZoomMeetingController::class);
-   
+
     Route::get('create-session',[AdminController::class, "CreateSession"]);
     Route::get('demo-session/{id}',[AdminController::class, "DemoSession"]);
     Route::get('permanent-customer/{id}',[AdminController::class, "PermanentCustomer"]);
@@ -85,7 +85,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('delete-newsletter',[ContactCMSController::class,'DeleteNewsletter']);
     Route::resource('/manufacturers', ManufacturerController::class);
     Route::get('/manufacturers/GetManufacturers/{id}', [ManufacturerController::class, 'GetManufacturers'])->name('GetManufacturers');
-    Route::resource('/products',ProductController::class);    
+    Route::resource('/products',ProductController::class);
     Route::get('/product_images/{id}', [ProductImageController::class, 'index'])->name('index');
     Route::post('/product_images/store', [ProductImageController::class, 'store'])->name('store');
     Route::post('/product_images/additional_images', [ProductImageController::class, 'additional_images'])->name('additional_images');
@@ -93,15 +93,15 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('change-password',[AdminController::class, 'ChangePassword']);
     Route::post('change-password',[AdminController::class, 'ChangePassword'])->name('change.password');
     Route::get('dashboard',[AdminController::class, 'dashboard']);
-    
+
     // Trainer
     Route::get('/trainers',[TrainerController::class, 'index'])->name('trainer.index');
     Route::get('/edit-trainer/{id}',[TrainerController::class, 'EditTrainer']);
     Route::post('/updateTrainer',[TrainerController::class, 'UpdateTrainer']);
     Route::post('/add-trainer-payment',[TrainerController::class, 'AddTrainerPayment'])->name('add_trainer_payment');
 
-   
-    
+
+
     Route::post('/trainer/create',[TrainerController::class, 'store'])->name('trainer.create');
     Route::delete('/trainer/delete/{id}',[TrainerController::class, 'destroy'])->name('trainer.destroy');
 
@@ -128,12 +128,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('sessions',[AdminCustomerController::class, 'Sessions'])->name('sessions');
     Route::post('cancel-session', [AdminCustomerController::class, 'CancelSession']);
 
-    
+
     Route::get('get-notification', function(){
         return view('admin.notification');
     })->name('admin.notification');
 
-    
+
 });
 
 Route::get('getting-notifications',[NotificationController::class,'getNotification'])->middleware('auth')->name('getNotification');
@@ -141,12 +141,12 @@ Route::get('getting-notifications',[NotificationController::class,'getNotificati
 Route::middleware('auth')->group(function () {
 
     Route::get('book-demo',[FrontendController::class,'BookDemo']);
-    Route::post('submit-demo',[FrontendController::class,'SubmitDemoRequest']); 
+    Route::post('submit-demo',[FrontendController::class,'SubmitDemoRequest']);
     Route::put('edit-demo',[FrontendController::class,'editDemoRequest'])->name('editDemoRequest');
 
 });
 
-Route::prefix('customer')->middleware('auth')->group(function () {    
+Route::prefix('customer')->middleware('auth')->group(function () {
 
     Route::get('dashboard',[CustomerController::class, 'dashboard']);
     Route::get('profile',[CustomerController::class, 'profile']);
@@ -166,12 +166,12 @@ Route::prefix('customer')->middleware('auth')->group(function () {
 
 });
 
-Route::prefix('trainer')->middleware('auth')->group(function () {    
+Route::prefix('trainer')->middleware('auth')->group(function () {
     Route::get('customer-details',[TrainerPortalController::class, 'CustomerDetails'])->name('cust_details');
 
     Route::get('dashboard',[TrainerPortalController::class, 'dashboard']);
     Route::get('payments',[TrainerPortalController::class, 'Payments']);
-    
+
     Route::get('profile/{id}',[TrainerPortalController::class, 'EditProfile']);
     Route::post('ProfileUpdate',[TrainerPortalController::class, 'ProfileUpdate'])->name('ProfileUpdate');
     Route::get('join-meeting/{id}',[TrainerPortalController::class,'JoinMeeting']);

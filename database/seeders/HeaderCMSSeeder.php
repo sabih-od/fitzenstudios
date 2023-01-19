@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\HeaderCMS;
 use Illuminate\Database\Seeder;
 
 class HeaderCMSSeeder extends Seeder
@@ -13,7 +14,9 @@ class HeaderCMSSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\HeaderCMS::insert([
+        HeaderCMS::truncate();
+
+        HeaderCMS::insert([
             'logo'       => 'assets/images/logo.png',
             'link_one'   => 'Home',
             'link_two'   => "About Us",

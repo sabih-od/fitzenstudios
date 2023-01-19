@@ -2,14 +2,16 @@
 
 namespace Database\Seeders;
 
+use App\Models\ContactCMS;
 use Illuminate\Database\Seeder;
 
 class create_contactus_cms_table_seeder extends Seeder
 {
-  
+
     public function run()
     {
-        \App\Models\ContactCMS::insert([
+        ContactCMS::truncate();
+        ContactCMS::insert([
             "banner_heading"      => "Contact Us",
             "banner_image"        => "assets/images/contantbg.png",
             "section_heading"     => "Contact Us",

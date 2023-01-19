@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -13,10 +14,12 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::insert([
+        User::truncate();
+
+        User::insert([
             'name' => 'Admin',
             'email' => 'admin@fitzenstudio.com',
-            'password' => \Illuminate\Support\Facades\Hash::make('admin@fitzen'),
+            'password' => bcrypt('admin!@#'),
             'role_id' => 1
         ]);
     }
