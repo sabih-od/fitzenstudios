@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Auth;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        //
+    }
+
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        view()->composer('*', function ($view)
+        {
+            if(Auth::check()){
+                if(Auth::user()->role_id == 2){
+                    $user = \App\Models\Customer::where('user_id', Auth()->id())                  
+                    ->first(['first_name','last_name','photo']);                    
+                              
+                    $view->with('user', $user );
+                }
+                if(Auth::user()->role_id == 3){
+                    $user = \App\Models\Trainer::where('user_id', Auth()->id())                  
+                    ->first(['name','last_name','photo']);                    
+                              
+                    $view->with('user', $user );
+                }
+            }
+
+        });
+        Schema::defaultStringLength(191);
+    }
+}

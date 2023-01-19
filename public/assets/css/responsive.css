@@ -1,0 +1,212 @@
+@media only screen and (max-width: 1600px) {
+    .aboutSec figure {
+        height: 600px;
+        object-fit: contain;
+        object-position: center center;
+    }
+}
+
+@media only screen and (max-width: 1445px) {
+    .main-slider h2 {
+        font-size: 2rem;
+    }
+
+    .main-slider h3 {
+        font-size: 5rem;
+    }
+
+    .main-slider p {
+        font-size: 1rem;
+    }
+
+    .title span {
+        font-size: 1.5rem;
+    }
+
+    .title h2 {
+        font-size: 4rem;
+    }
+
+    .featureCard .content h3 {
+        font-size: 2rem;
+    }
+
+    .testimonialCard p {
+        font-size: 1rem;
+    }
+
+    .testimonialCard h3 {
+        font-size: 1.25rem;
+    }
+
+    footer h3 {
+        font-size: 1.5rem;
+    }
+
+    footer .links li a {
+        font-size: 0.875rem;
+    }
+
+    footer .copyRight p {
+        font-size: 1rem;
+    }
+}
+
+@media only screen and (max-width: 1366px) {
+    .container {
+        max-width: 1140px;
+    }
+
+    .main-slider h3 {
+        font-size: 4.5rem;
+    }
+
+    .title h3 {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    html {
+        font-size: 13px;
+    }
+
+    .container {
+        max-width: 960px;
+    }
+
+    .navbar-brand {
+        margin-right: 0;
+    }
+
+    header.sticky .navbar-collapse {
+        margin: 0 auto !important;
+    }
+
+    .title span {
+        font-size: 1.125rem;
+    }
+
+    .title h2 {
+        font-size: 3rem;
+    }
+
+    .featureCard img {
+        height: 350px;
+    }
+
+    .featureCard .content h3 {
+        font-size: 1.5rem;
+    }
+
+    .title h3 {
+        font-size: 2.25rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    html {
+        font-size: 12px;
+    }
+
+    .main-slider > img {
+        height: 60vh;
+    }
+
+    .container {
+        max-width: 720px;
+    }
+
+    .aboutSec figure {
+        height: 500px;
+    }
+
+    .navbar-collapse {
+        background: rgba(0, 0, 0, 0.75);
+        padding: 1rem 1.25rem;
+    }
+
+    .navbar-collapse .navbar-nav {
+        gap: 1rem 0;
+    }
+
+    .navbar-collapse .navbar-nav .nav-item {
+        display: inherit;
+    }
+
+    .aboutSec.aboutInner .aboutImg {
+        height: auto;
+        margin-bottom: 2rem;
+    }
+
+    .aboutSec figure::before {
+        left: -1.5rem;
+        top: -1.5rem;
+    }
+
+    .aboutMe {
+        width: 75%;
+        height: 75%;
+        margin: auto;
+    }
+
+    section {
+        padding: 3rem 0;
+    }
+
+    .aboutInnerMe {
+        padding: 3rem 0;
+    }
+
+    .main-slider h3 {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    html {
+        font-size: 14px;
+    }
+
+    .aboutSec figure::before {
+        left: 0;
+    }
+
+    .aboutSec figure {
+        justify-content: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .mapSection .map iframe {
+        height: 768px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    html {
+        font-size: 13px;
+    }
+
+    .featureCard .content h3 {
+        font-size: 2rem;
+    }
+
+    footer .row {
+        gap: 1.25rem 0;
+        text-align: center;
+    }
+
+    footer .socialIo {
+        justify-content: center;
+    }
+
+    .mapSection .map iframe {
+        height: 500px;
+    }
+}
+
+@media (max-width: 320.98px) {
+    html {
+        font-size: 11px;
+    }
+}
