@@ -2,14 +2,16 @@
 
 namespace Database\Seeders;
 
+use App\Models\AboutUsCMS;
 use Illuminate\Database\Seeder;
 
 class create_aboutus_cms_table_seeder extends Seeder
 {
-   
+
     public function run()
     {
-        \App\Models\AboutUsCMS::insert([
+        AboutUsCMS::truncate();
+        AboutUsCMS::insert([
             'banner_heading'      => "About Us",
             'banner_image'        => "assets/images/aboutInnr.jpg",
             'section_one_heading' => "A Little Bit About Me",

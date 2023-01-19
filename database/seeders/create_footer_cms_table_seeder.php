@@ -2,13 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Models\FooterCMS;
 use Illuminate\Database\Seeder;
 
 class create_footer_cms_table_seeder extends Seeder
 {
     public function run()
     {
-        \App\Models\FooterCMS::insert([
+        FooterCMS::truncate();
+        FooterCMS::insert([
             "footer_image" => "assets/images/footerBg.jpg",
             "heading_one"  => "Quick Links",
             "link_one"     => "FAQs",

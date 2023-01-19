@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -13,16 +14,18 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Role::insert([
-            'name' => 'Admin',            
+        Role::truncate();
+
+        Role::insert([
+            'name' => 'Admin',
         ]);
 
-        \App\Models\Role::insert([
-            'name' => 'Customer',            
+        Role::insert([
+            'name' => 'Customer',
         ]);
 
-        \App\Models\Role::insert([
-            'name' => 'Trainer',            
+        Role::insert([
+            'name' => 'Trainer',
         ]);
     }
 }

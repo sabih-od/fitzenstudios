@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\FaqBannerCMS;
 use Illuminate\Database\Seeder;
 
 class FAQBannerSeeder extends Seeder
@@ -13,10 +14,12 @@ class FAQBannerSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\FaqBannerCMS::insert([
+        FaqBannerCMS::truncate();
+
+        FaqBannerCMS::insert([
             'banner_heading'   => 'FAQS',
             'banner_image'   => "assets/images/faqBnnr.jpg",
-        
+
         ]);
     }
 }

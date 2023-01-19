@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\PrivacyPolicyCMS;
 use Illuminate\Database\Seeder;
 
 class create_privacypolicy_cms_table_seeder extends Seeder
@@ -13,7 +14,9 @@ class create_privacypolicy_cms_table_seeder extends Seeder
      */
     public function run()
     {
-        \App\Models\PrivacyPolicyCMS::insert([
+        PrivacyPolicyCMS::truncate();
+
+        PrivacyPolicyCMS::insert([
             'banner_heading'  => 'Privacy Policy',
             'banner_image'    => 'assets/images/termsBnnr.jpg',
             'section_heading' => "Privacy Policy",

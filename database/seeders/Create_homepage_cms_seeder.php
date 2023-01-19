@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\HomepageCMS;
 use Illuminate\Database\Seeder;
 
 class Create_homepage_cms_seeder extends Seeder
@@ -13,7 +14,9 @@ class Create_homepage_cms_seeder extends Seeder
      */
     public function run()
     {
-        \App\Models\HomepageCMS::insert([
+        HomepageCMS::truncate();
+
+        HomepageCMS::insert([
             'banner_heading' => "GET FIT WITH",
             'banner_sub_heading' => "Fitzen.Studio",
             'banner_content' => "We have rebranded from FitMonk.Studio to Fitzen.Studio!",

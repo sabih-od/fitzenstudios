@@ -2,14 +2,17 @@
 
 namespace Database\Seeders;
 
+use App\Models\SignupCms;
 use Illuminate\Database\Seeder;
 
 class SignupBannerSeeder extends Seeder
 {
-    
+
     public function run()
     {
-        \App\Models\SignupCms::insert([
+        SignupCms::truncate();
+
+        SignupCms::insert([
             'banner_text'    => 'Register',
             'banner_image'   => 'assets/images/loginBg.jpg',
         ]);
