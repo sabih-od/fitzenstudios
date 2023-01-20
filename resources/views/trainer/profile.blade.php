@@ -125,7 +125,8 @@ Edit Profile
                                         <select name="time_zone" id="time_zone" class="form-control">
                                             <option value="" selected disabled>Select Time Zone</option>
                                             @foreach ($timezones as $timezone)
-                                                <option value="{{ $timezone->timezone_value }}" {{ old('time_zone', isset($trainer) ? $trainer->time_zone : '') == $timezone->timezone_value ? 'selected' : '' }}>{{ $timezone->timezone_value }}</option>
+{{--                                                <option value="{{ $timezone->timezone_value }}" {{ old('time_zone', isset($trainer) ? $trainer->time_zone : '') == $timezone->timezone_value ? 'selected' : '' }}>{{ $timezone->timezone_value }}</option>--}}
+                                                <option value="{{ $timezone->timezone_value }}" {{ old('time_zone', isset($trainer) ? $trainer->time_zone : '') == $timezone->timezone_value ? 'selected' : '' }}>{{ $timezone->abbreviation }}</option>
                                             @endforeach
                                         </select>
                                         <!--<input type="text" name="time_zone" value="{{ $trainer->time_zone ?? ' ' }}" class="form-control">-->
