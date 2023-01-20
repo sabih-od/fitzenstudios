@@ -37,7 +37,11 @@ class AppServiceProvider extends ServiceProvider
                 }
                 $view->with('user', $user);
                 // update the timezones as per the user location
-                config(['app.timezone' => $user->time_zone]);
+                if ($user) {
+                    config(['app.timezone' => $user->time_zone]);
+                }else{
+                    config(['app.timezone' => "PDT"]);
+                }
             }
         });
         Schema::defaultStringLength(191);
