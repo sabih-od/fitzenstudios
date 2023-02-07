@@ -45,7 +45,7 @@
                                         <span>{{ $item->demo_session_id != null ? date('H:i', strtotime(@$item["sessions"]["session_time"])) : date('H:i', strtotime(@$item->trainer_time)) }}</span>
                                     </td>
                                     <td>
-                                        <span>{{ isset($item->time_zone) ? $item->timeZone['abbreviation'] : '---'  }}</span>
+                                        <span>{{ isset($item->time_zone) ? $item->timeZone['abbreviation'] ?? '---' : '---'  }}</span>
                                     </td>
                                     {{-- @if($item->status == "completed" && $item->id != $item["reviews"]["cust_to_trainer_id"]) --}}
                                     @if($item->status == "completed")
