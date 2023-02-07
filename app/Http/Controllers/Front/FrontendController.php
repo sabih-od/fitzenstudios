@@ -24,7 +24,7 @@ use App\Models\FaqBannerCMS;
 use App\Models\LoginCms;
 use App\Models\SignupCms;
 use App\Models\Trainer;
-use Carbon; 
+use Carbon;
 use File;
 class FrontendController extends Controller
 {
@@ -42,7 +42,7 @@ class FrontendController extends Controller
     }
     public function FAQS() {
         $faqs    = FAQCMS::all();
-        $content = FaqBannerCMS::find(1); 
+        $content = FaqBannerCMS::find(1);
         return view('front.faqs',compact('faqs', 'content'));
     }
     public function ContactUs() {
@@ -58,7 +58,7 @@ class FrontendController extends Controller
         return view('front.terms',compact('content'));
     }
     public function ContactFormSubmit(Request $request) {
-    
+
         $inquiry             = new ContactInquiry();
         $inquiry->first_name = $request->first_name;
         $inquiry->last_name  = $request->last_name;
@@ -76,10 +76,10 @@ class FrontendController extends Controller
             // 'to'          => $setting->email,
             'to'          => "info@fitzen.studio",
         );
-    
+
         Mail::send('front.emails.contact-us', $mailData, function($message) use($mailData){
             $message->to($mailData['to'])->subject('Fitzen Studio - Contact Us');
-        });    
+        });
 
         return redirect()->back()->with('message','Your Inquiry Submitted successfull. we will contact you shortly!');
     }
@@ -105,7 +105,7 @@ class FrontendController extends Controller
                 $demo->customer_id  = $customer->id;
                 $demo->save();
                 $mailData = array(
-        
+
                     'first_name'   => $request->first_name,
                     'last_name'    => $request->last_name,
                     'email'        => $request->email,
@@ -115,19 +115,19 @@ class FrontendController extends Controller
                     'goals'        => $request->goals,
                     'user_message' => $request->message,
                     'to'           => config("app.mail_from_address"),
-                ); 
-            
+                );
+
                 Mail::send('front.emails.session_request', $mailData, function($message) use($mailData){
                     $message->to($mailData['to'])->subject('Fitzen Studio - Session Request');
-                });  
-        
+                });
+
                 $notify = "You have a new demo request from ".$request->first_name.' '.$request->last_name;
-        
+
                 $notification               = new Notification();
-                $notification->sender_id    = Auth::user()->id; 
-                $notification->receiver_id  = 1; 
-                $notification->notification = $notify; 
-                $notification->type         = "Demo Request"; 
+                $notification->sender_id    = Auth::user()->id;
+                $notification->receiver_id  = 1;
+                $notification->notification = $notify;
+                $notification->type         = "Demo Request";
                 $notification->save();
                 Customer::where('user_id', Auth::id())->update(['is_lead' => 0]);
                 return redirect()->back()->with('message','Welcome you onboard! We will get back to you shortly.');
@@ -163,8 +163,8 @@ class FrontendController extends Controller
             'goals'        => $request->goals,
             'user_message' => $request->message,
             'to'           => "info@fitzen.studio",
-        ); 
-    
+        );
+
         Mail::send('front.emails.session_request', $mailData, function($message) use($mailData){
             $message->to($mailData['to'])->subject('Fitzen Studio - Session Request Updated');
         });
@@ -174,7 +174,7 @@ class FrontendController extends Controller
 
     public function RescheduleRequest(Request $request) {
 
-      
+
         $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->first();
         $session = CustomerToTrainer::where('id', $request->session_id)->first();
 
@@ -196,10 +196,10 @@ class FrontendController extends Controller
             $session_request->save();
 
             $notification               = new Notification();
-            $notification->sender_id    = Auth::user()->id; 
-            $notification->receiver_id  = 1; 
-            $notification->notification = "Demo Request is Re-Scheduled by ".$request->request_by; 
-            $notification->type         = "ReSchedule Session"; 
+            $notification->sender_id    = Auth::user()->id;
+            $notification->receiver_id  = 1;
+            $notification->notification = "Demo Request is Re-Scheduled by ".$request->request_by;
+            $notification->type         = "ReSchedule Session";
             $notification->save();
 
 
@@ -233,16 +233,16 @@ class FrontendController extends Controller
 
         }
 
-     
+
 
     }
 
     public function subscribeNewsletter(Request $request) {
-        
+
         try{
-           
+
             if($request->method() == 'POST'){
-               
+
                 $email = $request->email;
                 $json  = array('status' => false);
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -252,12 +252,12 @@ class FrontendController extends Controller
                 if( $email == null || $email == ''){
                     $json['error'] = "Error: Please type correct email address";
                 }
-              
+
                 $alreadyExists = Newsletter::where('email', $email)->first();
                 if($alreadyExists != null){
                     $json['error'] = "Error: You have already subscribed";
                 }
-               
+
                 if(!isset($json['error'])){
                     $letter        = new Newsletter();
                     $letter->email = $email;
@@ -266,35 +266,35 @@ class FrontendController extends Controller
                     $mailData = array(
                         'email'        => $request->email,
                         'to'           => "info@fitzen.studio",
-                    ); 
-                
+                    );
+
                     Mail::send('front.emails.newsletter', $mailData, function($message) use($mailData){
                         $message->to($mailData['to'])->subject('Fitzen Studio - Newsletter');
-                    });  
+                    });
 
                     $notification               = new Notification();
-                    $notification->sender_id    = 1; 
-                    $notification->receiver_id  = 1; 
-                    $notification->notification = $email." is subscribed for newsletter on your website"; 
-                    $notification->type         = "NewsLetter"; 
+                    $notification->sender_id    = 1;
+                    $notification->receiver_id  = 1;
+                    $notification->notification = $email." is subscribed for newsletter on your website";
+                    $notification->type         = "NewsLetter";
                     $notification->save();
-        
+
                     $json['status']  = true;
                     $json["success"] =  "Success: You Have Successfully Subscribed";
                 }
 
-          
+
                 return $json;
             }
         }catch (\Exception $ex){
 
-          
+
             $json           = array();
             $json['status'] = false;
             $json['error']  = "Whoops!! Something went wrong ";
             return $json;
         }
-        
+
     }
 
     public function ThankYouForRegistration(){
@@ -310,7 +310,7 @@ class FrontendController extends Controller
         $content = SignupCms::find(1);
        return view('admin.cms.signupcms', compact('content'));
     }
-    
+
 
     public function UpdateLoginCMS(Request $request) {
 
@@ -322,7 +322,7 @@ class FrontendController extends Controller
         {
             if(File::exists(public_path($dirPath.'/'.$request->banner_image))){
                 File::delete(public_path($dirPath.'/'.$request->banner_image));
-            }    
+            }
             $fileName = time().'-'.$request->banner_image->getClientOriginalName();
             $request->banner_image->move(public_path($dirPath), $fileName);
 
@@ -343,7 +343,7 @@ class FrontendController extends Controller
         {
             if(File::exists(public_path($dirPath.'/'.$request->banner_image))){
                 File::delete(public_path($dirPath.'/'.$request->banner_image));
-            }    
+            }
             $fileName = time().'-'.$request->banner_image->getClientOriginalName();
             $request->banner_image->move(public_path($dirPath), $fileName);
 
@@ -354,5 +354,5 @@ class FrontendController extends Controller
         return redirect()->back()->with('success','Data Updated Successfully....!!!');
     }
 
-    // 
+    //
 }

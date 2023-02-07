@@ -23,7 +23,7 @@ Create Session
                         <form method="POST" action="{{ route('admin.assignCustomer') }}" enctype="multipart/form-data" id="assignTrainer">
                             @csrf
                             <div class="row">
-                             
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="">Trainer</label>
@@ -104,7 +104,7 @@ Create Session
                                                 </td>
                                                 <td>
                                                     <input type="time" placeholder="Select Time" class="form-control" name="trainer_time[]" required>
-    
+
                                                 </td>
                                                 <td style="text-align: center;">
                                                     <a href="javascript:void(0);" class="addCF"><i class="fa-solid fa-circle-plus"></i></a>

@@ -20,11 +20,11 @@ use Auth;
 class TrainerController extends Controller
 {
     public function index(Request $request)
-    {   
+    {
         $trainers = Trainer::orderBy('id','DESC')->get();
         return view('admin.trainers.list', compact('trainers'));
     }
-   
+
     public function store(Request $request)
     {
         $check_email = User::where('email', $request->email)->first();
@@ -34,26 +34,26 @@ class TrainerController extends Controller
                 //code...
                 $request->request->remove('_token');
                 $request->request->remove('id');
-    
+
                 $user =  User::create([
                     'name'     => $request->name,
                     'email'    => $request->email,
-                    'password' => Hash::make($request->email),           
-                    'role_id'  => '3',        
+                    'password' => Hash::make($request->email),
+                    'role_id'  => '3',
                 ]);
-    
+
                 Trainer::create([
                     'name'      => $request->name,
-                    'email'     => $request->email, 
+                    'email'     => $request->email,
                     'user_id'   => $user->id,
                     'time_zone' => $request->time_zone,
                 ]);
-    
-                $mailData = array(            
+
+                $mailData = array(
                     'to'   => $request->email,
                     'token'=> $user->password
-                );         
-        
+                );
+
                 Mail::send('trainer.emails.invitation', $mailData, function($message) use($mailData){
                     $message->to($mailData['to'])->subject('Fitzen Studio - Invitation to join as trainer');
                 });
@@ -67,14 +67,15 @@ class TrainerController extends Controller
         } else {
 
             // $trainer = Trainer::find($request->id);
-            // $trainer->update($request->all());  
+            // $trainer->update($request->all());
             return redirect()->back()->with('error','Email ALready Exist..!!');
         }
     }
 
     public function EditTrainer($id) {
-        
+
         $trainer   = Trainer::find($id);
+        $trainer = $trainer->load('timeZone');
         $schedules = CustomerToTrainer::with('customer', 'trainer')->where('trainer_id', $id)->get();
         $rating    = Review::where('trainer_id', $id)->avg('rating');
 
@@ -109,7 +110,7 @@ class TrainerController extends Controller
         {
             if(File::exists(public_path($dirPath.'/'.$request->photo))){
                 File::delete(public_path($dirPath.'/'.$request->photo));
-            }    
+            }
             $fileName = time().'-'.$request->photo->getClientOriginalName();
             $request->photo->move(public_path($dirPath), $fileName);
 
@@ -119,12 +120,12 @@ class TrainerController extends Controller
         return redirect()->back()->with('success','Trainer Updated Successfully.');
     }
 
-   
+
     public function destroy($id, Request $request)
-    {   
+    {
         $trainer = Trainer::find($id);
         User::where('id', $trainer->user_id)->delete();
-        $trainer->delete();  
+        $trainer->delete();
         return redirect()->back()->with('success','Trainer Deleted Successfully.');
     }
 
@@ -136,7 +137,7 @@ class TrainerController extends Controller
         {
             if(File::exists(public_path($dirPath.'/'.$request->slip))){
                 File::delete(public_path($dirPath.'/'.$request->slip));
-            }    
+            }
             $fileName = time().'-'.$request->slip->getClientOriginalName();
             $request->slip->move(public_path($dirPath), $fileName);
 
@@ -145,14 +146,14 @@ class TrainerController extends Controller
         $payment->save();
 
         $notification_to_trainer               = new Notification();
-        $notification_to_trainer->sender_id    = Auth::user()->id; 
-        $notification_to_trainer->receiver_id  = $request->trainer_id; 
-        $notification_to_trainer->notification = "You have a new payment slip from admin"; 
-        $notification_to_trainer->type         = "Payment Slip"; 
+        $notification_to_trainer->sender_id    = Auth::user()->id;
+        $notification_to_trainer->receiver_id  = $request->trainer_id;
+        $notification_to_trainer->notification = "You have a new payment slip from admin";
+        $notification_to_trainer->type         = "Payment Slip";
         $notification_to_trainer->save();
 
         return redirect()->back()->with('success', 'Payment slip added successfully...!!');
     }
 
-    
+
 }
