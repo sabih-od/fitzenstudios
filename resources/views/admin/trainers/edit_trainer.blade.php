@@ -181,10 +181,11 @@
                                                    name="city">
                                         </div>
                                     </div>
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="">Time Zone</label>
-                                            <input type="text" name="time_zone" value="{{ $trainer->time_zone ?? ' ' }}"
+                                            <input type="text" name="time_zone" value="{{ isset($trainer->time_zone) ? $trainer->timeZone['abbreviation'] : ' ' }}"
                                                    class="form-control">
                                         </div>
                                     </div>

@@ -10,13 +10,13 @@ class CustomerToTrainer extends Model
     // protected $fillable = ['customer_id', 'trainer_id', 'trainer_date', 'trainer_time', 'notes', 'session_type', 'status'];
     use HasFactory;
     protected $guarded = [];
-    
+
     public function customer(){
-        return $this->hasOne(Customer::class, 'id', 'customer_id')->withDefault();  
+        return $this->hasOne(Customer::class, 'id', 'customer_id')->withDefault();
     }
 
     public function trainer(){
-        return $this->hasOne(Trainer::class, 'id', 'trainer_id')->withDefault();  
+        return $this->hasOne(Trainer::class, 'id', 'trainer_id')->withDefault();
     }
 
     public function sessions() {
@@ -24,5 +24,9 @@ class CustomerToTrainer extends Model
     }
     public function reviews() {
         return $this->belongsTo(Review::class, 'id','cust_to_trainer_id');
+    }
+
+    public function timeZone() {
+        return $this->hasOne(TimeZone::class, 'timezone_value','time_zone');
     }
 }

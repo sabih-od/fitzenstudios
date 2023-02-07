@@ -12,16 +12,18 @@ Training Sessions
             <div class="col-md-6">
                 <h2 class="secHeading">Training Sessions </h2>
             </div>
- 
+
             <div class="col-md-12">
                 @forelse ($upcoming_sessions as $item)
                     <div class="performCard">
                         <div class="dateWrap">
                             <h2>{{ date('d', strtotime($item->trainer_date))}}<span>{{ date('M', strtotime($item->trainer_date))}}</h2>
                         </div>
-                        <h3><span>Time</span>{{ $item->trainer_time }}</h3>
+
+
+                        <h3><span>Time</span>{{ date("g:i a", strtotime($item->trainer_time ))}}</h3>
                         <h3><span>Customer</span>{{ $item["customer"]->first_name.' '.$item["customer"]->last_name }}</h3>
-                    
+
                         <div class="statusBox">
                             <span>Status</span>
                             <ul>
@@ -40,7 +42,7 @@ Training Sessions
                             <button type="button" class="btn btn-primary btnStyle" data-toggle="modal" data-target="#exampleModal{{ $loop->iteration }}">
                                 Update Session Status
                             </button>
-                            
+
                             <!-- Modal -->
                             <div class="modal fade" id="exampleModal{{ $loop->iteration }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
@@ -79,6 +81,6 @@ Training Sessions
 
 @section('js')
     <script>
-    
+
     </script>
 @endsection
