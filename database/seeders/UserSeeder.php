@@ -22,5 +22,18 @@ class UserSeeder extends Seeder
             'password' => bcrypt('admin!@#'),
             'role_id' => 1
         ]);
+
+//        User::insert([
+//            'name' => 'custo',
+//            'email' => 'custo@fitzenstudio.com',
+//            'password' => bcrypt('12345'),
+//            'role_id' => 2
+//        ]);
+//        User::insert([
+//            'name' => 'traino',
+//            'email' => 'traino@fitzenstudio.com',
+//            'password' => bcrypt('12345'),
+//            'role_id' => 3
+//        ]);
     }
 }

@@ -46,7 +46,8 @@
                                     <td>
                                         @if ($item->status == 'canceled')
                                             <button type="button" class="btn btn-danger btnStyle">
-                                                N/A
+{{--                                                N/A--}}
+                                                Not Avaiable
                                             </button>
                                         @else
                                             <span>
@@ -60,7 +61,8 @@
                                     </td>
 
 
-                                    {{-- @if($item->status == "completed" && $item->id != $item["reviews"]["cust_to_trainer_id"]) --}}
+                                    {{-- @if($item->statusF
+                                     == "completed" && $item->id != $item["reviews"]["cust_to_trainer_id"]) --}}
                                     @if($item->status == "completed")
                                         <td><a href="javascript:;" class="btn btn-success">Completed</a></td>
                                     @elseif($item->status == "upcoming" || $item->status == "re-scheduled")
@@ -91,7 +93,7 @@
                                             <div class="modal-body">
                                                 <form action="{{ url('trainer/update-session-status') }}" method="POST">
                                                     @csrf
-                                                    <input type="hidden" name="session_id" value="{{ $item->id }}">
+                                                    <input type="text" name="session_id" value="{{ $item->id }}">
                                                     <select name="status" class="form-control">
                                                         <option value="upcoming">Upcoming</option>
                                                         <option value="completed">Completed</option>
