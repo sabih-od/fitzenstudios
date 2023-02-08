@@ -73,6 +73,8 @@ User Profile
                                 @endif
                             </div>
                         </div>
+
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="">Date Of Brith</label>
@@ -80,6 +82,15 @@ User Profile
 
                             </div>
                         </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">Time</label>
+                                <input type="time" name="dob" value="{{ $customer->dob ? date('Y-m-d' , strtotime($customer->dob)) : "" }}" class="form-control">
+
+                            </div>
+                        </div>
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="">Age</label>
@@ -110,30 +121,7 @@ User Profile
                                 <input type="text" value="{{$customer->city ?? ""}}" class="form-control" name="city">
                             </div>
                         </div>
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="">Time Zone</label>
-                                <input type="text" placeholder="{{$customer->timezone}}" class="form-control" >
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Days: <span id="selectedId"></span></label>
-                                <select id="selecteddays" multiple></select>
-                            </div>
-                        </div> --}}
-                        {{-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="">No. of Sessions in a Week</label>
-                                <input type="text" placeholder="{{$customer->sessions_in_week}}" class="form-control" disabled>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="">Type of Training </label>
-                                <input type="text" placeholder="{{$customer->training_type}}" class="form-control" disabled>
-                            </div>
-                        </div> --}}
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="">Trainer Assigned </label>

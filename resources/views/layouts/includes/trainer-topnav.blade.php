@@ -17,10 +17,12 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
-                   
-                    <img src="{{ $user->photo ? asset($user->photo) : asset('themes/customer/assets/images/profileImg.jpg')  }}" class="userImg rounded-circle" alt="">
-                    
-                    {{$user->name.' '.$user->last_name}}
+                    <img src="{{ Auth::user()->photo ? asset(Auth::user()->photo) : asset('themes/customer/assets/images/profileImg.jpg')  }}" class="userImg rounded-circle" alt="">
+
+{{--                    <img src="{{ $user->photo ? asset($user->photo) : asset('themes/customer/assets/images/profileImg.jpg')  }}" class="userImg rounded-circle" alt="">--}}
+
+                    {{Auth::user()->name.''.Auth::user()->last_name}}
+{{--                    {{$user->name.' '.$user->last_name}}--}}
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
 
