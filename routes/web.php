@@ -73,7 +73,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('demosessioncms',BookDemoSessionController::class);
     Route::resource('meetings',ZoomMeetingController::class);
 
-    Route::get('create-session',[AdminController::class, "CreateSession"]);
+    Route::get('create-session',[AdminController::class, "CreateSession"])->name('CreateSession');
     Route::get('demo-session/{id}',[AdminController::class, "DemoSession"]);
     Route::get('permanent-customer/{id}',[AdminController::class, "PermanentCustomer"]);
 

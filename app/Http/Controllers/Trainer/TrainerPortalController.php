@@ -10,6 +10,7 @@ use App\Models\CustomerDetail;
 use App\Models\Performance;
 use App\Models\Notification;
 use App\Models\Customer;
+use Carbon\Carbon;
 use App\Models\BookDemoSession;
 use App\Models\TimeZone;
 use App\Models\PaymentToTrainer;
@@ -33,15 +34,44 @@ class TrainerPortalController extends Controller
 
     public function dashboard()
     {
+
+//        $firstdate =date('Y-m-d',strtotime('monday this week'));
+//        $laststdate =date('Y-m-d',strtotime('sunday this week'));
+
+        $now = Carbon::now();
+//        $start = $now->startOfWeek(Carbon::MONDAY)->format('H:i');
+//        $end = $now->endOfWeek(Carbon::SUNDAY)->format('H:i');
+
+        $weekStartDate = $now->startOfWeek()->format('Y-m-d');
+        $weekEndDate = $now->endOfWeek()->format('Y-m-d');
+        $currentMonth_start = $now->startOfMOnth()->format('Y-m-d');
+        $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
+
+
+
+
+//        $CustomerToTrainer=CustomerToTrainer::whereBetween('trainer_date',[$weekStartDate,$weekEndDate])->get();
+//        $CustomerToTrainer=CustomerToTrainer::whereDate('trainer_date',$currentMonth)->get();
+
+//dd($CustomerToTrainer);
         $user_id           = Auth::user()->id;
         $get_trainer_id    = Trainer::where('user_id',$user_id)->pluck('id')->first();
+
         // $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')->where('trainer_id', $get_trainer_id)->where('status','!=','completed')->get();
-        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')->where('trainer_id', $get_trainer_id)->where('status','!=','completed')->where('status','!=','canceled')->orderBy('id', 'DESC')->get();
-    
+        $upcoming_sessions_month = CustomerToTrainer::with('customer', 'trainer')
+            ->whereBetween('trainer_date',[$currentMonth_start,$currentMonth_end])
+            ->where('trainer_id', $get_trainer_id)->where('status','!=','completed')
+            ->where('status','!=','canceled')->orderBy('id', 'DESC')->get();
+
+        $upcoming_sessions_week = CustomerToTrainer::with('customer', 'trainer')
+            ->whereBetween('trainer_date',[$weekStartDate,$weekEndDate])
+            ->where('trainer_id', $get_trainer_id)->where('status','!=','completed')
+            ->where('status','!=','canceled')->orderBy('id', 'DESC')->get();
+
         $demo_data = [];
         $i         = 0;
-        foreach ($upcoming_sessions as $demo) {
-       
+        foreach ($upcoming_sessions_week as $demo) {
+
             $demo_data[$i]['id']          = $demo->id;
             $demo_data[$i]['title']       = $demo->session_type;//$demo->goals;
             $demo_data[$i]['start']       = $demo->trainer_date;
@@ -49,7 +79,8 @@ class TrainerPortalController extends Controller
             $i++;
         }
 
-        return view('trainer.dashboard', compact('upcoming_sessions', 'demo_data'));
+
+        return view('trainer.dashboard', compact('upcoming_sessions_week', 'upcoming_sessions_month','demo_data'));
     }
 
     public function EditProfile($id) {
@@ -57,7 +88,7 @@ class TrainerPortalController extends Controller
         $trainer = Trainer::find($id);
         return view('trainer.profile', compact('trainer', 'timezones'));
     }
-    
+
     public function ProfileUpdate(Request $request) {
 
         $dirPath = "uploads/images/home";
@@ -85,7 +116,7 @@ class TrainerPortalController extends Controller
         {
             if(File::exists(public_path($dirPath.'/'.$request->photo))){
                 File::delete(public_path($dirPath.'/'.$request->photo));
-            }    
+            }
             $fileName = time().'-'.$request->photo->getClientOriginalName();
             $request->photo->move(public_path($dirPath), $fileName);
 
@@ -129,7 +160,7 @@ class TrainerPortalController extends Controller
             // $detail->training_type           = $request->training_type;
             // $detail->trainer_assigned        = $request->trainer_assigned;
             // $detail->total_sessions_in_week  = $request->total_sessions_in_week;
-    
+
             // if ($request->fitness_type) {
             //     $detail->fitness_type        = json_encode($request->fitness_type);
             // }
@@ -142,35 +173,35 @@ class TrainerPortalController extends Controller
             // if ($request->on_medication) {
             //     $detail->on_medication      = json_encode($request->on_medication);
             // }
-    
+
             // $detail->period                  = $request->period;
             // $detail->workout_experience      = $request->workout_experience;
             // $detail->life_style              = $request->life_style;
             // $detail->focus_of_workout        = $request->focus_of_workout;
             // $detail->workout_type            = $request->workout_type;
             // $detail->medical_condition       = $request->medical_condition;
-          
-    
+
+
             $notification               = new Notification();
-            $notification->sender_id    = Auth::user()->id; 
-            $notification->receiver_id  = 1; 
-            $notification->notification = Auth::user()->name." just added customer detail"; 
-            $notification->type         = "Trainer Add Customer Details"; 
+            $notification->sender_id    = Auth::user()->id;
+            $notification->receiver_id  = 1;
+            $notification->notification = Auth::user()->name." just added customer detail";
+            $notification->type         = "Trainer Add Customer Details";
             $notification->save();
 
         } else {
-            
+
             $detail                = CustomerDetail::find($check->id);
             $detail->customer_name = $request->customer_name;
             $detail->trainer_name  = $request->trainer_name;
             $detail->feedback      = $request->feedback;
             $detail->save();
-     
+
             $notification               = new Notification();
-            $notification->sender_id    = Auth::user()->id; 
-            $notification->receiver_id  = 1; 
-            $notification->notification = Auth::user()->name." just added customer detail"; 
-            $notification->type         = "Trainer Updated Customer Details"; 
+            $notification->sender_id    = Auth::user()->id;
+            $notification->receiver_id  = 1;
+            $notification->notification = Auth::user()->name." just added customer detail";
+            $notification->type         = "Trainer Updated Customer Details";
             $notification->save();
         }
 
@@ -203,8 +234,10 @@ class TrainerPortalController extends Controller
     public function UpdateSessionStatus(Request $request) {
 
         $update         = CustomerToTrainer::find($request->session_id);
+//        dd($update);
+
         $update->status = $request->status;
-        $update->save();
+        $update->update();
 
         return redirect()->back()->with('success', 'Session Status Updated successfully...!!');
     }
@@ -222,7 +255,7 @@ class TrainerPortalController extends Controller
         if($check_performance == null) {
 
             $get_cust_id = CustomerToTrainer::where('id', $request->session_id)->pluck('customer_id')->first();
-            
+
             $performance                                = new Performance();
             $performance->demo_session_id               = $get_demo_session_id;
             $performance->session_id                    = $request->session_id;
@@ -264,10 +297,10 @@ class TrainerPortalController extends Controller
             $performance->save();
 
             $notification               = new Notification();
-            $notification->sender_id    = Auth::user()->id; 
-            $notification->receiver_id  = 1; 
-            $notification->notification = Auth::user()->name." just added customer performance"; 
-            $notification->type         = "Trainer Add Customer Performance"; 
+            $notification->sender_id    = Auth::user()->id;
+            $notification->receiver_id  = 1;
+            $notification->notification = Auth::user()->name." just added customer performance";
+            $notification->type         = "Trainer Add Customer Performance";
             $notification->save();
 
             return redirect('trainer/dashboard')->with('success', 'Session Performance Added Successfully...!!');
@@ -316,10 +349,10 @@ class TrainerPortalController extends Controller
             $performance->save();
 
             $notification               = new Notification();
-            $notification->sender_id    = Auth::user()->id; 
-            $notification->receiver_id  = 1; 
-            $notification->notification = Auth::user()->name." just updated customer performance"; 
-            $notification->type         = "Trainer Updated Customer Performance"; 
+            $notification->sender_id    = Auth::user()->id;
+            $notification->receiver_id  = 1;
+            $notification->notification = Auth::user()->name." just updated customer performance";
+            $notification->type         = "Trainer Updated Customer Performance";
             $notification->save();
 
             return redirect('trainer/dashboard')->with('success', 'Session Performance Updated Successfully...!!');
@@ -336,7 +369,7 @@ class TrainerPortalController extends Controller
         $get_trainer_id    = Trainer::where('user_id',$user_id)->pluck('id')->first();
         $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer','sessions')->where('trainer_id', $get_trainer_id)->orderBy('id', 'DESC')->get();
         return view('trainer.sessions', compact('upcoming_sessions'));
-    
+
     }
 
     public function CancelSession(Request $request) {

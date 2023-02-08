@@ -32,79 +32,7 @@
 
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <h2 class="secHeading">Schedule Calendar</h2>
-                    <div class="calanderWrapp">
-                        <div id='demo_calendar'></div>
-                        <!-- Session Popup -->
-                        {{-- <div class="session-popup">
-                            <a href="#" class="popupClone"><i class="fas fa-times"></i></a>
-                            <div class="form-group">
-                                <label for="">Session Name</label>
-                                <input type="text" class="form-control" id="session_name">
-                            </div>
-                            <div class="form-group">
-                                <label for="">Trainer Name</label>
-                                <input type="text"  class="form-control" id="trainer_name">
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="">Session Date</label>
-                                        <input type="text"  class="form-control" id="trainer_date">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="">Session Time</label>
-                                        <input type="text"  class="form-control" id="trainer_time">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="">Status</label>
-                                        <input style="border-bottom: none;" type="text" placeholder="Schedule" class="form-control" id="session_status">
-                                    </div>
-                                </div>
-                            </div>
-                            {{-- <div class="btn-group">
-                                <a href="#" data-toggle="modal" data-target="#joinMeetingModal" class="btnStyle">JOIN
-                                    MEETING</a>
-                                <a href="re-schedule.php" class="btnStyle redBtn">Re-Schedule</a>
-                                <a href="javascript:;" id="add_cust_url" class="btnStyle">add customer Details</a>
-                            </div> --}}
-                        {{-- </div>  --}}
 
-                        <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog"
-                             aria-labelledby="exampleModalLabel" aria-hidden="true">
-
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="modalHeaderText">Session Detail</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body" id="modalBodyText">
-                                        <p><b>Session Name: </b><span id="session_name"></span></p>
-                                        <p><b>Trainer Name: </b><span id="trainer_name"></span></p>
-                                        <p><b>Session Date: </b><span id="trainer_date"></span></p>
-                                        <p><b>Session Time: </b><span id="trainer_time"></span></p>
-                                        <p><b>Status: </b><span id="session_status"></span></p>
-                                        {{-- <a href="javascript:;" id="add_cust_url" class="btnStyle">add customer Details</a> --}}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Session Popup -->
-                    </div>
-                </div>
-            </div>
             <div class="row">
                 <div class="col-md-12">
                     <h2 class="secHeading">Upcoming Sessions</h2>
@@ -225,7 +153,7 @@
                                     </p>
                                 </div>
                                 <div class="btnWrap">
-                                    <span>{{  date('h:i A', strtotime($item->trainer_time)); }}</span>
+                                    <span>{{  date('h:i A', strtotime($item->trainer_time)) }}</span>
                                     {{-- <a href="join-meeting.php" data-toggle="modal" data-target="#joinMeetingModal">JOIN MEETING</a> --}}
                                 </div>
                             </div>
@@ -235,6 +163,81 @@
                     <h2 style="text-align: center;">Currently no sessions available today..!!</h2>
                 @endforelse
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="secHeading">Schedule Calendar</h2>
+                    <div class="calanderWrapp">
+                        <div id='demo_calendar'></div>
+                        <!-- Session Popup -->
+                        {{-- <div class="session-popup">
+                            <a href="#" class="popupClone"><i class="fas fa-times"></i></a>
+                            <div class="form-group">
+                                <label for="">Session Name</label>
+                                <input type="text" class="form-control" id="session_name">
+                            </div>
+                            <div class="form-group">
+                                <label for="">Trainer Name</label>
+                                <input type="text"  class="form-control" id="trainer_name">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">Session Date</label>
+                                        <input type="text"  class="form-control" id="trainer_date">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">Session Time</label>
+                                        <input type="text"  class="form-control" id="trainer_time">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="">Status</label>
+                                        <input style="border-bottom: none;" type="text" placeholder="Schedule" class="form-control" id="session_status">
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- <div class="btn-group">
+                                <a href="#" data-toggle="modal" data-target="#joinMeetingModal" class="btnStyle">JOIN
+                                    MEETING</a>
+                                <a href="re-schedule.php" class="btnStyle redBtn">Re-Schedule</a>
+                                <a href="javascript:;" id="add_cust_url" class="btnStyle">add customer Details</a>
+                            </div> --}}
+                        {{-- </div>  --}}
+
+                        <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog"
+                             aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalHeaderText">Session Detail</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" id="modalBodyText">
+                                        <p><b>Session Name: </b><span id="session_name"></span></p>
+                                        <p><b>Trainer Name: </b><span id="trainer_name"></span></p>
+                                        <p><b>Session Date: </b><span id="trainer_date"></span></p>
+                                        <p><b>Session Time: </b><span id="trainer_time"></span></p>
+                                        <p><b>Status: </b><span id="session_status"></span></p>
+                                        {{-- <a href="javascript:;" id="add_cust_url" class="btnStyle">add customer Details</a> --}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Session Popup -->
+                    </div>
+                </div>
+            </div>
+
+
             {{-- <div class="row mt-5">
                 <div class="col-md-12">
                     <h2 class="secHeading">Invoices & Payments</h2>

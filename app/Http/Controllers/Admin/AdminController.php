@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\AdminCreateSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\BookDemoSession;
@@ -18,11 +19,12 @@ use App\Models\CustomerToTrainer;
 class AdminController extends Controller
 {
     public function dashboard(){
-        
+
         $requests           = BookDemoSession::where('status','pending')->orderBy('id','DESC')->get();
         $sessions           = CustomerToTrainer::with('customer', 'trainer')->where('status','!=','canceled')->orderBy('id', 'DESC')->get();
         $current_date       = date('Y-m-d');
         $upcoming_sessions  = CustomerToTrainer::with('customer', 'trainer')->where('trainer_date', $current_date)->orderBy('id', 'DESC')->get();
+//        dd($upcoming_sessions);
 
         $demo_data = [];
         $i         = 0;
@@ -67,7 +69,7 @@ class AdminController extends Controller
 
     public function DemoSession($id) {
         $session  = BookDemoSession::find($id);
-        $trainers = Trainer::all(); 
+        $trainers = Trainer::all();
         return view('admin.demo_session', compact('session', 'trainers'));
     }
 
@@ -76,7 +78,7 @@ class AdminController extends Controller
     }
 
     public function PermanentCustomer($lead_id) {
-      
+
         $update_lead               = Lead::find($lead_id);
         $update_lead->is_customer  = 1;
         $update_lead->save();
@@ -94,12 +96,21 @@ class AdminController extends Controller
 
     }
 
-    public function CreateSession() {
-        
-        //$customers = Customer::where('is_lead', 0)->get();
+    public function CreateSession(Request $request) {
+
+        $customers = Customer::where('is_lead', 0)->get();
         $customers = Customer::get();
         $trainers  = Trainer::all();
         $zones     = TimeZone::all();
+//        $AdminCreateSession=new AdminCreateSession();
+//        $AdminCreateSession->trainer_id = $request->trainer_id;
+//        $AdminCreateSession->customer_id = $request->customer_id;
+//        $AdminCreateSession->session_type = $request->session_type;
+//        $AdminCreateSession->time_zone = $request->time_zone;
+//        $AdminCreateSession->notes = $request->notes;
+//        $AdminCreateSession->trainer_date = $request->trainer_date;
+//        $AdminCreateSession->trainer_time = $request->trainer_time;
+//        $AdminCreateSession->save();
 
         return view('admin.create_session', compact('customers', 'trainers', 'zones'));
     }

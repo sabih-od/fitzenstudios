@@ -29,6 +29,9 @@ use File;
 class FrontendController extends Controller
 {
     public function index() {
+//        dd(bcrypt('admin!@#'));
+//        dd(\Hash::make('admin!@#'));
+
         $content = HomepageCMS::find(1);
         return view('front.index',compact('content'));
     }

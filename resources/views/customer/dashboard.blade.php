@@ -117,18 +117,18 @@ Dashboard
 
                                         </div>
                                         @if($item->status == "completed")
-                                        <span class="badge badge-success">{{ ucfirst($item->status) }}</span>
+                                        <span class="badge badge-success">{{$item->status}}</span>
                                         @elseif($item->status == "re-scheduled")
-                                        <span class="badge badge-warning">{{ ucfirst($item->status) }}</span>
-                                        @elseif($item->status == "canceled")
-                                        <span class="badge badge-danger">{{ ucfirst($item->status) }}</span>
+                                        <span class="badge badge-warning">{{$item->status }}</span>
+                                        @elseif($item->status == "cancelled")
+                                        <span class="badge badge-danger">{{$item->status}}</span>
                                         @elseif($item->status == "upcoming")
-                                        <span class="badge badge-primary">{{ ucfirst($item->status) }}</span>
+                                        <span class="badge badge-primary">{{$item->status }}</span>
                                         @endif
                                     </div>
                                     <div class="btnWrap">
 
-                                        <span>{{  date('h:i A', strtotime($item->customer_timezone_time)); }}</span>
+                                        <span>{{  date('h:i A', strtotime($item->customer_timezone_time)) }}</span>
                                         {{-- <p class="zone">{{ $item->time_zone ?? "" }}</p> --}}
                                         @if($item->status == "completed")
                                             <a href="{{ url('customer/performance-detail/'.$item->id) }}">View Performance</a>
@@ -137,8 +137,8 @@ Dashboard
                                         <a href="{{ url('trainer/add-customer-details/'.$item->customer_id)}}">ADD
                                             Details</a> --}}
                                         @elseif($item->status == "upcoming")
-                                            <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}">JOIN MEETING</a>
-                                            <a href="javascript:;" class="cancel-session btn- btn-danger" data-cust_to_trainer_id="{{ $item->id }}">Cancel Session</a>
+                                            <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="mb-2">JOIN MEETING</a>
+                                            <a href="javascript:;" class="mb-2 cancel-session btn- btn-danger" data-cust_to_trainer_id="{{ $item->id }}">Cancel Session</a>
 
                                             @php
                                                 $user_id     = Auth::user()->id;
@@ -152,16 +152,16 @@ Dashboard
                                         @if($diff >= 6)
                                             <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}">RE-SCHEDULE</a>
                                         @else
-                                            <a href="#" data-toggle="modal" data-target="#rescheduleMessage">RE-SCHEDULE</a>
+                                            <a href="#" data-toggle="modal" data-target="#rescheduleMessage"class="">RE-SCHEDULE</a>
                                         @endif
 
                                         @elseif($item->status == "re-scheduled")
-                                            <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}">JOIN MEETING</a>
+                                            <a href="#"  data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}">JOIN MEETING</a>
                                             <a href="javascript:;" class="cancel-session btn- btn-danger" data-cust_to_trainer_id="{{ $item->id }}">Cancel Session</a>
                                         @else
                                         @endif
                                         <!-- Begin Join Meeting Popup -->
-                                        <div class="modal fade joinMeetingModal" id="joinMeetingModal{{$loop->iteration}}"
+                                        <div class=" modal fade joinMeetingModal" id="joinMeetingModal{{$loop->iteration}}"
                                             tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content p-5">
@@ -342,10 +342,15 @@ Dashboard
             selectable: true,
             datesRender: handleDatesRender,
             defaultDate: date,
+            // header: {
+            //     left: 'prev,next today',
+            //     center: 'title',
+            //     right: 'timeGridWeek,timeGridDay'
+            // },
             header: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                right: 'dayGridMonth, dayGridWeek,'
             },
             firstDay: 1,
             dateClick: function () {
@@ -355,11 +360,13 @@ Dashboard
             eventClick: function (event, jsEvent, view) {
                 console.log(event.event._def);
                 $('#modalHeaderText').html(event.event._def.title);
+
                 $('#trainer').text(event.event.extendedProps.description.customer.trainer.name);
                 $('#start_date').html(event.event.extendedProps.description.customer.trainer
                     .trainer_date);
                 $('#start_time').html(event.event.extendedProps.description.customer.trainer
                     .trainer_time);
+
                 $('#goal').html(event.event.extendedProps.description.goals);
                 $('#message').html(event.event.extendedProps.description.message);
                 $('#d_start_date').html(event.event.extendedProps.description.customer.trainer.customer_timezone_date);
@@ -390,6 +397,17 @@ Dashboard
             document.getElementById('cancelSession').submit();
         }
     })
+
+    $(".fc-dayGridWeek-button").click(function(){
+        $("#upcoming_sessions_month").hide();
+        $("#upcoming_sessions_week").show();
+    });
+
+    $(".fc-dayGridMonth-button").click(function(){
+        $("#upcoming_sessions_week").hide();
+        $("#upcoming_sessions_month").show();
+
+    });
 
 </script>
 
