@@ -35,19 +35,13 @@
                                         <span>{{ $item["customer"]["first_name"].' '.$item["customer"]["last_name"] }}</span>
                                     </td>
                                     <td><span>{{ $item["customer"]["email"] }}</span></td>
-
-
                                     <td><span>{{ date('d-m-Y', strtotime(@$item->trainer_timezone_date)) }}</span></td>
-                                    <td><span>{{ date('h:i A', strtotime(@$item->trainer_timezone_date)) }}</span></td>
-                                <!--<td><span>{{ $item->demo_session_id != null ? date('d-m-Y', strtotime(@$item["sessions"]["session_date"])) : date('d-m-Y', strtotime(@$item->trainer_timezone_date)) }}</span></td>-->
-                                <!--<td><span>{{ $item->demo_session_id != null ? date('h:i A', strtotime(@$item["sessions"]["session_time"])) : date('h:i A', strtotime(@$item->trainer_timezone_time)) }}</span></td>-->
-                                <!--<td><span>{{ @$item["sessions"]["time_zone"] }}</span></td>-->
+                                    <td>{{ date("h:i", strtotime($item->trainer_time ))}}</td>
                                     <td><span>{{ @$item->trainer->time_zone }}</span></td>
                                     <td>
                                         @if ($item->status == 'canceled')
-                                            <button type="button" class="btn btn-danger btnStyle">
-{{--                                                N/A--}}
-                                                Not Avaiable
+                                            <button type="button" class="btn btn-danger" style="width: 13.3rem;">
+                                                Not Available
                                             </button>
                                         @else
                                             <span>
@@ -67,14 +61,16 @@
                                         <td><a href="javascript:;" class="btn btn-success">Completed</a></td>
                                     @elseif($item->status == "upcoming" || $item->status == "re-scheduled")
                                         <td>
+                                            ---
                                             {{-- <button class="btn btn-sm btn-danger cancel-session" onClick="Delete({{$item->id}});">
                                                 Cancel Session
                                             </button> --}}
-                                            <a href="javascript:;" data-cust_to_trainer_id="{{ $item->id }}"
-                                               class="btn-sm btn btn-danger cancel-session">Cancel Session</a></td>
+{{--                                            <a href="javascript:;" data-cust_to_trainer_id="{{ $item->id }}"--}}
+{{--                                               class="btn-sm btn btn-primary cancel-session">Cancel Session</a>--}}
+                                        </td>
                                     @else
                                         <td>
-                                            <a href="javascript:;" class="btn btn-danger">Cancelled</a>
+                                            <a href="javascript:;" class="btn btn-danger">Canceled</a>
                                         </td>
                                     @endif
                                 </tr>
@@ -93,11 +89,10 @@
                                             <div class="modal-body">
                                                 <form action="{{ url('trainer/update-session-status') }}" method="POST">
                                                     @csrf
-                                                    <input type="text" name="session_id" value="{{ $item->id }}">
+                                                    <input type="hidden" name="session_id" value="{{ $item->id }}">
                                                     <select name="status" class="form-control">
-                                                        <option value="upcoming">Upcoming</option>
                                                         <option value="completed">Completed</option>
-                                                        <option value="cancelled">Cancelled</option>
+                                                        <option value="cancelled">Canceled</option>
                                                     </select><br>
                                                     <button type="submit" class="btn btn-primary">Save changes</button>
                                                 </form>
