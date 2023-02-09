@@ -51,7 +51,7 @@ Create Session
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="">Session Type</label>
-                                       <input type="time" class="form-control" name="session_type" value="{{ old('session_type', '') }}" required>
+                                       <input type="text" class="form-control" name="session_type" value="{{ old('session_type', '') }}" required>
                                     </div>
                                 </div>
                                 {{-- <div class="col-md-6">

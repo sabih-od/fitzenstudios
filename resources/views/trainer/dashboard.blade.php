@@ -73,10 +73,10 @@ Dashboard
 
                                     @elseif($item->status == "upcoming")
 
-                                        <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="mb-3">JOIN MEETING</a>
-                                        <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}">RE-SCHEDULE</a>
+                                        <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="mb-3">JOIN</a>
+                                        <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}">RE-SCHEDULE.</a>
                                     @else
-                                        <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}">JOIN MEETING</a>
+                                        <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="text-center"style="width: 131px;!important">JOIN</a>
                                     @endif
                                     <!-- Begin Join Meeting Popup -->
                                     <div class="modal fade joinMeetingModal" id="joinMeetingModal{{$loop->iteration}}"
@@ -132,10 +132,9 @@ Dashboard
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="">Select Time</label>
-                                                                <i class="fa-regular fa-clock">
 
                                                                 <input type="time" name="new_session_time"
-                                                                    class="form-control " required></i>
+                                                                    class="form-control " required>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-12">
@@ -213,10 +212,10 @@ Dashboard
 
                                             @elseif($item->status == "upcoming")
 
-                                                <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="mb-3">JOIN MEETING</a>
-                                                <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}">RE-SCHEDULE</a>
+                                                <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="mb-3 text-center"style="width:131px;!important">JOIN</a>
+                                                <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}"style="width:131px;!important">RE-SCHEDULE.</a>
                                             @else
-                                                <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}">JOIN MEETING</a>
+                                                <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="text-center" style="width:131px;!important;">JOIN</a>
                                         @endif
                                         <!-- Begin Join Meeting Popup -->
                                             <div class="modal fade joinMeetingModal" id="joinMeetingModal{{$loop->iteration}}"
@@ -272,10 +271,11 @@ Dashboard
                                                                     <div class="col-md-6">
                                                                         <div class="form-group">
                                                                             <label for="">Select Time</label>
-                                                                            <i class="fa-regular fa-clock">
 
                                                                                 <input type="time" name="new_session_time"
-                                                                                       class="form-control " required></i>
+                                                                                       class="form-control " required>
+{{--                                                                            <i class="fa-regular fa-clock"></i>--}}
+
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-md-12">
