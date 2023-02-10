@@ -34,43 +34,22 @@ class TrainerPortalController extends Controller
 
     public function dashboard()
     {
-
-//        $firstdate =date('Y-m-d',strtotime('monday this week'));
-//        $laststdate =date('Y-m-d',strtotime('sunday this week'));
-
         $now = Carbon::now();
-//        $start = $now->startOfWeek(Carbon::MONDAY)->format('H:i');
-//        $end = $now->endOfWeek(Carbon::SUNDAY)->format('H:i');
-
-        $weekStartDate = $now->startOfWeek()->format('Y-m-d');
-        $weekEndDate = $now->endOfWeek()->format('Y-m-d');
         $currentMonth_start = $now->startOfMOnth()->format('Y-m-d');
         $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
 
-
-
-
-//        $CustomerToTrainer=CustomerToTrainer::whereBetween('trainer_date',[$weekStartDate,$weekEndDate])->get();
-//        $CustomerToTrainer=CustomerToTrainer::whereDate('trainer_date',$currentMonth)->get();
-
-//dd($CustomerToTrainer);
         $user_id           = Auth::user()->id;
         $get_trainer_id    = Trainer::where('user_id',$user_id)->pluck('id')->first();
 
-        // $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')->where('trainer_id', $get_trainer_id)->where('status','!=','completed')->get();
-        $upcoming_sessions_month = CustomerToTrainer::with('customer', 'trainer')
+        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')
             ->whereBetween('trainer_date',[$currentMonth_start,$currentMonth_end])
             ->where('trainer_id', $get_trainer_id)->where('status','!=','completed')
             ->where('status','!=','canceled')->orderBy('id', 'DESC')->get();
 
-        $upcoming_sessions_week = CustomerToTrainer::with('customer', 'trainer')
-            ->whereBetween('trainer_date',[$weekStartDate,$weekEndDate])
-            ->where('trainer_id', $get_trainer_id)->where('status','!=','completed')
-            ->where('status','!=','canceled')->orderBy('id', 'DESC')->get();
 
         $demo_data = [];
         $i         = 0;
-        foreach ($upcoming_sessions_week as $demo) {
+        foreach ($upcoming_sessions as $demo) {
 
             $demo_data[$i]['id']          = $demo->id;
             $demo_data[$i]['title']       = $demo->session_type;//$demo->goals;
@@ -80,7 +59,32 @@ class TrainerPortalController extends Controller
         }
 
 
-        return view('trainer.dashboard', compact('upcoming_sessions_week', 'upcoming_sessions_month','demo_data'));
+        return view('trainer.dashboard', compact('upcoming_sessions', 'demo_data'));
+    }
+
+    public  function calendardatafetch(Request $request){
+
+        $currentMonth_start_date = $request->start_date;
+        $currentMonth_end_date = $request->end_date;
+
+        $currentMonth_start_dates = date('Y-m-d', strtotime($currentMonth_start_date));
+
+        $currentMonth_end_dates =date('Y-m-d',strtotime($currentMonth_end_date. ' -1 day'));
+
+
+        $user_id = Auth::user()->id;
+        $get_trainer_id = Trainer::where('user_id', $user_id)->pluck('id')->first();
+
+        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')
+            ->whereBetween('trainer_date', [$currentMonth_start_dates, $currentMonth_end_dates])
+//            ->where('trainer_date',$currentMonth_start_dates)
+            ->where('trainer_id', $get_trainer_id)->where('status', '!=', 'completed')
+            ->where('status', '!=', 'canceled')->orderBy('id', 'DESC')->get();
+        $data = view('trainer.upcoming-sessions', compact('upcoming_sessions'))->render();
+        return response()->json(['data'=> $data]);
+
+//        return response()->json(['data'=> $currentMonth_start_dates]);
+
     }
 
     public function EditProfile($id) {

@@ -13,7 +13,7 @@ use App\Models\CustomerToTrainer;
 use App\Models\Contract;
 use App\Models\Payment;
 use App\Models\Review;
-
+use Carbon\Carbon;
 
 use App\Models\Performance;
 
@@ -22,32 +22,68 @@ class CustomerController extends Controller
 {
     public function dashboard()
     {
-     
-        $demos     = BookDemoSession::where('customer_id', Auth::user()->customer->id)->with('Customer', 'Customer.trainer')->orderBy('id','DESC')->get();
+
+        $now = Carbon::now();
+        $currentMonth_start = $now->startOfMOnth()->format('Y-m-d');
+        $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
+
+
+        $demos     = BookDemoSession::where('customer_id', Auth::user()->customer->id)
+
+            ->with('Customer', 'Customer.trainer')->orderBy('id','DESC')->get();
         $demo_data = [];
         $i         = 0;
 
         $user_id           = Auth::user()->id;
         $get_cust_id       = Customer::where('user_id',$user_id)->first();
-        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer','reviews')->where('customer_id', $get_cust_id->id)->where('status','!=','completed')->orderBy('id', 'DESC')->get();
-       
+
+        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer','reviews')
+            ->where('customer_id', $get_cust_id->id)
+            ->whereBetween('trainer_date',[$currentMonth_start,$currentMonth_end])
+            ->where('status','!=','completed')
+            ->orderBy('id', 'DESC')->get();
+
         foreach ($demos as $demo) {
-       
+
             $demo_data[$i]['id'] = $demo->id;
             $demo_data[$i]['title'] = 'Demo Session';//$demo->goals;
             $demo_data[$i]['start'] = $demo->session_date;
             $demo_data[$i]['description'] = $demo;
             $i++;
         }
-       
+
         return view('customer.dashboard', compact('demo_data', 'upcoming_sessions'));
+    }
+
+
+    public  function customersitecalendardatafetch(Request $request){
+
+        $currentMonth_start_date = $request->start_date;
+        $currentMonth_end_date = $request->end_date;
+
+        $currentMonth_start_dates = date('Y-m-d', strtotime($currentMonth_start_date));
+
+        $currentMonth_end_dates =date('Y-m-d',strtotime($currentMonth_end_date. ' -1 day'));
+
+        $user_id           = Auth::user()->id;
+        $get_cust_id       = Customer::where('user_id',$user_id)->first();
+
+        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer','reviews')
+            ->where('customer_id', $get_cust_id->id)
+            ->whereBetween('trainer_date', [$currentMonth_start_dates, $currentMonth_end_dates])
+            ->where('status','!=','completed')
+            ->orderBy('id', 'DESC')->get();
+
+        $data = view('customer.upcoming-sessions', compact('upcoming_sessions'))->render();
+        return response()->json(['data'=> $data]);
+
     }
 
     public function profile()
     {
         $trainer  = '';
         $customer = Customer::where('user_id', Auth()->id())->first();
-      
+
         if (isset($customer->trainer->trainer_id)) {
             $trainer = Trainer::where('id', $customer->trainer->trainer_id)->first();
         }
@@ -61,22 +97,22 @@ class CustomerController extends Controller
     }
 
     public function ProfileUpdate(Request $request){
-        
+
         $file_name = "";
         $dirPath = "uploads/images/home";
 
         $customer              = Customer::find($request->customer_id);
         $customer->first_name  = $request->first_name;
         $customer->last_name   = $request->last_name;
-        $customer->email       = $request->email; 
-        $customer->phone       = $request->phone; 
-        $customer->gender      = $request->gender; 
+        $customer->email       = $request->email;
+        $customer->phone       = $request->phone;
+        $customer->gender      = $request->gender;
         $customer->dob         = $request->dob;
-        $customer->age         = $request->age; 
+        $customer->age         = $request->age;
         $customer->weight      = $request->weight;
-        $customer->nationality = $request->nationality; 
+        $customer->nationality = $request->nationality;
         $customer->residence   = $request->residence;
-        $customer->city        = $request->city; 
+        $customer->city        = $request->city;
         // $customer->timezone    = $request->timezone;
         // $customer->days        = $request->days;
         // $customer->sessions_in_week =  $request->sessions_in_week;
@@ -85,12 +121,12 @@ class CustomerController extends Controller
         {
             if(File::exists(public_path($dirPath.'/'.$request->photo))){
                 File::delete(public_path($dirPath.'/'.$request->photo));
-            }    
+            }
             $fileName = time().'-'.$request->photo->getClientOriginalName();
             $request->photo->move(public_path($dirPath), $fileName);
 
             $customer->photo =  $dirPath.'/'.$fileName;
-        }      
+        }
         $customer->save();
 
         return redirect('customer/profile')->
@@ -129,9 +165,9 @@ class CustomerController extends Controller
         {
             if(File::exists(public_path($dirPath.'/'.$request->client_siganture))){
                 File::delete(public_path($dirPath.'/'.$request->client_siganture));
-            }    
+            }
             $fileName = time().'-'.$request->client_siganture->getClientOriginalName();
-            $request->client_siganture->move(public_path($dirPath), $fileName); 
+            $request->client_siganture->move(public_path($dirPath), $fileName);
             $contract->client_siganture  = $dirPath.'/'.$fileName;
         }
 
@@ -140,13 +176,13 @@ class CustomerController extends Controller
         // {
         //     if(File::exists(public_path($dirPath.'/'.$request->company_signature))){
         //         File::delete(public_path($dirPath.'/'.$request->company_signature));
-        //     }    
+        //     }
         //     $fileName = time().'-'.$request->company_signature->getClientOriginalName();
-        //     $request->company_signature->move(public_path($dirPath), $fileName); 
+        //     $request->company_signature->move(public_path($dirPath), $fileName);
         //     $contract->company_signature  = $dirPath.'/'.$fileName;
         // }
         $contract->save();
-        
+
         // Customer::where('user_id', Auth::id())->update(['type'=>'permanent']);
 
         return redirect()->back()->with('success', 'Contract Submitted successfully..!!');
@@ -176,13 +212,13 @@ class CustomerController extends Controller
     }
 
     public function Sessions() {
-      
+
         $get_cust_id = Customer::where('user_id', Auth::user()->id)->pluck('id')->first();
         $sessions    = CustomerToTrainer::with('customer', 'trainer', 'sessions', 'reviews')->where('customer_id', $get_cust_id)->get();
         return view('customer.sessions', compact('sessions'));
     }
     public function CancelSession(Request $request) {
-        
+
         $update_status         = CustomerToTrainer::find($request->customer_to_trainer_id);
         $update_status->status = "canceled";
         $update_status->save();
@@ -192,7 +228,7 @@ class CustomerController extends Controller
     }
 
     public function AddReview(Request $request) {
-       
+
         $get_cust_id             = Customer::where('user_id', Auth::user()->id)->pluck('id')->first();
 
         $add_review                     = new Review();

@@ -149,6 +149,8 @@ Route::middleware('auth')->group(function () {
 Route::prefix('customer')->middleware('auth')->group(function () {
 
     Route::get('dashboard',[CustomerController::class, 'dashboard']);
+    Route::post('calendardatafetch',[CustomerController::class, 'customersitecalendardatafetch'])->name('customer-site-calendar-data-fetch');
+
     Route::get('profile',[CustomerController::class, 'profile']);
     Route::get('contract',[CustomerController::class, 'Contract']);
     Route::post('submit-contract',[CustomerController::class, 'SubmitContract']);
@@ -170,6 +172,8 @@ Route::prefix('trainer')->middleware('auth')->group(function () {
     Route::get('customer-details',[TrainerPortalController::class, 'CustomerDetails'])->name('cust_details');
 
     Route::get('dashboard',[TrainerPortalController::class, 'dashboard']);
+    Route::post('calendardatafetch',[TrainerPortalController::class, 'calendardatafetch'])->name('calendardatafetch');
+
     Route::get('payments',[TrainerPortalController::class, 'Payments']);
 
     Route::get('profile/{id}',[TrainerPortalController::class, 'EditProfile']);

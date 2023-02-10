@@ -18,6 +18,7 @@ Sessions
                             <thead>
                             <tr class="thead-dark">
                                 <th><span>No.</span></th>
+                                <th><span>Name</span></th>
                                 <th><span>Session Date</span></th>
                                 <th><span>Session Time</span></th>
                                 <th><span>Time Zone</span></th>
@@ -28,9 +29,11 @@ Sessions
                             </thead>
                             <tbody>
                                 @forelse ($sessions as $item)
-                                
+
                                     <tr>
                                         <td><span>{{ $loop->iteration }}</span></td>
+                                        <td><span>{{ $item->customer->first_name}}</span></td>
+
                                         <td><span>{{ date('d-m-Y', strtotime(@$item->customer_timezone_date)) }}</span></td>
                                         <td><span>{{ date('h:i A', strtotime(@$item->customer_timezone_time)) }}</span></td>
                                         <!--<td><span>{{ $item->demo_session_id != null ? date('d-m-Y', strtotime(@$item["sessions"]["session_date"])) : date('d-m-Y', strtotime(@$item->customer_timezone_date)) }}</span></td>-->
@@ -41,23 +44,23 @@ Sessions
                                         <td><span>{{ $item["sessions"] != null ? $item["sessions"]["message"] : '' }}</span></td>
                                         {{-- @if($item->status == "completed" && $item->id != $item["reviews"]["cust_to_trainer_id"]) --}}
                                         @if($item["status"] == "completed")
-                                      
+
                                             @php $check = App\Models\Performance::where('session_id',$item->id)->where('customer_id', $item->customer_id)->first(); @endphp
                                             @if($check != null)
-                                                <td> 
+                                                <td>
                                                     <a href="{{ url('customer/performance-detail/'.$item->customer_id) }}" class="btn-sm btn-warning">View Performance</a>
                                                     <a href="javascript:;" data-cust_to_trainer_id="{{ $item->id }}" data-trainer_id="{{ $item->trainer_id }}" data-session_id="{{ $item->demo_session_id }}" class="btn-sm btn-warning add-review">Add Review</a>
                                                 </td>
-                                            @else 
+                                            @else
                                                 <td> <a href="javascript:;" data-cust_to_trainer_id="{{ $item->id }}" data-trainer_id="{{ $item->trainer_id }}" data-session_id="{{ $item->demo_session_id }}" class="btn-sm btnStyle add-review">Add Review</a></td>
                                             @endif
                                         @elseif($item["status"] == "upcoming" || $item["status"] == "re-scheduled")
-                                            <td> 
+                                            <td>
                                             {{-- <button class="btn btn-sm btn-danger cancel-session" onClick="Delete({{$item->id}});">
                                                 Cancel Session
                                             </button> --}}
                                             <a href="javascript:;" data-cust_to_trainer_id="{{ $item->id }}" class="btn-sm btn btn-danger cancel-session">Cancel Session</a></td>
-                                        @else 
+                                        @else
                                             <td>
                                                 <a href="javascript:;" class="btn btn-danger">Cancelled</a>
                                             </td>
@@ -114,7 +117,7 @@ Sessions
                                                 </div>
                                             </form>
                                         </div>
-                                       
+
                                     </div>
                                     </div>
                                 </div>
@@ -137,7 +140,7 @@ Sessions
 <script type = "text/javascript">
     $(document).ready(function(){
         $('.add-review').click(function(){
-            
+
             var trainer_id         = $(this).data('trainer_id');
             var session_id         = $(this).data('session_id');
             var cust_to_trainer_id = $(this).data('cust_to_trainer_id');
