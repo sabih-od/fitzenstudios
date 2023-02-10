@@ -4,17 +4,11 @@ Dashboard
 @endsection
 @section('style')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-<style>
-    /* .fc-right .fc-button-group {
-            display: none !important;
-        } */
 
-</style>
 @endsection
 @section('content')
 <main>
 
-{{--    @dd($firstdate);--}}
     <div class="content-wrap">
         <div class="calanderWrapp row">
             <div class="col-xl-6">
@@ -32,282 +26,8 @@ Dashboard
                             </span> --}}
                     </div>
 
-                    <div id="upcoming_sessions_week">
-                    @forelse ($upcoming_sessions_week as $item)
-                    <div class="col-md-12">
-                        <div class="activityCard">
-                            <div class="dateWrap">
-                                <h2>
-                                    {{ date('d', strtotime($item->trainer_timezone_date))}}
-                                    <span>{{ date('M', strtotime($item->trainer_timezone_date))}}</span>
-                                </h2>
-                            </div>
-                            <div class="content">
-                                <div>
-                                    <h3>{{ $item->session_type }}</h3>
-                                    <p> {{ $item["customer"]->first_name.' '.$item["customer"]->last_name }}</p>
 
-                                    @if($item->status == "completed")
-                                        <span class="badge badge-success mb-3">{{ ucfirst($item->status) }}</span>
-                                    @elseif($item->status == "re-scheduled")
-                                        <span class="badge badge-warning mb-3">{{ ucfirst($item->status) }}</span>
-                                    @elseif($item->status == "canceled")
-                                        <span class="badge badge-danger mb-3">{{ ucfirst($item->status) }}</span>
-                                    @elseif($item->status == "upcoming")
-                                        <span class="badge badge-primary mb-3">{{ ucfirst($item->status) }}</span>
-                                    @endif
-
-                                </div>
-                                <div class="btnWrap">
-                                    <span>{{  date('h:i A', strtotime($item->trainer_timezone_time)) }}</span>
-                                    {{-- <p class="zone">{{ $item->time_zone ?? "" }}</p> --}}
-                                    @if($item->status == "completed")
-                                        @if($item->demo_session_id != null)
-                                            @php $check = App\Models\Performance::where('demo_session_id',$item->demo_session_id)->first();
-                                            @endphp
-                                            @if($check == null)
-                                                <a href="{{ url('trainer/add-customer-performance/'.$item->id)}}">ADD PERFORMANCE</a>
-                                            @endif
-                                        @endif
-                                        <a href="{{ url('trainer/add-customer-details/'.$item->customer_id)}}">ADD Details</a>
-
-                                    @elseif($item->status == "upcoming")
-
-                                        <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="mb-3">JOIN</a>
-                                        <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}">RE-SCHEDULE.</a>
-                                    @else
-                                        <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="text-center"style="width: 131px;!important">JOIN</a>
-                                    @endif
-                                    <!-- Begin Join Meeting Popup -->
-                                    <div class="modal fade joinMeetingModal" id="joinMeetingModal{{$loop->iteration}}"
-                                        tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content p-5">
-                                                <button type="button" class=" text-right close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span style="font-size: 30px" aria-hidden="true">&times;</span>
-                                                </button>
-                                                <div class="modal-body text-center">
-                                                    <h2 class="secHeading">{{ $item->session_type}}</h2>
-                                                    <div class="exerciseCard mb-0 bg-light">
-                                                        <a href="#" class="text-dark"
-                                                            style="background-color: #f8f9fa">{{ $item->notes }}</a>
-                                                    </div>
-                                                    {{-- <div class="text-right"><a href="{{ url('trainer/dashboard') }}"
-                                                    class="text-dark" style="background-color:#fff"><i
-                                                        class="fas fa-share"></i></a>
-                                                </div> --}}
-                                                <a target="blank" href="{{ $item->start_url }}" class="btnStyle">Join Now</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- END Join Meeting Popup -->
-                                <!-- Re-Schedule Modal -->
-                                <div class="modal fade" id="rescheduleModal{{$loop->iteration}}" tabindex="-1"
-                                    role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalHeaderText1">Re-schedule</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body" id="modalBodyText1">
-                                                <form method="POST" action="{{ url('reschedule-request') }}">
-                                                    @csrf
-                                                    <input type="hidden" name="request_by" value="trainer">
-                                                    <input type="hidden" name="session_id" value="{{ $item->id }}">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="">Select Date</label>
-                                                                <input type="date" name="new_session_date"
-                                                                    class="form-control" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="">Select Time</label>
-
-                                                                <input type="time" name="new_session_time"
-                                                                    class="form-control " required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <label for="">Reason</label>
-                                                                <textarea name="reason" class="form-control" rows="6"
-                                                                    placeholder="Tell us reason to re-schedule your session"
-                                                                    required></textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-12 text-center">
-                                                            <!-- <button onclick="window.location.href = 'dashboard.php'" class="btnStyle">BOOK SESSION</button> -->
-                                                            <button type="submit" class="btnStyle"
-                                                                data-wow-delay="0.6s"><span></span>UPDATE BOOKING
-                                                                SESSION</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @empty
-                <h2 style="text-align: center;">Currenty No sessions available..!!</h2>
-                @endforelse
-
-                    </div>
-
-
-
-
-
-                    <div id="upcoming_sessions_month">
-                        @forelse ($upcoming_sessions_month as $item)
-                            <div class="col-md-12">
-                                <div class="activityCard">
-                                    <div class="dateWrap">
-                                        <h2>
-                                            {{ date('d', strtotime($item->trainer_timezone_date))}}
-                                            <span>{{ date('M', strtotime($item->trainer_timezone_date))}}</span>
-                                        </h2>
-                                    </div>
-                                    <div class="content">
-                                        <div>
-                                            <h3>{{ $item->session_type }}</h3>
-                                            <p> {{ $item["customer"]->first_name.' '.$item["customer"]->last_name }}</p>
-
-                                            @if($item->status == "completed")
-                                                <span class="badge badge-success mb-3">{{ ucfirst($item->status) }}</span>
-                                            @elseif($item->status == "re-scheduled")
-                                                <span class="badge badge-warning mb-3">{{ ucfirst($item->status) }}</span>
-                                            @elseif($item->status == "canceled")
-                                                <span class="badge badge-danger mb-3">{{ ucfirst($item->status) }}</span>
-                                            @elseif($item->status == "upcoming")
-                                                <span class="badge badge-primary mb-3">{{ ucfirst($item->status) }}</span>
-                                            @endif
-
-                                        </div>
-                                        <div class="btnWrap">
-                                            <span>{{  date('h:i A', strtotime($item->trainer_timezone_time)) }}</span>
-                                            {{-- <p class="zone">{{ $item->time_zone ?? "" }}</p> --}}
-                                            @if($item->status == "completed")
-                                                @if($item->demo_session_id != null)
-                                                    @php $check = App\Models\Performance::where('demo_session_id',$item->demo_session_id)->first();
-                                                    @endphp
-                                                    @if($check == null)
-                                                        <a href="{{ url('trainer/add-customer-performance/'.$item->id)}}">ADD PERFORMANCE</a>
-                                                    @endif
-                                                @endif
-                                                <a href="{{ url('trainer/add-customer-details/'.$item->customer_id)}}">ADD Details</a>
-
-                                            @elseif($item->status == "upcoming")
-
-                                                <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="mb-3 text-center"style="width:131px;!important">JOIN</a>
-                                                <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}"style="width:131px;!important">RE-SCHEDULE.</a>
-                                            @else
-                                                <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="text-center" style="width:131px;!important;">JOIN</a>
-                                        @endif
-                                        <!-- Begin Join Meeting Popup -->
-                                            <div class="modal fade joinMeetingModal" id="joinMeetingModal{{$loop->iteration}}"
-                                                 tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg">
-                                                    <div class="modal-content p-5">
-                                                        <button type="button" class=" text-right close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                            <span style="font-size: 30px" aria-hidden="true">&times;</span>
-                                                        </button>
-                                                        <div class="modal-body text-center">
-                                                            <h2 class="secHeading">{{ $item->session_type}}</h2>
-                                                            <div class="exerciseCard mb-0 bg-light">
-                                                                <a href="#" class="text-dark"
-                                                                   style="background-color: #f8f9fa">{{ $item->notes }}</a>
-                                                            </div>
-                                                            {{-- <div class="text-right"><a href="{{ url('trainer/dashboard') }}"
-                                                            class="text-dark" style="background-color:#fff"><i
-                                                                class="fas fa-share"></i></a>
-                                                        </div> --}}
-                                                            <a target="blank" href="{{ $item->start_url }}" class="btnStyle">Join Now</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- END Join Meeting Popup -->
-                                            <!-- Re-Schedule Modal -->
-                                            <div class="modal fade" id="rescheduleModal{{$loop->iteration}}" tabindex="-1"
-                                                 role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="modalHeaderText1">Re-schedule</h5>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                    aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body" id="modalBodyText1">
-                                                            <form method="POST" action="{{ url('reschedule-request') }}">
-                                                                @csrf
-                                                                <input type="hidden" name="request_by" value="trainer">
-                                                                <input type="hidden" name="session_id" value="{{ $item->id }}">
-                                                                <div class="row">
-                                                                    <div class="col-md-6">
-                                                                        <div class="form-group">
-                                                                            <label for="">Select Date</label>
-                                                                            <input type="date" name="new_session_date"
-                                                                                   class="form-control" required>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <div class="form-group">
-                                                                            <label for="">Select Time</label>
-
-                                                                                <input type="time" name="new_session_time"
-                                                                                       class="form-control " required>
-{{--                                                                            <i class="fa-regular fa-clock"></i>--}}
-
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-12">
-                                                                        <div class="form-group">
-                                                                            <label for="">Reason</label>
-                                                                            <textarea name="reason" class="form-control" rows="6"
-                                                                                      placeholder="Tell us reason to re-schedule your session"
-                                                                                      required></textarea>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-12 text-center">
-                                                                        <!-- <button onclick="window.location.href = 'dashboard.php'" class="btnStyle">BOOK SESSION</button> -->
-                                                                        <button type="submit" class="btnStyle"
-                                                                                data-wow-delay="0.6s"><span></span>UPDATE BOOKING
-                                                                            SESSION</button>
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <h2 style="text-align: center;">Currenty No sessions available..!!</h2>
-                        @endforelse
-
-                    </div>
-
+                     <div id="upcoming_sessions_month"></div>
             </div>
         </div>
 
@@ -370,7 +90,7 @@ Dashboard
                         <p><b>Session Status: </b><span id="session_status"></span></p>
                         <a href="#" data-toggle="modal" data-target="#joinMeetingModal" class="btnStyle">JOIN
                             MEETING</a>
-                        <a href="javascript:;" id="add_cust_url" class="btnStyle">add customer Details</a>
+{{--                        <a href="javascript:;" id="add_cust_url" class="btnStyle">add customer Details</a>--}}
                     </div>
                 </div>
             </div>
@@ -378,14 +98,21 @@ Dashboard
     </div>
     </div>
 </main>
+
+
 @endsection
 
 @section('js')
 <script>
+    $.ajaxSetup({
+        headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     $(document).ready(function () {
         var calendarEl = document.getElementById('demo_calendar');
         var demos = @json($demo_data);
-
         // console.log("data", demos);
         const date = new Date();
 
@@ -397,8 +124,26 @@ Dashboard
             plugins: ['interaction', 'dayGrid', 'timeGrid'],
             defaultView: 'dayGridMonth',
             selectable: true,
-            datesRender: handleDatesRender,
+            // datesRender: handleDatesRender,
             defaultDate: date,
+            datesRender: function(info) {
+                var startDate = new Date(info.view.calendar.state.dateProfile.currentRange.start).toDateString()
+                var endDate = new Date(info.view.calendar.state.dateProfile.currentRange.end).toDateString()
+
+                $.ajax({
+
+                    url: "{{route('calendardatafetch')}}",
+                    type: "post",
+                    dataType:'json',
+                    data: {
+                        start_date: startDate,
+                        end_date: endDate
+                    },
+                    success: function(data) {
+                        $('#upcoming_sessions_month').html(data.data);
+                    }
+                });
+            },
             header: {
                 left: 'prev,next today',
                 center: 'title',
@@ -419,15 +164,14 @@ Dashboard
                     .trainer_timezone_time);
                 $('#session_name').text(event.event.extendedProps.description.session_type);
                 $('#trainer_name').text(name);
-                $('#trainer_date').text(event.event.extendedProps.description
-
-                .trainer_timezone_date);
+                $('#trainer_date').text(event.event.extendedProps.description.trainer_timezone_date);
                 $('#trainer_time').text(session_time);
                 $("#admin_time_zone").text(event.event.extendedProps.description.time_zone);
                 $('#session_status').text(event.event.extendedProps.description.status);
                 $("#add_cust_url").attr("href", cust_detail_url);
                 $('#calendarModal').modal();
             },
+
 
         });
         calendar.render();
@@ -450,16 +194,20 @@ Dashboard
 
         $(document).ready(function(){
 
-        $(".fc-dayGridWeek-button").click(function(){
-            $("#upcoming_sessions_month").hide();
-            $("#upcoming_sessions_week").show();
-        });
 
-            $(".fc-dayGridMonth-button").click(function(){
-                $("#upcoming_sessions_week").hide();
-                $("#upcoming_sessions_month").show();
 
-            });
+        // $(".fc-dayGridWeek-button").click(function(){
+        //     $("#upcoming_sessions_month").hide();
+        //     $("#upcoming_sessions_week").show();
+        // });
+        //
+        //     $(".fc-dayGridMonth-button").click(function(){
+        //         $("#upcoming_sessions_week").hide();
+        //         $("#upcoming_sessions_month").show();
+        //
+        //     });
+
+
 
         });
 

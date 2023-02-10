@@ -124,7 +124,7 @@ Customers
                                                 <option value="{{ $time->timezone_value }}">
                                                     {{ $time->zone_name.' '.$time->time_zone }}</option>
                                                 @empty
-            
+
                                                 @endforelse
                                             </select>
                                         </div>
@@ -151,7 +151,7 @@ Customers
                                         </div>
                                     </div>
                                 </div>
-                               
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -220,7 +220,7 @@ Customers
         $("#pkid").val(0);
         $("#trainer_name").val('');
         $("#email").val('');
-        $("#modalHeaderText").text('Add New Trainer');
+        $("#modalHeaderText").text('Add New Customer');
         $('#AddModal').modal('show');
     });
     function Delete(id) {

@@ -308,7 +308,7 @@
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                    right: 'dayGridWeek,dayGridMonth,'
                 },
                 firstDay: 1,
                 dateClick: function () {

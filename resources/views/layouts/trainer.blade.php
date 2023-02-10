@@ -8,6 +8,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Fitzen Studio - @yield('page-title')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Calandar CSS -->
     <link href="https://unpkg.com/@fullcalendar/core@4.3.0/main.min.css" rel="stylesheet" />
     <link href="https://unpkg.com/@fullcalendar/daygrid@4.3.0/main.min.css" rel="stylesheet" />
@@ -74,7 +75,7 @@
         <div class="exerciseCard mb-0 bg-light">
           <a href="#" class="text-dark">https://www.w3.org/Help/Webmaster#sourceSed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium</a>
         </div>
-        <div class="text-right"><a href="#" class="text-dark"><i class="fas fa-share"></i></a></div>
+{{--        <div class="text-right"><a href="#" class="text-dark"><i class="fas fa-share"></i></a></div>--}}
         <a href="join-meeting.php" class="btnStyle">Join Now</a>
       </div>
     </div>
