@@ -921,7 +921,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     position: relative;
 }
 
-.calanderWrapp [class*='col-']{
+.calanderWrapp [class*='col-'] {
     padding-right: 1.75rem;
     padding-left: 1.75rem;
 }
@@ -1207,11 +1207,13 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .meeting-wrap .btnCont {
     display: flex;
     justify-content: space-between;
-}.profileInfo .profileImg img {
-     width: 150px;
-     height: 150px;
-     object-fit: cover;
- }
+}
+
+.profileInfo .profileImg img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
 
 .activityCard .rate {
     height: auto;
@@ -1345,16 +1347,61 @@ table .btnStyle {
     border-bottom: none;
 }
 
-.notifications li:last-child:hover{
+.notifications li:last-child:hover {
     background: #fff;
 }
 
-table *{
+table * {
     white-space: nowrap;
 }
 
 
-#demo_calendar .fc-right{
+#demo_calendar .fc-right {
     display: flex;
     flex-direction: row-reverse;
+}
+
+.fc-button-group > .fc-button {
+    background-color: var(--white);
+    color: var(--theme-color);
+    border-radius: 50px;
+    font-size: 1rem;
+    padding: 0.25em 0.5em;
+    text-transform: capitalize;
+    border: 1px solid var(--theme-color);
+}
+
+.fc-button-group > .fc-button:not(:first-child) {
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+button.fc-button.fc-button-primary {
+    background-color: var(--white) !important;
+    color: var(--theme-color) !important;
+    font-size: 1rem;
+    padding: 0.25em 0.5em;
+    text-transform: capitalize;
+    border: 1px solid var(--theme-color);
+}
+
+.fc-view.fc-dayGridWeek-view.fc-dayGrid-view > table,
+.fc-view-container {
+    border: 2px solid var(--theme-color);
+    border-top: none;
+}
+
+.fc-view.fc-dayGridWeek-view.fc-dayGrid-view > table table td {
+    border: none;
+    border-right: 1px solid var(--theme-color);
+    border-left: 1px solid var(--theme-color);
+}
+
+.fc-toolbar.fc-header-toolbar {
+    margin: 0 !important;
+}
+
+.fc-row.fc-widget-header table {
+    border-bottom: 1px solid var(--theme-color);
 }
