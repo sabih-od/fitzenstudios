@@ -30,13 +30,13 @@
                     <div class="row">
                         <div class="col-md-12">
                             <h2 class="secHeading">Upcoming Sessions</h2>
+                            @php
+                                $upcoming_session = json_decode($upcoming_sessions,true);
+
+                            @endphp
+
+                            <div id="upcoming_sessions_month"></div>
                         </div>
-                        @php
-                            $upcoming_session = json_decode($upcoming_sessions,true);
-
-                        @endphp
-
-                        <div id="upcoming_sessions_month"></div>
 
 
                         <!-- Re-Schedule Modal -->
