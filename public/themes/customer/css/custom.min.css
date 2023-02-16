@@ -1272,9 +1272,55 @@ table .btnStyle {
     border-bottom: none;
 }
 
-.notifications li:last-child:hover{
+.notifications li:last-child:hover {
     background: #fff;
 }
-table *{
+
+table * {
     white-space: nowrap;
+}
+
+.fc-button-group > .fc-button {
+    background-color: var(--white);
+    color: var(--theme-color);
+    border-radius: 50px;
+    font-size: 1rem;
+    padding: 0.25em 0.5em;
+    text-transform: capitalize;
+    border: 1px solid var(--theme-color);
+}
+
+.fc-button-group > .fc-button:not(:first-child) {
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+button.fc-button.fc-button-primary {
+    background-color: var(--white) !important;
+    color: var(--theme-color) !important;
+    font-size: 1rem;
+    padding: 0.25em 0.5em;
+    text-transform: capitalize;
+    border: 1px solid var(--theme-color);
+}
+
+.fc-view.fc-dayGridWeek-view.fc-dayGrid-view > table,
+.fc-view-container {
+    border: 2px solid var(--theme-color);
+    border-top: none;
+}
+
+.fc-view.fc-dayGridWeek-view.fc-dayGrid-view > table table td {
+    border: none;
+    border-right: 1px solid var(--theme-color);
+    border-left: 1px solid var(--theme-color);
+}
+
+.fc-toolbar.fc-header-toolbar {
+    margin: 0 !important;
+}
+
+.fc-row.fc-widget-header table {
+    border-bottom: 1px solid var(--theme-color);
 }
