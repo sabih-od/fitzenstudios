@@ -38,7 +38,10 @@ Sessions
                                         <td><span>{{ date('h:i A', strtotime(@$item->customer_timezone_time)) }}</span></td>
                                         <!--<td><span>{{ $item->demo_session_id != null ? date('d-m-Y', strtotime(@$item["sessions"]["session_date"])) : date('d-m-Y', strtotime(@$item->customer_timezone_date)) }}</span></td>-->
                                         <!--<td><span>{{ $item->demo_session_id != null ? date('h:i A', strtotime(@$item["sessions"]["session_time"])) : date('h:i A', strtotime(@$item->customer_timezone_time)) }}</span></td>-->
-                                        <td><span>{{ @$item->customer->time_zone }}</span></td>
+                                        <td><span>{{ @$item->timeZone->abbreviation }}</span></td>
+                                        {{--<td><span>{{@$item->abbreviation}}</span></td>--}}
+
+                                      
                                         <!--<td><span>{{ @$item["sessions"]["time_zone"] }}</span></td>-->
                                         <td><span>{{ $item["sessions"] != null ? $item["sessions"]["goals"] : '' }}</span></td>
                                         <td><span>{{ $item["sessions"] != null ? $item["sessions"]["message"] : '' }}</span></td>

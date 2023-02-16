@@ -69,6 +69,7 @@ class AdminController extends Controller
 
     public function DemoSession($id) {
         $session  = BookDemoSession::find($id);
+        $session = $session->load('timeZone');
         $trainers = Trainer::all();
         return view('admin.demo_session', compact('session', 'trainers'));
     }
