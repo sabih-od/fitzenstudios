@@ -111,7 +111,9 @@
                                                 <select name="time_zone" id="time_zone" class="form-control" required>
                                                     <option value="">Select Time Zone</option>
                                                       @forelse ($timezones as $time)
-                                                          <option style="color: black !important" value="{{ $time->timezone_value }}">{{ $time->zone_name.' '.$time->time_zone }}</option>
+                                                      {{--<option style="color: black !important" value="{{ $time->timezone_value }}">{{ $time->zone_name.' '.$time->time_zone }}</option>--}}
+
+                                                          <option style="color: black !important" value="{{ $time->id}}">{{ $time->zone_name.' '.$time->time_zone }}</option>
                                                       @empty
                                                           
                                                       @endforelse

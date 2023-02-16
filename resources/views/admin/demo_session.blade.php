@@ -33,7 +33,8 @@ Demo Session Request
                                         <li><span>Requested Time:</span> {{ $session->session_time }}</li>
                                         <li><span>Goals:</span> {{ $session->goals }}</li>
                                         <li><span>Message:</span> {{ $session->message }}</li>
-                                        <li><span>Time Zone: </span>{{ $session->time_zone ?? "" }}</li>
+                                        <input type="hidden"value="{{ $session->timeZone->id}}"name="time_zone"> 
+                                        <li><span>Time Zone: </span>{{ $session->timeZone->abbreviation ?? "" }}</li>
                                     </ul>
                                 </div>
                                 <div class="col-md-12">

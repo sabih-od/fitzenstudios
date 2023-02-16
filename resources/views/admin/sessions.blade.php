@@ -57,10 +57,10 @@
                                                 Cancel Session
                                             </button> --}}
                                             <a href="javascript:;" data-cust_to_trainer_id="{{ $item->id }}"
-                                               class="btn-sm btn btn-danger cancel-session">Cancel Session</a></td>
+                                               class="btn-sm btn btn-primary cancel-session">Cancel Session</a></td>
                                     @else
                                         <td>
-                                            <a href="javascript:;" class="btn btn-primary">Cancel</a>
+                                            <a href="javascript:;" class="btn btn-danger">Cancelled</a>
                                         </td>
                                     @endif
                                 </tr>

@@ -26,7 +26,13 @@ class CustomerToTrainer extends Model
         return $this->belongsTo(Review::class, 'id','cust_to_trainer_id');
     }
 
+    // public function timeZone() {
+    //     return $this->hasOne(TimeZone::class, 'timezone_value','time_zone');
+    // }
+    
+    
     public function timeZone() {
-        return $this->hasOne(TimeZone::class, 'timezone_value','time_zone');
+        return $this->hasOne(TimeZone::class, 'id','time_zone');
     }
+    
 }

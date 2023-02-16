@@ -27,27 +27,24 @@ class CustomerController extends Controller
         $currentMonth_start = $now->startOfMOnth()->format('Y-m-d');
         $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
 
-
-        $demos     = BookDemoSession::where('customer_id', Auth::user()->customer->id)
-
+        $demos = BookDemoSession::where('customer_id', Auth::user()->customer->id)
             ->with('Customer', 'Customer.trainer')->orderBy('id','DESC')->get();
         $demo_data = [];
         $i         = 0;
 
         $user_id           = Auth::user()->id;
         $get_cust_id       = Customer::where('user_id',$user_id)->first();
-
         $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer','reviews')
             ->where('customer_id', $get_cust_id->id)
-            ->whereBetween('trainer_date',[$currentMonth_start,$currentMonth_end])
+            ->whereBetween('trainer_date', [$currentMonth_start,$currentMonth_end])
             ->where('status','!=','completed')
             ->orderBy('id', 'DESC')->get();
 
-        foreach ($demos as $demo) {
+        foreach ($upcoming_sessions as $demo) {
 
             $demo_data[$i]['id'] = $demo->id;
-            $demo_data[$i]['title'] = 'Demo Session';//$demo->goals;
-            $demo_data[$i]['start'] = $demo->session_date;
+            $demo_data[$i]['title'] = $demo->session_type;//$demo->goals;
+            $demo_data[$i]['start'] = $demo->trainer_date;
             $demo_data[$i]['description'] = $demo;
             $i++;
         }
@@ -214,7 +211,8 @@ class CustomerController extends Controller
     public function Sessions() {
 
         $get_cust_id = Customer::where('user_id', Auth::user()->id)->pluck('id')->first();
-        $sessions    = CustomerToTrainer::with('customer', 'trainer', 'sessions', 'reviews')->where('customer_id', $get_cust_id)->get();
+        $sessions    = CustomerToTrainer::with('timeZone','customer', 'trainer', 'sessions', 'reviews')->where('customer_id', $get_cust_id)->get();
+        
         return view('customer.sessions', compact('sessions'));
     }
     public function CancelSession(Request $request) {

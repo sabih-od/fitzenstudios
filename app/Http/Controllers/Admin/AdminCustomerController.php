@@ -21,6 +21,7 @@ use GuzzleHttp\Client;
 use App\Models\Contract;
 use App\Models\Payment;
 use App\Models\Lead;
+use App\Models\TimeZone;
 
 use File;
 use Auth;
@@ -96,20 +97,17 @@ class AdminCustomerController extends Controller
 
     public function assignTrainer(Request $request)
     {
-
         $customer_id = $request->customer_id;
         $trainer_id = $request->trainer_id;
-        $customer = Customer::where('id', $customer_id)->first();
+        $customer = Customer::with('timeZone')->where('id', $customer_id)->first();
         $trainer = Trainer::where('id', $trainer_id)->first();
         $exist = CustomerToTrainer::where('customer_id', $customer_id)->first();
-
+        $timezone = TimeZone::find($request->time_zone);
         try {
-
-            $date = new DateTime($request->trainer_date . '' . $request->trainer_time, new DateTimeZone($request->customer_timezone));
-            $date->setTimezone(new DateTimeZone('America/New_York'));
+            $date = new DateTime($request->trainer_date . '' . $request->trainer_time, new DateTimeZone($timezone->timezone_value));
+            $date->setTimezone(new DateTimeZone($timezone->timezone_value));
             $sessionDate = $date->format('Y-m-d');
             $sessionTime = $date->format('H:i:s');
-
             $meeting_data = [
                 "topic" => $request->session_type,
                 "start_time" => $sessionDate . ' ' . $sessionTime,
@@ -117,18 +115,17 @@ class AdminCustomerController extends Controller
                 "agenda" => "demo session",
                 "host_video" => "",
                 "participant_video" => "",
-                "time_zone" => 'America/New_York',
+                "time_zone" => $timezone->timezone_value
             ];
-
             $resp = $this->create($meeting_data);
-
+            //dd($resp, $trainer, $customer);
             $trainerDate = new DateTime($sessionDate . '' . $sessionTime, new DateTimeZone($resp['data']['timezone']));
             $trainerDate->setTimezone(new DateTimeZone($trainer->time_zone));
             $trainer_timezone_date = $trainerDate->format('Y-m-d');
             $trainer_timezone_time = $trainerDate->format('H:i:s');
 
             $customerDate = new DateTime($sessionDate . '' . $sessionTime, new DateTimeZone($resp['data']['timezone']));
-            $customerDate->setTimezone(new DateTimeZone($customer->time_zone));
+            $customerDate->setTimezone(new DateTimeZone($customer->timeZone->timezone_value));
             $customer_timezone_date = $customerDate->format('Y-m-d');
             $customer_timezone_time = $customerDate->format('H:i:s');
 
@@ -212,7 +209,6 @@ class AdminCustomerController extends Controller
             });
 
             if ($exist != null) {
-
                 CustomerToTrainer::where('customer_id', $customer_id)->update([
                     'start_url' => $resp["data"]["start_url"],
                     'join_url' => $resp["data"]["join_url"],
@@ -226,7 +222,10 @@ class AdminCustomerController extends Controller
                     'trainer_timezone_time' => $trainer_timezone_time,
                     'customer_timezone_date' => $customer_timezone_date,
                     'customer_timezone_time' => $customer_timezone_time,
-                    'time_zone' => $request->customer_timezone
+                   
+                    // 'time_zone' => $timezone->timezone_value
+                  'time_zone' => $request->time_zone
+
                 ]);
 
             } else {
@@ -246,7 +245,9 @@ class AdminCustomerController extends Controller
                     'trainer_timezone_time' => $trainer_timezone_time,
                     'customer_timezone_date' => $customer_timezone_date,
                     'customer_timezone_time' => $customer_timezone_time,
-                    'time_zone' => $request->customer_timezone
+                    'time_zone' => $request->time_zone
+
+                    // 'time_zone' => $timezone->timezone_value
                 ]);
 
             }
@@ -270,8 +271,6 @@ class AdminCustomerController extends Controller
             $notification_to_customer->save();
 
             return redirect()->back()->with('success', 'Trainer assigned successfully.');
-
-            //code...
         } catch (\Exception $e) {
 
             return redirect()->back()->with('error', $e->getMessage());
@@ -543,10 +542,7 @@ class AdminCustomerController extends Controller
     public function AdminassignTrainer(Request $request)
     {
 
-        // dd($request->all());
-
         if ($request->customer_id != null) {
-
             $customer = Customer::whereIn('id', $request->customer_id)->get();
             // $customer_id = $request->customer_id;
             $trainer_id = $request->trainer_id;
@@ -556,9 +552,9 @@ class AdminCustomerController extends Controller
                 foreach ($customer as $value) {
                     if ($request->trainer_date != null) {
                         foreach ($request->trainer_date as $key => $trainer_date) {
-
-                            $date = new DateTime($request->trainer_date[$key] . '' . $request->trainer_time[$key], new DateTimeZone($request->time_zone));
-                            $date->setTimezone(new DateTimeZone('America/New_York'));
+                            $timezone = TimeZone::find($request->time_zone);
+                            $date = new DateTime($request->trainer_date[$key] . '' . $request->trainer_time[$key], new DateTimeZone($timezone->timezone_value));
+                            $date->setTimezone(new DateTimeZone($timezone->timezone_value));
                             $sessionDate = $date->format('Y-m-d');
                             $sessionTime = $date->format('H:i:s');
 
@@ -623,7 +619,10 @@ class AdminCustomerController extends Controller
                                 "agenda" => "Weekly Session",
                                 "host_video" => "",
                                 "participant_video" => "",
-                                "time_zone" => 'America/New_York',
+                                // "time_zone" => 'America/New_York',
+                                "time_zone" => $request->time_zone,
+
+                                
                             ];
 
                             $resp = $this->create($meeting_data);

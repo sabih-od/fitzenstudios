@@ -117,6 +117,7 @@
         $(document).ready(function () {
             var calendarEl = document.getElementById('demo_calendar');
             var demos = @json($demo_data);
+            console.log(demos)
             const date = new Date();
 
             function handleDatesRender(arg) {
@@ -156,8 +157,17 @@
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth, dayGridWeek,'
+                    right: 'dayGridWeek, dayGridMonth,'
                 },
+                
+              
+            
+                // header: {
+                //     left: 'prev,next today',
+                //     center: 'title',
+                //     right: 'dayGridWeek,dayGridMonth,'
+                // },
+                
                 firstDay: 1,
                 dateClick: function () {
                     $('.session-popup').slideDown(500);

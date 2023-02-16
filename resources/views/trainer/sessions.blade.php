@@ -37,7 +37,7 @@
                                     <td><span>{{ $item["customer"]["email"] }}</span></td>
                                     <td><span>{{ date('d-m-Y', strtotime(@$item->trainer_timezone_date)) }}</span></td>
                                     <td>{{ date("h:i", strtotime($item->trainer_time ))}}</td>
-                                    <td><span>{{ @$item->trainer->time_zone }}</span></td>
+                                    <td><span>{{ @$item->timeZone->abbreviation}}</span></td>
                                     <td>
                                         @if ($item->status == 'canceled')
                                             <button type="button" class="btn btn-danger" style="width: 13.3rem;">
@@ -61,7 +61,7 @@
                                         <td><a href="javascript:;" class="btn btn-success">Completed</a></td>
                                     @elseif($item->status == "upcoming" || $item->status == "re-scheduled")
                                         <td>
-                                            ---
+                                            <span class="btn btn-primary">Upcoming</span>
                                             {{-- <button class="btn btn-sm btn-danger cancel-session" onClick="Delete({{$item->id}});">
                                                 Cancel Session
                                             </button> --}}
@@ -92,7 +92,6 @@
                                                     <input type="hidden" name="session_id" value="{{ $item->id }}">
                                                     <select name="status" class="form-control">
                                                         <option value="completed">Completed</option>
-                                                        <option value="cancelled">Canceled</option>
                                                     </select><br>
                                                     <button type="submit" class="btn btn-primary">Save changes</button>
                                                 </form>
