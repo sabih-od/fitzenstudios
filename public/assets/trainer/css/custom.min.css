@@ -230,7 +230,6 @@ ul {
     display: grid;
     text-align: center;
     place-items: center;
-    min-width: 81px;
 }
 
 .dateWrap h2 {
@@ -245,16 +244,12 @@ ul {
     font-size: 1rem;
     font-weight: 600;
 }
-.activityCard .contentWrapper{
-    width: calc(100% - 102px);
-}
+
 .activityCard .content {
-    width: 100%;
+    width: calc(100% - 102px);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: calc(100% - 102px);
-    
 }
 
 .activityCard .content h3 {
