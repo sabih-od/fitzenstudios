@@ -44,9 +44,9 @@ trait ZoomMeetingTrait
             'exp' => time() + 3600,
         );
         // return JWT::encode($payload, $key);
-        return JWT::encode($payload, $secret, 'HS256');
+        return JWT::encode($payload, $secret, 'HS256');    
     }
-
+   
     private function retrieveZoomUrl()
     {
         return config('app.zoom_api_url');
@@ -86,9 +86,9 @@ trait ZoomMeetingTrait
                     ],
                 ]),
             ];
-
+    
             $response =  $this->client->post($url.$path, $body);
-
+    
             return [
                 'success' => $response->getStatusCode() === 201,
                 'data'    => json_decode($response->getBody(), true),
@@ -98,7 +98,7 @@ trait ZoomMeetingTrait
 
             return $ex->getMessage();
         }
-
+       
     }
 
     public function update($id, $data)
@@ -150,7 +150,7 @@ trait ZoomMeetingTrait
 
     /**
      * @param string $id
-     *
+     * 
      * @return bool[]
      */
     public function delete($id)
@@ -164,11 +164,11 @@ trait ZoomMeetingTrait
             ];
 
             $response =  $this->client->delete($url.$path, $body);
-
+            
             return [
                 'success' => $response->getStatusCode() === 204,
             ];
-
+            
         } catch (\Exception $ex) {
             return [
                 'success' => false,

@@ -22,7 +22,6 @@
     <link href="{{ asset('themes/customer/css/styles.css') }}" rel="stylesheet" />
     <link href="{{ asset('themes/customer/css/custom.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('themes/customer/css/responsive.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('themes/customer/css/main.css') }}"  rel="stylesheet" />
     <link href="{{asset('themes/admin/vendor/bootstrap-datepicker/css/bootstrap-datepicker.min.css')}}" rel="stylesheet" >
     @yield('style')
 </head>
