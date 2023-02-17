@@ -14,8 +14,8 @@ use Carbon\Carbon;
 use App\Models\BookDemoSession;
 use App\Models\TimeZone;
 use App\Models\PaymentToTrainer;
-
-
+//use Illuminate\Facades\Support\DB;
+use DB;
 use App\Traits\ZoomMeetingTrait;
 use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
@@ -47,6 +47,14 @@ class TrainerPortalController extends Controller
             ->where('status','!=','canceled')->orderBy('id', 'DESC')->get();
 
 
+        $new_upcoming_sessions = [];
+        foreach ($upcoming_sessions as $upcoming_session) {
+            $new_upcoming_sessions[$upcoming_session->trainer_time][]= $upcoming_session;
+        }
+
+//        $upcoming_sessions = $new_upcoming_sessions;
+
+
         $demo_data = [];
         $i         = 0;
         foreach ($upcoming_sessions as $demo) {
@@ -59,7 +67,7 @@ class TrainerPortalController extends Controller
         }
 
 
-        return view('trainer.dashboard', compact('upcoming_sessions', 'demo_data'));
+        return view('trainer.dashboard', compact('upcoming_sessions', 'new_upcoming_sessions', 'demo_data'));
     }
 
     public  function calendardatafetch(Request $request){
@@ -80,7 +88,13 @@ class TrainerPortalController extends Controller
 //            ->where('trainer_date',$currentMonth_start_dates)
             ->where('trainer_id', $get_trainer_id)->where('status', '!=', 'completed')
             ->where('status', '!=', 'canceled')->orderBy('id', 'DESC')->get();
-        $data = view('trainer.upcoming-sessions', compact('upcoming_sessions'))->render();
+
+        $new_upcoming_sessions = [];
+        foreach ($upcoming_sessions as $upcoming_session) {
+            $new_upcoming_sessions[$upcoming_session->trainer_time][]= $upcoming_session;
+        }
+
+        $data = view('trainer.upcoming-sessions', compact('upcoming_sessions', 'new_upcoming_sessions'))->render();
         return response()->json(['data'=> $data]);
 
 //        return response()->json(['data'=> $currentMonth_start_dates]);

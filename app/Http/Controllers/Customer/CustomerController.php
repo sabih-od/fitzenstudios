@@ -71,7 +71,14 @@ class CustomerController extends Controller
             ->where('status','!=','completed')
             ->orderBy('id', 'DESC')->get();
 
-        $data = view('customer.upcoming-sessions', compact('upcoming_sessions'))->render();
+
+        $new_upcoming_sessions = [];
+        foreach ($upcoming_sessions as $upcoming_session) {
+            $new_upcoming_sessions[$upcoming_session->trainer_time][]= $upcoming_session;
+        }
+
+
+        $data = view('customer.upcoming-sessions', compact('upcoming_sessions', 'new_upcoming_sessions'))->render();
         return response()->json(['data'=> $data]);
 
     }
@@ -212,7 +219,7 @@ class CustomerController extends Controller
 
         $get_cust_id = Customer::where('user_id', Auth::user()->id)->pluck('id')->first();
         $sessions    = CustomerToTrainer::with('timeZone','customer', 'trainer', 'sessions', 'reviews')->where('customer_id', $get_cust_id)->get();
-        
+
         return view('customer.sessions', compact('sessions'));
     }
     public function CancelSession(Request $request) {
