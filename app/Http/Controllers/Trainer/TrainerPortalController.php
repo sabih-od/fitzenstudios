@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use App\Models\BookDemoSession;
 use App\Models\TimeZone;
 use App\Models\PaymentToTrainer;
+
 //use Illuminate\Facades\Support\DB;
 use DB;
 use App\Traits\ZoomMeetingTrait;
@@ -27,8 +28,8 @@ class TrainerPortalController extends Controller
 {
     use ZoomMeetingTrait;
 
-    const MEETING_TYPE_INSTANT   = 1;
-    const MEETING_TYPE_SCHEDULE  = 2;
+    const MEETING_TYPE_INSTANT = 1;
+    const MEETING_TYPE_SCHEDULE = 2;
     const MEETING_TYPE_RECURRING = 3;
     const MEETING_TYPE_FIXED_RECURRING_FIXED = 8;
 
@@ -38,31 +39,34 @@ class TrainerPortalController extends Controller
         $currentMonth_start = $now->startOfMOnth()->format('Y-m-d');
         $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
 
-        $user_id           = Auth::user()->id;
-        $get_trainer_id    = Trainer::where('user_id',$user_id)->pluck('id')->first();
+        $user_id = Auth::user()->id;
+        $get_trainer_id = Trainer::where('user_id', $user_id)->pluck('id')->first();
 
         $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')
-            ->whereBetween('trainer_date',[$currentMonth_start,$currentMonth_end])
-            ->where('trainer_id', $get_trainer_id)->where('status','!=','completed')
-            ->where('status','!=','canceled')->orderBy('id', 'DESC')->get();
+            ->whereBetween('trainer_date', [$currentMonth_start, $currentMonth_end])
+            ->where('trainer_id', $get_trainer_id)->where('status', '!=', 'completed')
+            ->where('status', '!=', 'canceled')->orderBy('id', 'DESC')->get();
 
 
-        $new_upcoming_sessions = [];
-        foreach ($upcoming_sessions as $upcoming_session) {
-            $new_upcoming_sessions[$upcoming_session->trainer_time][]= $upcoming_session;
-        }
+//        $new_upcoming_sessions = [];
+//        foreach ($upcoming_sessions as $upcoming_session) {
+//            $new_upcoming_sessions[$upcoming_session->trainer_time][] = $upcoming_session;
+//        }
 
 //        $upcoming_sessions = $new_upcoming_sessions;
 
+        $new_upcoming_sessions = $upcoming_sessions->groupBy(function ($item) {
+//            dd($item);
+            return $item->trainer_date . "_" . $item->trainer_time;
+        });
 
         $demo_data = [];
-        $i         = 0;
-        foreach ($upcoming_sessions as $demo) {
-
-            $demo_data[$i]['id']          = $demo->id;
-            $demo_data[$i]['title']       = $demo->session_type;//$demo->goals;
-            $demo_data[$i]['start']       = $demo->trainer_date;
-            $demo_data[$i]['description'] = $demo;
+        $i = 0;
+        foreach ($new_upcoming_sessions as $demo) {
+            $demo_data[$i]['id'] = $demo[0]->id;
+            $demo_data[$i]['title'] = $demo[0]->session_type;//$demo->goals;
+            $demo_data[$i]['start'] = $demo[0]->trainer_date;
+            $demo_data[$i]['description'] = $demo[0]->notes;
             $i++;
         }
 
@@ -70,14 +74,15 @@ class TrainerPortalController extends Controller
         return view('trainer.dashboard', compact('upcoming_sessions', 'new_upcoming_sessions', 'demo_data'));
     }
 
-    public  function calendardatafetch(Request $request){
+    public function calendardatafetch(Request $request)
+    {
 
         $currentMonth_start_date = $request->start_date;
         $currentMonth_end_date = $request->end_date;
 
         $currentMonth_start_dates = date('Y-m-d', strtotime($currentMonth_start_date));
 
-        $currentMonth_end_dates =date('Y-m-d',strtotime($currentMonth_end_date. ' -1 day'));
+        $currentMonth_end_dates = date('Y-m-d', strtotime($currentMonth_end_date . ' -1 day'));
 
 
         $user_id = Auth::user()->id;
@@ -86,88 +91,101 @@ class TrainerPortalController extends Controller
         $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')
             ->whereBetween('trainer_date', [$currentMonth_start_dates, $currentMonth_end_dates])
 //            ->where('trainer_date',$currentMonth_start_dates)
-            ->where('trainer_id', $get_trainer_id)->where('status', '!=', 'completed')
-            ->where('status', '!=', 'canceled')->orderBy('id', 'DESC')->get();
+            ->where('trainer_id', $get_trainer_id)
+            ->where('status', '!=', 'completed')
+            ->where('status', '!=', 'canceled')
+            ->orderBy('id', 'DESC')
+            ->get();
 
-        $new_upcoming_sessions = [];
-        foreach ($upcoming_sessions as $upcoming_session) {
-            $new_upcoming_sessions[$upcoming_session->trainer_time][]= $upcoming_session;
-        }
+
+//        $new_upcoming_sessions = [];
+//        foreach ($upcoming_sessions as $upcoming_session) {
+//            $new_upcoming_sessions[$upcoming_session->trainer_time][] = $upcoming_session;
+//        }
+
+        $new_upcoming_sessions = $upcoming_sessions->groupBy(function ($item) {
+//            dd($item);
+            return $item->trainer_date . "_" . $item->trainer_time;
+        });
 
         $data = view('trainer.upcoming-sessions', compact('upcoming_sessions', 'new_upcoming_sessions'))->render();
-        return response()->json(['data'=> $data]);
+        return response()->json(['data' => $data]);
 
 //        return response()->json(['data'=> $currentMonth_start_dates]);
 
     }
 
-    public function EditProfile($id) {
+    public function EditProfile($id)
+    {
         $timezones = TimeZone::get();
         $trainer = Trainer::find($id);
         return view('trainer.profile', compact('trainer', 'timezones'));
     }
 
-    public function ProfileUpdate(Request $request) {
+    public function ProfileUpdate(Request $request)
+    {
 
         $dirPath = "uploads/images/home";
 
-        $update_trainer                        = Trainer::find($request->trainer_id);
-        $update_trainer->name                  = $request->name ? $request->name : '';
-        $update_trainer->last_name             = $request->last_name ? $request->last_name : '';
-        $update_trainer->phone                 = $request->phone;
-        $update_trainer->gender                = $request->gender;
-        $update_trainer->dob                   = $request->dob;
-        $update_trainer->age                   = $request->age;
-        $update_trainer->weight                = $request->weight;
-        $update_trainer->nationality           = $request->nationality;
-        $update_trainer->country               = $request->country;
-        $update_trainer->city                  = $request->city;
-        if($request->days_available) {
-            $update_trainer->days_available    = json_encode($request->days_available);
+        $update_trainer = Trainer::find($request->trainer_id);
+        $update_trainer->name = $request->name ? $request->name : '';
+        $update_trainer->last_name = $request->last_name ? $request->last_name : '';
+        $update_trainer->phone = $request->phone;
+        $update_trainer->gender = $request->gender;
+        $update_trainer->dob = $request->dob;
+        $update_trainer->age = $request->age;
+        $update_trainer->weight = $request->weight;
+        $update_trainer->nationality = $request->nationality;
+        $update_trainer->country = $request->country;
+        $update_trainer->city = $request->city;
+        if ($request->days_available) {
+            $update_trainer->days_available = json_encode($request->days_available);
         }
         $update_trainer->no_of_session_in_week = $request->no_of_session_in_week;
-        $update_trainer->description           = $request->description;
-        $update_trainer->time_zone             = $request->time_zone;
+        $update_trainer->description = $request->description;
+        $update_trainer->time_zone = $request->time_zone;
 
 
-        if($request->hasFile('photo'))
-        {
-            if(File::exists(public_path($dirPath.'/'.$request->photo))){
-                File::delete(public_path($dirPath.'/'.$request->photo));
+        if ($request->hasFile('photo')) {
+            if (File::exists(public_path($dirPath . '/' . $request->photo))) {
+                File::delete(public_path($dirPath . '/' . $request->photo));
             }
-            $fileName = time().'-'.$request->photo->getClientOriginalName();
+            $fileName = time() . '-' . $request->photo->getClientOriginalName();
             $request->photo->move(public_path($dirPath), $fileName);
 
-            $update_trainer->photo =  $dirPath.'/'.$fileName;
+            $update_trainer->photo = $dirPath . '/' . $fileName;
         }
         $update_trainer->save();
-        return redirect()->back()->with('success','Trainer Updated Successfully.');
+        return redirect()->back()->with('success', 'Trainer Updated Successfully.');
     }
 
-    public function JoinMeeting($id) {
+    public function JoinMeeting($id)
+    {
         return view('trainer.join_meeting');
     }
 
-    public function AddCustomerDetails($id) {
+    public function AddCustomerDetails($id)
+    {
 
         $time_zones = TimeZone::all();
-        $get_name   = Trainer::where('user_id',Auth::user()->id)->first();
-        $cust_name  = Customer::find($id);
+        $get_name = Trainer::where('user_id', Auth::user()->id)->first();
+        $cust_name = Customer::find($id);
         return view('trainer.add_customer_detail', compact('id', 'time_zones', 'get_name', 'cust_name'));
     }
 
-    public function UpdateCustomerDetails(Request $request) {
+    public function UpdateCustomerDetails(Request $request)
+    {
 
-        $check      = CustomerDetail::where('trainer_id',Auth::user()->id)->where('customer_id',$request->customer_id)->first();
-        $user_id    = Auth::user()->id;
-        $trainer_id = Trainer::where('user_id',$user_id)->first();
+        $check = CustomerDetail::where('trainer_id', Auth::user()->id)->where('customer_id', $request->customer_id)->first();
+        $user_id = Auth::user()->id;
+        $trainer_id = Trainer::where('user_id', $user_id)->first();
 
-        if($check == null) {
+        if ($check == null) {
 
-            $detail                = new CustomerDetail();
+            $detail = new CustomerDetail();
             $detail->customer_name = $request->customer_name;
-            $detail->trainer_name  = $request->trainer_name;
-            $detail->feedback      = $request->feedback;
+            $detail->trainer_name = $request->trainer_name;
+            $detail->feedback = $request->feedback;
             $detail->save();
 
             // $detail->trainer_id              = $trainer_id;
@@ -200,58 +218,62 @@ class TrainerPortalController extends Controller
             // $detail->medical_condition       = $request->medical_condition;
 
 
-            $notification               = new Notification();
-            $notification->sender_id    = Auth::user()->id;
-            $notification->receiver_id  = 1;
-            $notification->notification = Auth::user()->name." just added customer detail";
-            $notification->type         = "Trainer Add Customer Details";
+            $notification = new Notification();
+            $notification->sender_id = Auth::user()->id;
+            $notification->receiver_id = 1;
+            $notification->notification = Auth::user()->name . " just added customer detail";
+            $notification->type = "Trainer Add Customer Details";
             $notification->save();
 
         } else {
 
-            $detail                = CustomerDetail::find($check->id);
+            $detail = CustomerDetail::find($check->id);
             $detail->customer_name = $request->customer_name;
-            $detail->trainer_name  = $request->trainer_name;
-            $detail->feedback      = $request->feedback;
+            $detail->trainer_name = $request->trainer_name;
+            $detail->feedback = $request->feedback;
             $detail->save();
 
-            $notification               = new Notification();
-            $notification->sender_id    = Auth::user()->id;
-            $notification->receiver_id  = 1;
-            $notification->notification = Auth::user()->name." just added customer detail";
-            $notification->type         = "Trainer Updated Customer Details";
+            $notification = new Notification();
+            $notification->sender_id = Auth::user()->id;
+            $notification->receiver_id = 1;
+            $notification->notification = Auth::user()->name . " just added customer detail";
+            $notification->type = "Trainer Updated Customer Details";
             $notification->save();
         }
 
 
-       return redirect('trainer/dashboard')->with('success', 'Customer Detail Added successfully...!!');
+        return redirect('trainer/dashboard')->with('success', 'Customer Detail Added successfully...!!');
     }
 
-    public function CustomerDetails() {
-        $user_id    = Auth::user()->id;
-        $trainer_id = Trainer::where('user_id',$user_id)->pluck('id')->first();
-        $details    = CustomerDetail::with('customers')->where('trainer_id',$trainer_id)->get();
-        return view('trainer.customer_detail',compact('details'));
+    public function CustomerDetails()
+    {
+        $user_id = Auth::user()->id;
+        $trainer_id = Trainer::where('user_id', $user_id)->pluck('id')->first();
+        $details = CustomerDetail::with('customers')->where('trainer_id', $trainer_id)->get();
+        return view('trainer.customer_detail', compact('details'));
     }
 
-    public function Payments() {
+    public function Payments()
+    {
 
-        $get_trainer_id = Trainer::where('user_id',Auth::id())->pluck('id')->first();
-        $payments       = PaymentToTrainer::where('trainer_id', $get_trainer_id)->orderBy('id', 'DESC')->get();
+        $get_trainer_id = Trainer::where('user_id', Auth::id())->pluck('id')->first();
+        $payments = PaymentToTrainer::where('trainer_id', $get_trainer_id)->orderBy('id', 'DESC')->get();
         return view('trainer.payments', compact('payments'));
     }
 
-    public function Performance() {
+    public function Performance()
+    {
 
-        $user_id           = Auth::user()->id;
-        $get_trainer_id    = Trainer::where('user_id',$user_id)->pluck('id')->first();
+        $user_id = Auth::user()->id;
+        $get_trainer_id = Trainer::where('user_id', $user_id)->pluck('id')->first();
         $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')->where('trainer_id', $get_trainer_id)->get();
         return view('trainer.performance', compact('upcoming_sessions'));
     }
 
-    public function UpdateSessionStatus(Request $request) {
+    public function UpdateSessionStatus(Request $request)
+    {
 
-        $update         = CustomerToTrainer::find($request->session_id);
+        $update = CustomerToTrainer::find($request->session_id);
 //        dd($update);
 
         $update->status = $request->status;
@@ -260,65 +282,67 @@ class TrainerPortalController extends Controller
         return redirect()->back()->with('success', 'Session Status Updated successfully...!!');
     }
 
-    public function AddCustomerPerformance($id) {
-        $performance = Performance::where('session_id',$id)->first();
+    public function AddCustomerPerformance($id)
+    {
+        $performance = Performance::where('session_id', $id)->first();
         return view('trainer.add_performance', compact('id', 'performance'));
     }
 
-    public function AddPerformance(Request $request) {
+    public function AddPerformance(Request $request)
+    {
 
         $get_demo_session_id = CustomerToTrainer::where('id', $request->session_id)->pluck('demo_session_id')->first();
-        $check_performance   = Performance::where('demo_session_id',$get_demo_session_id)->first();
+        $check_performance = Performance::where('demo_session_id', $get_demo_session_id)->first();
 
-        if($check_performance == null) {
+        if ($check_performance == null) {
 
             $get_cust_id = CustomerToTrainer::where('id', $request->session_id)->pluck('customer_id')->first();
 
-            $performance                                = new Performance();
-            $performance->demo_session_id               = $get_demo_session_id;
-            $performance->session_id                    = $request->session_id;
-            $performance->trainer_id                    = Auth::user()->id;;
-            $performance->customer_id                   = $get_cust_id;
-            $performance->time_login                    = $request->time_login;
-            $performance->time_logout                   = $request->time_logout;
-            $performance->per_workout_meal              = $request->per_workout_meal;
-            $performance->hours_of_sleep_prev_day       = $request->hours_of_sleep_prev_day;
-            $performance->step_count_prev_day           = $request->step_count_prev_day;
-            $performance->prev_day_activity             = $request->prev_day_activity;
+            $performance = new Performance();
+            $performance->demo_session_id = $get_demo_session_id;
+            $performance->session_id = $request->session_id;
+            $performance->trainer_id = Auth::user()->id;;
+            $performance->customer_id = $get_cust_id;
+            $performance->time_login = $request->time_login;
+            $performance->time_logout = $request->time_logout;
+            $performance->per_workout_meal = $request->per_workout_meal;
+            $performance->hours_of_sleep_prev_day = $request->hours_of_sleep_prev_day;
+            $performance->step_count_prev_day = $request->step_count_prev_day;
+            $performance->prev_day_activity = $request->prev_day_activity;
             $performance->calories_count_during_session = $request->calories_count_during_session;
-            $performance->any_aches_or_pains            = $request->any_aches_or_pains;
-            $performance->mood_and_energy_level         = $request->mood_and_energy_level;
+            $performance->any_aches_or_pains = $request->any_aches_or_pains;
+            $performance->mood_and_energy_level = $request->mood_and_energy_level;
             $performance->avg_heart_rate_during_session = $request->avg_heart_rate_during_session;
-            $performance->time_taken                    = $request->time_taken;
-            $performance->any_difficulty_noticed        = $request->any_difficulty_noticed;
-            $performance->no_of_reps_for_each_workout   = $request->no_of_reps_for_each_workout;
-            $performance->no_of_laps                    = $request->no_of_laps;
-            $performance->stipulated_time               = $request->stipulated_time;
-            $performance->difficulty                    = $request->difficulty;
-            $performance->additional_comments           = $request->additional_comments;
-            $performance->agility_workout               = $request->agility_workout;
-            $performance->agility_no_of_laps            = $request->agility_no_of_laps;
-            $performance->agility_stipulated_time       = $request->agility_stipulated_time;
-            $performance->agility_difficulty_noticed    = $request->agility_difficulty_noticed;
-            $performance->agility_add_comments          = $request->agility_add_comments;
-            $performance->resistance_workout            = $request->resistance_workout;
-            $performance->resistance_no_of_laps         = $request->resistance_no_of_laps;
-            $performance->resistance_stipulated_time    = $request->resistance_stipulated_time;
+            $performance->time_taken = $request->time_taken;
+            $performance->any_difficulty_noticed = $request->any_difficulty_noticed;
+            $performance->no_of_reps_for_each_workout = $request->no_of_reps_for_each_workout;
+            $performance->no_of_laps = $request->no_of_laps;
+            $performance->stipulated_time = $request->stipulated_time;
+            $performance->difficulty = $request->difficulty;
+            $performance->additional_comments = $request->additional_comments;
+            $performance->agility_workout = $request->agility_workout;
+            $performance->agility_no_of_laps = $request->agility_no_of_laps;
+            $performance->agility_stipulated_time = $request->agility_stipulated_time;
+            $performance->agility_difficulty_noticed = $request->agility_difficulty_noticed;
+            $performance->agility_add_comments = $request->agility_add_comments;
+            $performance->resistance_workout = $request->resistance_workout;
+            $performance->resistance_no_of_laps = $request->resistance_no_of_laps;
+            $performance->resistance_stipulated_time = $request->resistance_stipulated_time;
             $performance->resistance_difficulty_noticed = $request->resistance_difficulty_noticed;
-            $performance->resistance_add_comments       = $request->resistance_add_comments;
-            $performance->denomination                  = $request->denomination;
-            $performance->type_of_props                 = $request->type_of_props;
-            $performance->denomination_stipulated_time  = $request->denomination_stipulated_time;
-            $performance->denomination_add_comments     = $request->denomination_add_comments;
-            $performance->stretches_time_taken          = $request->stretches_time_taken;
-            $performance->stretches_difficulty_noticed  = $request->stretches_difficulty_noticed;
+            $performance->resistance_add_comments = $request->resistance_add_comments;
+            $performance->denomination = $request->denomination;
+            $performance->type_of_props = $request->type_of_props;
+            $performance->denomination_stipulated_time = $request->denomination_stipulated_time;
+            $performance->denomination_add_comments = $request->denomination_add_comments;
+            $performance->stretches_time_taken = $request->stretches_time_taken;
+            $performance->stretches_difficulty_noticed = $request->stretches_difficulty_noticed;
             $performance->save();
 
-            $notification               = new Notification();
-            $notification->sender_id    = Auth::user()->id;
-            $notification->receiver_id  = 1;
-            $notification->notification = Auth::user()->name." just added customer performance";
-            $notification->type         = "Trainer Add Customer Performance";
+            $notification = new Notification();
+            $notification->sender_id = Auth::user()->id;
+            $notification->receiver_id = 1;
+            $notification->notification = Auth::user()->name . " just added customer performance";
+            $notification->type = "Trainer Add Customer Performance";
             $notification->save();
 
             return redirect('trainer/dashboard')->with('success', 'Session Performance Added Successfully...!!');
@@ -327,71 +351,74 @@ class TrainerPortalController extends Controller
 
             $get_cust_id = CustomerToTrainer::where('id', $request->session_id)->pluck('customer_id')->first();
 
-            $performance                                = Performance::find($check_performance->id);
-            $performance->session_id                    = $request->session_id;
-            $performance->trainer_id                    = Auth::user()->id;;
-            $performance->customer_id                   = $get_cust_id;
-            $performance->time_login                    = $request->time_login;
-            $performance->time_logout                   = $request->time_logout;
-            $performance->per_workout_meal              = $request->per_workout_meal;
-            $performance->hours_of_sleep_prev_day       = $request->hours_of_sleep_prev_day;
-            $performance->step_count_prev_day           = $request->step_count_prev_day;
-            $performance->prev_day_activity             = $request->prev_day_activity;
+            $performance = Performance::find($check_performance->id);
+            $performance->session_id = $request->session_id;
+            $performance->trainer_id = Auth::user()->id;;
+            $performance->customer_id = $get_cust_id;
+            $performance->time_login = $request->time_login;
+            $performance->time_logout = $request->time_logout;
+            $performance->per_workout_meal = $request->per_workout_meal;
+            $performance->hours_of_sleep_prev_day = $request->hours_of_sleep_prev_day;
+            $performance->step_count_prev_day = $request->step_count_prev_day;
+            $performance->prev_day_activity = $request->prev_day_activity;
             $performance->calories_count_during_session = $request->calories_count_during_session;
-            $performance->any_aches_or_pains            = $request->any_aches_or_pains;
-            $performance->mood_and_energy_level         = $request->mood_and_energy_level;
+            $performance->any_aches_or_pains = $request->any_aches_or_pains;
+            $performance->mood_and_energy_level = $request->mood_and_energy_level;
             $performance->avg_heart_rate_during_session = $request->avg_heart_rate_during_session;
-            $performance->time_taken                    = $request->time_taken;
-            $performance->any_difficulty_noticed        = $request->any_difficulty_noticed;
-            $performance->no_of_reps_for_each_workout   = $request->no_of_reps_for_each_workout;
-            $performance->no_of_laps                    = $request->no_of_laps;
-            $performance->stipulated_time               = $request->stipulated_time;
-            $performance->difficulty                    = $request->difficulty;
-            $performance->additional_comments           = $request->additional_comments;
-            $performance->agility_workout               = $request->agility_workout;
-            $performance->agility_no_of_laps            = $request->agility_no_of_laps;
-            $performance->agility_stipulated_time       = $request->agility_stipulated_time;
-            $performance->agility_difficulty_noticed    = $request->agility_difficulty_noticed;
-            $performance->agility_add_comments          = $request->agility_add_comments;
-            $performance->resistance_workout            = $request->resistance_workout;
-            $performance->resistance_no_of_laps         = $request->resistance_no_of_laps;
-            $performance->resistance_stipulated_time    = $request->resistance_stipulated_time;
+            $performance->time_taken = $request->time_taken;
+            $performance->any_difficulty_noticed = $request->any_difficulty_noticed;
+            $performance->no_of_reps_for_each_workout = $request->no_of_reps_for_each_workout;
+            $performance->no_of_laps = $request->no_of_laps;
+            $performance->stipulated_time = $request->stipulated_time;
+            $performance->difficulty = $request->difficulty;
+            $performance->additional_comments = $request->additional_comments;
+            $performance->agility_workout = $request->agility_workout;
+            $performance->agility_no_of_laps = $request->agility_no_of_laps;
+            $performance->agility_stipulated_time = $request->agility_stipulated_time;
+            $performance->agility_difficulty_noticed = $request->agility_difficulty_noticed;
+            $performance->agility_add_comments = $request->agility_add_comments;
+            $performance->resistance_workout = $request->resistance_workout;
+            $performance->resistance_no_of_laps = $request->resistance_no_of_laps;
+            $performance->resistance_stipulated_time = $request->resistance_stipulated_time;
             $performance->resistance_difficulty_noticed = $request->resistance_difficulty_noticed;
-            $performance->resistance_add_comments       = $request->resistance_add_comments;
-            $performance->denomination                  = $request->denomination;
-            $performance->type_of_props                 = $request->type_of_props;
-            $performance->denomination_stipulated_time  = $request->denomination_stipulated_time;
-            $performance->denomination_add_comments     = $request->denomination_add_comments;
-            $performance->stretches_time_taken          = $request->stretches_time_taken;
-            $performance->stretches_difficulty_noticed  = $request->stretches_difficulty_noticed;
+            $performance->resistance_add_comments = $request->resistance_add_comments;
+            $performance->denomination = $request->denomination;
+            $performance->type_of_props = $request->type_of_props;
+            $performance->denomination_stipulated_time = $request->denomination_stipulated_time;
+            $performance->denomination_add_comments = $request->denomination_add_comments;
+            $performance->stretches_time_taken = $request->stretches_time_taken;
+            $performance->stretches_difficulty_noticed = $request->stretches_difficulty_noticed;
             $performance->save();
 
-            $notification               = new Notification();
-            $notification->sender_id    = Auth::user()->id;
-            $notification->receiver_id  = 1;
-            $notification->notification = Auth::user()->name." just updated customer performance";
-            $notification->type         = "Trainer Updated Customer Performance";
+            $notification = new Notification();
+            $notification->sender_id = Auth::user()->id;
+            $notification->receiver_id = 1;
+            $notification->notification = Auth::user()->name . " just updated customer performance";
+            $notification->type = "Trainer Updated Customer Performance";
             $notification->save();
 
             return redirect('trainer/dashboard')->with('success', 'Session Performance Updated Successfully...!!');
         }
     }
 
-    public function PerformanceDetail($id) {
-        $detail       = Performance::with('customer')->where('session_id', $id)->first();
+    public function PerformanceDetail($id)
+    {
+        $detail = Performance::with('customer')->where('session_id', $id)->first();
         return view('trainer.performance_detail', compact('detail'));
     }
 
-    public function Sessions() {
-        $user_id           = Auth::user()->id;
-        $get_trainer_id    = Trainer::where('user_id',$user_id)->pluck('id')->first();
-        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer','sessions')->where('trainer_id', $get_trainer_id)->orderBy('id', 'DESC')->get();
+    public function Sessions()
+    {
+        $user_id = Auth::user()->id;
+        $get_trainer_id = Trainer::where('user_id', $user_id)->pluck('id')->first();
+        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer', 'sessions')->where('trainer_id', $get_trainer_id)->orderBy('id', 'DESC')->get();
         return view('trainer.sessions', compact('upcoming_sessions'));
 
     }
 
-    public function CancelSession(Request $request) {
-        $update_status         = CustomerToTrainer::find($request->customer_to_trainer_id);
+    public function CancelSession(Request $request)
+    {
+        $update_status = CustomerToTrainer::find($request->customer_to_trainer_id);
         $update_status->status = "canceled";
         $update_status->save();
 

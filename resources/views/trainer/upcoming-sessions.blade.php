@@ -3,8 +3,8 @@
         <div class="activityCard">
             <div class="dateWrap">
                 <h2>
-                    {{ date('d', strtotime($key))}}
-                    <span>{{ date('M', strtotime($key))}}</span>
+                    {{ date('d', strtotime($upcoming_session[0]->trainer_date))}}
+                    <span>{{ date('M', strtotime($upcoming_session[0]->trainer_date))}}</span>
                 </h2>
             </div>
             <div class="content">
