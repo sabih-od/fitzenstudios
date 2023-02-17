@@ -222,9 +222,9 @@ class AdminCustomerController extends Controller
                     'trainer_timezone_time' => $trainer_timezone_time,
                     'customer_timezone_date' => $customer_timezone_date,
                     'customer_timezone_time' => $customer_timezone_time,
-                   
+
                     // 'time_zone' => $timezone->timezone_value
-                  'time_zone' => $request->time_zone
+                    'time_zone' => $request->time_zone
 
                 ]);
 
@@ -541,6 +541,7 @@ class AdminCustomerController extends Controller
 
     public function AdminassignTrainer(Request $request)
     {
+//        dd($request->all());
 
         if ($request->customer_id != null) {
             $customer = Customer::whereIn('id', $request->customer_id)->get();
@@ -622,7 +623,6 @@ class AdminCustomerController extends Controller
                                 // "time_zone" => 'America/New_York',
                                 "time_zone" => $request->time_zone,
 
-                                
                             ];
 
                             $resp = $this->create($meeting_data);
