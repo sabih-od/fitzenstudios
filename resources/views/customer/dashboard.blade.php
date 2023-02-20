@@ -30,10 +30,10 @@
                     <div class="row">
                         <div class="col-md-12">
                             <h2 class="secHeading">Upcoming Sessions</h2>
-                            @php
-                                $upcoming_session = json_decode($upcoming_sessions,true);
+                            {{--                            @php--}}
+                            {{--                                $upcoming_session = json_decode($upcoming_sessions,true);--}}
 
-                            @endphp
+                            {{--                            @endphp--}}
 
                             <div id="upcoming_sessions_month"></div>
                         </div>
@@ -109,8 +109,8 @@
 @section('js')
     <script type="text/javascript">
         $.ajaxSetup({
-            headers:{
-                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
 
@@ -132,7 +132,7 @@
                 defaultDate: date,
 
 
-                datesRender: function(info) {
+                datesRender: function (info) {
                     var startDate = new Date(info.view.calendar.state.dateProfile.currentRange.start).toDateString()
                     var endDate = new Date(info.view.calendar.state.dateProfile.currentRange.end).toDateString()
                     console.log(startDate);
@@ -140,18 +140,16 @@
 
                         url: "{{route('customer-site-calendar-data-fetch')}}",
                         type: "post",
-                        dataType:'json',
+                        dataType: 'json',
                         data: {
                             start_date: startDate,
                             end_date: endDate
                         },
-                        success: function(data) {
+                        success: function (data) {
                             $('#upcoming_sessions_month').html(data.data);
                         }
                     });
                 },
-
-
 
 
                 header: {
@@ -159,15 +157,14 @@
                     center: 'title',
                     right: 'dayGridWeek, dayGridMonth,'
                 },
-                
-              
-            
+
+
                 // header: {
                 //     left: 'prev,next today',
                 //     center: 'title',
                 //     right: 'dayGridWeek,dayGridMonth,'
                 // },
-                
+
                 firstDay: 1,
                 dateClick: function () {
                     $('.session-popup').slideDown(500);
@@ -205,7 +202,7 @@
             $('#rescheduleModal').modal();
         });
 
-        $('.cancel-session').click(function () {
+        $(document).on('click', '.cancel-session',function () {
             var cust_to_trainer_id = $(this).data('cust_to_trainer_id');
             if (confirm("Are you sure you want to cancel this session?")) {
                 event.preventDefault();
@@ -214,12 +211,12 @@
             }
         })
 
-        $(".fc-dayGridWeek-button").click(function(){
+        $(".fc-dayGridWeek-button").click(function () {
             $("#upcoming_sessions_month").hide();
             $("#upcoming_sessions_week").show();
         });
 
-        $(".fc-dayGridMonth-button").click(function(){
+        $(".fc-dayGridMonth-button").click(function () {
             $("#upcoming_sessions_week").hide();
             $("#upcoming_sessions_month").show();
 

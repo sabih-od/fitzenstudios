@@ -105,7 +105,9 @@
                             Details</a> --}}
                     @elseif($item->status == "upcoming")
                         <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="mb-2"style="width: 150px;">JOIN MEETING</a>
-                        <a href="javascript:;" class="mb-2 cancel-session btn- btn-danger" data-cust_to_trainer_id="{{ $item->id }}">Cancel Session</a>
+
+{{--                    <a href="{{ url('customer/cancel-session/'.$item->id) }}">Cancel Session</a>--}}
+                        <a href="#" class="mb-2 cancel-session btn- btn-danger" data-cust_to_trainer_id="{{ $item->id }}">Cancel Session</a>
 
                         @php
                             $user_id     = Auth::user()->id;
