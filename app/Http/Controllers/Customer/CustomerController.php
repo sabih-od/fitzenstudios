@@ -38,8 +38,9 @@ class CustomerController extends Controller
             ->where('customer_id', $get_cust_id->id)
             ->whereBetween('trainer_date', [$currentMonth_start,$currentMonth_end])
             ->where('status','!=','completed')
-            ->orderBy('id', 'DESC')->get();
+            ->orderBy('id', 'asc')->get();
 //        dd($upcoming_sessions);
+
         foreach ($upcoming_sessions as $demo) {
 
             $demo_data[$i]['id'] = $demo->id;
@@ -58,6 +59,14 @@ class CustomerController extends Controller
         $currentMonth_start_date = $request->start_date;
         $currentMonth_end_date = $request->end_date;
 
+        $now = Carbon::now();
+        $start_date = Carbon::parse(strtotime($currentMonth_start_date));
+        $subDates = $now->diffInDays($start_date, false);
+        if($subDates < 0){
+            $start_date = $start_date->subtract('days', $subDates);
+            $start_date->addDay();
+        }
+
         $currentMonth_start_dates = date('Y-m-d', strtotime($currentMonth_start_date));
 
         $currentMonth_end_dates =date('Y-m-d',strtotime($currentMonth_end_date. ' -1 day'));
@@ -69,7 +78,7 @@ class CustomerController extends Controller
             ->where('customer_id', $get_cust_id->id)
             ->whereBetween('trainer_date', [$currentMonth_start_dates, $currentMonth_end_dates])
             ->where('status','!=','completed')
-            ->orderBy('id', 'DESC')->get();
+            ->orderBy('trainer_date', 'asc')->get();
 
 
         $new_upcoming_sessions = [];

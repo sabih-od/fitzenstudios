@@ -21,10 +21,13 @@ class AdminController extends Controller
     public function dashboard(){
 
         $requests           = BookDemoSession::where('status','pending')->orderBy('id','DESC')->get();
+//        $sessions           = CustomerToTrainer::all();
+
         $sessions           = CustomerToTrainer::with('customer', 'trainer')->where('status','!=','canceled')->orderBy('id', 'DESC')->get();
         $current_date       = date('Y-m-d');
-        $upcoming_sessions  = CustomerToTrainer::with('customer', 'trainer')->where('trainer_date', $current_date)->orderBy('id', 'DESC')->get();
-//        dd($upcoming_sessions);
+        $upcoming_sessions           = CustomerToTrainer::with('customer', 'trainer')->where('status','!=','canceled')->orderBy('id', 'ASC')->take(8)->get();
+
+//        $upcoming_sessions  = CustomerToTrainer::with('customer', 'trainer')->where('trainer_date', $current_date)->orderBy('id', 'ASC')->get();
 
         $demo_data = [];
         $i         = 0;

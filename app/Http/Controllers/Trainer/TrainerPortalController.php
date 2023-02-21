@@ -45,18 +45,10 @@ class TrainerPortalController extends Controller
         $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')
             ->whereBetween('trainer_date', [$currentMonth_start, $currentMonth_end])
             ->where('trainer_id', $get_trainer_id)->where('status', '!=', 'completed')
-            ->where('status', '!=', 'canceled')->orderBy('id', 'DESC')->get();
-
-
-//        $new_upcoming_sessions = [];
-//        foreach ($upcoming_sessions as $upcoming_session) {
-//            $new_upcoming_sessions[$upcoming_session->trainer_time][] = $upcoming_session;
-//        }
-
-//        $upcoming_sessions = $new_upcoming_sessions;
+            ->where('status', '!=', 'canceled')->orderBy('trainer_date','asc' )->get();
 
         $new_upcoming_sessions = $upcoming_sessions->groupBy(function ($item) {
-//            dd($item);
+
             return $item->trainer_date . "_" . $item->trainer_time;
         });
 
@@ -80,7 +72,15 @@ class TrainerPortalController extends Controller
         $currentMonth_start_date = $request->start_date;
         $currentMonth_end_date = $request->end_date;
 
-        $currentMonth_start_dates = date('Y-m-d', strtotime($currentMonth_start_date));
+        $now = Carbon::now();
+        $start_date = Carbon::parse(strtotime($currentMonth_start_date));
+        $subDates = $now->diffInDays($start_date, false);
+        if($subDates < 0){
+            $start_date = $start_date->subtract('days', $subDates);
+            $start_date->addDay();
+        }
+
+        $currentMonth_start_dates = $start_date->format('Y-m-d');
 
         $currentMonth_end_dates = date('Y-m-d', strtotime($currentMonth_end_date . ' -1 day'));
 
@@ -94,24 +94,17 @@ class TrainerPortalController extends Controller
             ->where('trainer_id', $get_trainer_id)
             ->where('status', '!=', 'completed')
             ->where('status', '!=', 'canceled')
-            ->orderBy('id', 'DESC')
+            ->orderBy('trainer_date', 'asc')
             ->get();
 
 
-//        $new_upcoming_sessions = [];
-//        foreach ($upcoming_sessions as $upcoming_session) {
-//            $new_upcoming_sessions[$upcoming_session->trainer_time][] = $upcoming_session;
-//        }
-
         $new_upcoming_sessions = $upcoming_sessions->groupBy(function ($item) {
-//            dd($item);
             return $item->trainer_date . "_" . $item->trainer_time;
         });
 
         $data = view('trainer.upcoming-sessions', compact('upcoming_sessions', 'new_upcoming_sessions'))->render();
         return response()->json(['data' => $data]);
 
-//        return response()->json(['data'=> $currentMonth_start_dates]);
 
     }
 
