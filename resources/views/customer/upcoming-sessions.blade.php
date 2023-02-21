@@ -6,6 +6,7 @@
                     <span>{{ date('M', strtotime($item->customer_timezone_date))}}</h2>
             </div>
             <div class="content">
+
                 <div>
                     <h3>{{ $item->session_type }}</h3>
                     <p> {{ $item["customer"]->first_name.' '.$item["customer"]->last_name }}</p>
@@ -95,7 +96,10 @@
                 </div>
                 <div class="btnWrap">
 
-                    <span>{{  date('h:i A', strtotime($item->customer_timezone_time)) }}</span>
+
+                    <span>{{\Carbon\Carbon::createFromFormat('H:i:s', $item->customer_timezone_time)->setTimezone($item->customer->time_zone)->format('h:i A')}}</span>
+
+                    {{--                    <span>{{  date('h:i A', strtotime($item->customer_timezone_time)) }}</span>--}}
                     {{-- <p class="zone">{{ $item->time_zone ?? "" }}</p> --}}
                     @if($item->status == "completed")
                         <a href="{{ url('customer/performance-detail/'.$item->id) }}">View Performance</a>

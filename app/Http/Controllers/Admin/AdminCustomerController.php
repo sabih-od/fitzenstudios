@@ -282,7 +282,7 @@ class AdminCustomerController extends Controller
     public function Performance(Request $request)
     {
 
-        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')->get();
+        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')->orderBy('id','Desc')->get();
         return view('admin.performance', compact('upcoming_sessions'));
     }
 

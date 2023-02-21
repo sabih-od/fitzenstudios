@@ -34,12 +34,12 @@ class CustomerController extends Controller
 
         $user_id           = Auth::user()->id;
         $get_cust_id       = Customer::where('user_id',$user_id)->first();
-        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer','reviews')
+        $upcoming_sessions = CustomerToTrainer::with('timeZone','customer', 'trainer','reviews')
             ->where('customer_id', $get_cust_id->id)
             ->whereBetween('trainer_date', [$currentMonth_start,$currentMonth_end])
             ->where('status','!=','completed')
             ->orderBy('id', 'DESC')->get();
-
+//        dd($upcoming_sessions);
         foreach ($upcoming_sessions as $demo) {
 
             $demo_data[$i]['id'] = $demo->id;

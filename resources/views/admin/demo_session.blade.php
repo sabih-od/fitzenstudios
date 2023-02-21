@@ -30,10 +30,10 @@ Demo Session Request
                                         <li><span>Email Address:</span> {{ $session->email }}</li>
                                         <li><span>Phone Number:</span> {{ $session->phone }}</li>
                                         <li><span>Requested Date:</span> {{ date('d-m-Y', strtotime($session->session_date))}}</li>
-                                        <li><span>Requested Time:</span> {{ $session->session_time }}</li>
+                                        <li><span>Requested Time:</span> {{ date('h:i:A', strtotime($session->session_time))}}</li>
                                         <li><span>Goals:</span> {{ $session->goals }}</li>
                                         <li><span>Message:</span> {{ $session->message }}</li>
-                                        <input type="hidden"value="{{ $session->timeZone->id}}"name="time_zone"> 
+{{--                                        <input type="hidden"value="{{ $session->timeZone->id}}"name="time_zone">--}}
                                         <li><span>Time Zone: </span>{{ $session->timeZone->abbreviation ?? "" }}</li>
                                     </ul>
                                 </div>
