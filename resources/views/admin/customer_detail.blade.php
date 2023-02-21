@@ -348,7 +348,7 @@
                                                 <div class="form-group">
                                                     <label for="">Time Zone</label> <input class="form-control"
                                                                                            disabled type="text"
-                                                                                           value="{{ $detail->timezone ?? '' }}">
+                                                                                           value="{{ $detail->timeZone->abbreviation ?? '' }}">
                                                 </div>
                                             </div>
                                             {{-- <div class="col-md-6">

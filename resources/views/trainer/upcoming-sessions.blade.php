@@ -29,8 +29,12 @@
 
                 </div>
                 <div class="btnWrap">
-                    <span>{{  date('h:i A', strtotime($item->trainer_timezone_time)) }}</span>
-                    {{-- <p class="zone">{{ $item->time_zone ?? "" }}</p> --}}
+
+
+                    <span>{{\Carbon\Carbon::createFromFormat('H:i:s', $item->trainer_timezone_time)->setTimezone($item->time_zone)->format('h:i A')}}</span>
+
+
+
                     @if($upcoming_session[0]->status == "completed")
                         @if($upcoming_session[0]->demo_session_id != null)
                             @php $check = App\Models\Performance::where('demo_session_id',$upcoming_session[0]->demo_session_id)->first();
