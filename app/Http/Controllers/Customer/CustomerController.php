@@ -114,8 +114,8 @@ class CustomerController extends Controller
             ->where('status', '!=', 'completed')
             ->orderBy('trainer_date')
             ->get()
-            ->map(function ($item) {
-                $item_zone = $item->timeZone->timezone_value;
+            ->map(function ($item) use ($now) {
+                $item_zone = $item->timeZone->timezone_value ?? $now->getTimezone();
                 $zone = $item->customer->timeZone->timezone_value ?? $item_zone;
 
                 $dt = $item->trainer_date . " " . $item->trainer_time;
