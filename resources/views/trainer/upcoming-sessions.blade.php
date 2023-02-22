@@ -29,10 +29,10 @@
 
                 </div>
                 <div class="btnWrap">
+{{--                    <span>{{ date('h:i:A', strtotime($item->trainer_timezone_time))}}</span>--}}
 
 
-                    <span>{{\Carbon\Carbon::createFromFormat('H:i:s', $item->trainer_timezone_time)->setTimezone($item->time_zone)->format('h:i A')}}</span>
-
+                    <span>{{\Carbon\Carbon::createFromFormat('H:i:s', $item->trainer_timezone_time)->setTimezone($item->timezone_value)->format('h:i A')}}</span>
 
 
                     @if($upcoming_session[0]->status == "completed")
