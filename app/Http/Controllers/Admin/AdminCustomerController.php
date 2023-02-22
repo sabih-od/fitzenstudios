@@ -747,7 +747,7 @@ class AdminCustomerController extends Controller
 
             } catch (\Exception $e) {
                 DB::rollBack();
-                dd($e);
+//                dd($e);
                 return redirect()->back()->with('error', $e->getMessage());
             }
         }
