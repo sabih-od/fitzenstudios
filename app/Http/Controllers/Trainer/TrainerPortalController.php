@@ -49,8 +49,8 @@ class TrainerPortalController extends Controller
             ->where('status', '!=', 'canceled')
             ->orderBy('trainer_date')
             ->get()
-            ->map(function ($item) {
-                $item_zone = $item->timeZone->timezone_value;
+            ->map(function ($item) use ($now) {
+                $item_zone = $item->timeZone->timezone_value ?? $now->getTimezone();
                 $zone = $item->trainer->timeZone->timezone_value ?? $item_zone;
 
                 $dt = $item->trainer_date . " " . $item->trainer_time;
@@ -126,8 +126,8 @@ class TrainerPortalController extends Controller
             ->where('status', '!=', 'canceled')
             ->orderBy('trainer_date')
             ->get()
-            ->map(function ($item) {
-                $item_zone = $item->timeZone->timezone_value;
+            ->map(function ($item) use ($now) {
+                $item_zone = $item->timeZone->timezone_value ?? $now->getTimezone();
                 $zone = $item->trainer->timeZone->timezone_value ?? $item_zone;
 
                 $dt = $item->trainer_date . " " . $item->trainer_time;
