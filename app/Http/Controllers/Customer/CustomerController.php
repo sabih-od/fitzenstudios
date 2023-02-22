@@ -38,7 +38,7 @@ class CustomerController extends Controller
         $get_cust_id = Customer::where('user_id', $user_id)->first();
         $upcoming_sessions = CustomerToTrainer::with('timeZone', 'customer', 'trainer', 'reviews')
             ->where('customer_id', $get_cust_id->id)
-            ->whereBetween('trainer_date', [$currentMonth_start, $currentMonth_end])
+            ->whereDate('trainer_date', '>=', $currentMonth_start)
             ->where('status', '!=', 'completed')
             ->orderBy('trainer_date')
             ->get()
