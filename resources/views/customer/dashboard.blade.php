@@ -117,7 +117,7 @@
         $(document).ready(function () {
             var calendarEl = document.getElementById('demo_calendar');
             var demos = @json($demo_data);
-            console.log(demos)
+            // console.log(demos)
             const date = new Date();
 
             function handleDatesRender(arg) {
@@ -128,10 +128,7 @@
                 plugins: ['interaction', 'dayGrid', 'timeGrid'],
                 defaultView: 'dayGridMonth',
                 selectable: true,
-                datesRender: handleDatesRender,
                 defaultDate: date,
-
-
                 datesRender: function (info) {
                     var startDate = new Date(info.view.calendar.state.dateProfile.currentRange.start).toDateString()
                     var endDate = new Date(info.view.calendar.state.dateProfile.currentRange.end).toDateString()

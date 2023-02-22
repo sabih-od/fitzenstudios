@@ -3,8 +3,8 @@
         <div class="activityCard">
             <div class="dateWrap">
                 <h2>
-                    {{ date('d', strtotime($upcoming_session[0]->trainer_date))}}
-                    <span>{{ date('M', strtotime($upcoming_session[0]->trainer_date))}}</span>
+                    {{ $upcoming_session[0]->converted_time->format('d')}}
+                    <span>{{ $upcoming_session[0]->converted_time->format('M') }}</span>
                 </h2>
             </div>
             <div class="content">
@@ -32,7 +32,7 @@
 {{--                    <span>{{ date('h:i:A', strtotime($item->trainer_timezone_time))}}</span>--}}
 
 
-                    <span>{{\Carbon\Carbon::createFromFormat('H:i:s', $item->trainer_timezone_time)->setTimezone($item->timezone_value)->format('h:i A')}}</span>
+                    <span>{{ $upcoming_session[0]->converted_time->format('h:i A')}}</span>
 
 
                     @if($upcoming_session[0]->status == "completed")

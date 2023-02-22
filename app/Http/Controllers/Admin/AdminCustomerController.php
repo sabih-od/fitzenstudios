@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use DataTables;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Performance;
 use App\Models\Customer;
@@ -29,6 +30,7 @@ use DateTime;
 use DateTimeZone;
 use Hash;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
+use Illuminate\Validation\Rule;
 
 class AdminCustomerController extends Controller
 {
@@ -125,7 +127,7 @@ class AdminCustomerController extends Controller
             $trainer_timezone_time = $trainerDate->format('H:i:s');
 
             $customerDate = new DateTime($sessionDate . '' . $sessionTime, new DateTimeZone($resp['data']['timezone']));
-            $customerDate->setTimezone(new DateTimeZone($customer->timeZone->timezone_value));
+            $customerDate->setTimezone(new DateTimeZone($customer->timeZone->timezone_value ?? $timezone->timezone_value));
             $customer_timezone_date = $customerDate->format('Y-m-d');
             $customer_timezone_time = $customerDate->format('H:i:s');
 
@@ -273,7 +275,7 @@ class AdminCustomerController extends Controller
             return redirect()->back()->with('success', 'Trainer assigned successfully.');
         } catch (\Exception $e) {
 
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage() . " Line: " . $e->getLine());
 
         }
 
@@ -282,7 +284,7 @@ class AdminCustomerController extends Controller
     public function Performance(Request $request)
     {
 
-        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')->orderBy('id','Desc')->get();
+        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')->orderBy('id', 'Desc')->get();
         return view('admin.performance', compact('upcoming_sessions'));
     }
 
@@ -541,6 +543,17 @@ class AdminCustomerController extends Controller
 
     public function AdminassignTrainer(Request $request)
     {
+        /*$request->validate([
+            'trainer_id' => ['required', Rule::exists('trainers', 'id')],
+            'customer_id' => ['required', 'array', function ($attr, $value, $fail) {
+                if (!$value || !is_array($value)) return;
+                dd(Customer::query()->whereIn('id', $value)->exists());
+//                if(!Customer::query()->whereIn('id', $value)->exists())
+            }],
+            'session_type' => 'required',
+            'time_zone' => ['required', Rule::exists('time_zones', 'id')],
+            'notes' => 'required',
+        ]);*/
 //        dd($request->all());
 
         if ($request->customer_id != null) {
@@ -550,6 +563,7 @@ class AdminCustomerController extends Controller
             $trainer = Trainer::where('id', $trainer_id)->first();
 
             try {
+                DB::beginTransaction();
                 foreach ($customer as $value) {
                     if ($request->trainer_date != null) {
                         foreach ($request->trainer_date as $key => $trainer_date) {
@@ -612,6 +626,7 @@ class AdminCustomerController extends Controller
                             //     $customer_timezone_time =  $newdatetime->format('H:i');
                             // }
 
+//                            dd($trainer->timeZone->timezone_value, $value->timeZone->timezone_value);
 
                             $meeting_data = [
                                 "topic" => $request->session_type,
@@ -621,19 +636,19 @@ class AdminCustomerController extends Controller
                                 "host_video" => "",
                                 "participant_video" => "",
                                 // "time_zone" => 'America/New_York',
-                                "time_zone" => $request->time_zone,
+                                "time_zone" => $timezone->timezone_value,
 
                             ];
 
                             $resp = $this->create($meeting_data);
 
                             $trainerDate = new DateTime($sessionDate . '' . $sessionTime, new DateTimeZone($resp['data']['timezone']));
-                            $trainerDate->setTimezone(new DateTimeZone($trainer->time_zone));
+                            $trainerDate->setTimezone(new DateTimeZone($trainer->timeZone->timezone_value));
                             $trainer_timezone_date = $trainerDate->format('Y-m-d');
                             $trainer_timezone_time = $trainerDate->format('H:i:s');
 
                             $customerDate = new DateTime($sessionDate . '' . $sessionTime, new DateTimeZone($resp['data']['timezone']));
-                            $customerDate->setTimezone(new DateTimeZone($value->time_zone));
+                            $customerDate->setTimezone(new DateTimeZone($value->timeZone->timezone_value));
                             $customer_timezone_date = $customerDate->format('Y-m-d');
                             $customer_timezone_time = $customerDate->format('H:i:s');
 
@@ -726,11 +741,13 @@ class AdminCustomerController extends Controller
                         }
                     }
                 }
+                DB::commit();
 
                 return redirect()->back()->with('success', 'Trainer Assigned Successfully.');
 
             } catch (\Exception $e) {
-
+                DB::rollBack();
+                dd($e);
                 return redirect()->back()->with('error', $e->getMessage());
             }
         }

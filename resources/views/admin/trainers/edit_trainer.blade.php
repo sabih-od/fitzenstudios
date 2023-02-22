@@ -17,11 +17,11 @@
                 <nav class="users-tab wow fadeInUp" data-wow-delay="0.9s">
                     <ul class="nav nav-pills" id="myTab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="one-tab" data-toggle="tab" href="#one-pane" role="tab"
+                            <a class="nav-link {{ !request()->has('page') ? 'active': '' }}" id="one-tab" data-toggle="tab" href="#one-pane" role="tab"
                                aria-controls="one-pane" aria-selected="true">Trainer Details</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " id="two-tab" data-toggle="tab" href="#two-pane" role="tab"
+                            <a class="nav-link {{ request()->has('page') ? 'active': '' }}" id="two-tab" data-toggle="tab" href="#two-pane" role="tab"
                                aria-controls="two-pane" aria-selected="false">Trainer schedules</a>
                         </li>
                         <!-- <li class="nav-item">
@@ -33,7 +33,7 @@
             <div class="col-md-12">
 
                 <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="one-pane" role="tabpanel" aria-labelledby="one-tab">
+                    <div class="tab-pane fade {{ !request()->has('page') ? 'show active': '' }}" id="one-pane" role="tabpanel" aria-labelledby="one-tab">
                         <div class="profile-wrap">
                             <div class="profileInfo">
                                 <div class="profileImg">
@@ -185,7 +185,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="">Time Zone</label>
-                                            <input type="text" name="time_zone" value="{{ isset($trainer->time_zone) ? $trainer->timeZone['abbreviation'] : ' ' }}"
+                                            <input type="text" name="time_zone"
+                                                   value="{{ isset($trainer->time_zone) ? $trainer->timeZone['abbreviation'] : ' ' }}"
                                                    class="form-control">
                                         </div>
                                     </div>
@@ -226,7 +227,7 @@
                             </form>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="two-pane" role="tabpanel" aria-labelledby="two-tab">
+                    <div class="tab-pane fade {{ request()->has('page') ? 'show active': '' }}" id="two-pane" role="tabpanel" aria-labelledby="two-tab">
                         <h2 class="trainerHead">Trainer schedules</h2>
                         <div class="row">
                             <div class="col-md-12">
@@ -252,6 +253,12 @@
                                 @empty
                                     <h2 style="text-align: center;">Currently no sessions available..!!</h2>
                                 @endforelse
+
+                                @if($schedules->hasPages())
+                                    <div class="d-flex justify-content-center">
+                                        {{ $schedules->links('vendor.pagination.bootstrap-4') }}
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

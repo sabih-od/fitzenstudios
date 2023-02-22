@@ -66,7 +66,7 @@ Create Session
                                         <select name="time_zone" id="time_zone" class="form-control">
                                             @foreach ($zones as $item)
                                             {{-- <option value="{{ $item->timezone_value }}" {{ old('time_zone', '') == $item->timezone_value ? 'selected' : '' }}>{{ $item->zone_name.' '.$item->time_zone }}</option>--}}
-                                            <!--<input type="hidden"value="{{ $item->id}}"name="time_zone">-->
+{{--                                            <!--<input type="hidden"value="{{ $item->id}}"name="time_zone">-->--}}
                                                 <option value="{{ $item->id}}" {{ old('time_zone', '') == $item->id ? 'selected' : '' }}>{{ $item->zone_name.' '.$item->time_zone }}</option>
                                             @endforeach
                                         </select>

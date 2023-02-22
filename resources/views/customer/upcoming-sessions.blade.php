@@ -2,8 +2,8 @@
     <div class="col-md-12">
         <div class="activityCard">
             <div class="dateWrap">
-                <h2>{{ date('d', strtotime($item->customer_timezone_date))}}
-                    <span>{{ date('M', strtotime($item->customer_timezone_date))}}</h2>
+                <h2>{{ $item->converted_time->format('d') }}
+                    <span>{{ $item->converted_time->format('M') }}</h2>
             </div>
             <div class="content">
 
@@ -97,7 +97,7 @@
                 <div class="btnWrap">
 
 
-                    <span>{{\Carbon\Carbon::createFromFormat('H:i:s', $item->customer_timezone_time)->setTimezone($item->customer->time_zone)->format('h:i A')}}</span>
+                    <span>{{$item->converted_time->format('h:i A')}}</span>
 
                     {{--                    <span>{{  date('h:i A', strtotime($item->customer_timezone_time)) }}</span>--}}
                     {{-- <p class="zone">{{ $item->time_zone ?? "" }}</p> --}}
