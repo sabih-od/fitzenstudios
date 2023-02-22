@@ -10,7 +10,7 @@
                     <h2 class="secHeading">Sessions</h2>
                 </div>
                 <div class="col-md-6 text-right">
-                    <a href="{{'admin/create-session'}}" class="btnStyle mb-2">create-session</a>
+                    <a href="{{url('admin/create-session')}}" class="btnStyle mb-2">create-session</a>
                 </div>
                 <div class="col-md-12">
                     <div class="table-responsive">

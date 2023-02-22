@@ -16,7 +16,7 @@ Demo Session Request
                             @csrf
                             <input type="hidden" id="customer_id" name="customer_id" value="{{ $session->customer_id }}" />
                             <input type="hidden" id="session_id" name="session_id" value="{{ $session->id }}" />
-                            <input type="hidden" id="customer_timezone" name="customer_timezone" value="{{ $session->time_zone }}">
+                            <input type="hidden" id="customer_timezone" name="time_zone" value="{{ $session->time_zone }}">
 
                             <div class="row">
                                 <div class="col-md-12">
