@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\AdminCreateSession;
@@ -24,8 +25,21 @@ class AdminController extends Controller
 //        $sessions           = CustomerToTrainer::all();
 
         $sessions           = CustomerToTrainer::with('customer', 'trainer')->where('status','!=','canceled')->orderBy('id', 'DESC')->get();
-        $current_date       = date('Y-m-d');
-        $upcoming_sessions           = CustomerToTrainer::with('customer', 'trainer')->where('status','!=','canceled')->orderBy('id', 'ASC')->take(8)->get();
+        $start_date       = date('Y-m-d');
+
+        $now = Carbon::now();
+        $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
+
+//        $start_date = Carbon::parse(strtotime($start_date));
+//        $subDates = $now->diffInDays($start_date, false);
+//        if($subDates < 0){
+//            $start_date = $start_date->subtract('days', $subDates);
+//            $start_date->addDay();
+//        }
+
+        $upcoming_sessions           = CustomerToTrainer::with('customer', 'trainer')
+            ->whereBetween('trainer_date', [$start_date,$currentMonth_end])
+            ->where('status','!=','canceled')->orderBy('trainer_date', 'ASC')->take(8)->get();
 
 //        $upcoming_sessions  = CustomerToTrainer::with('customer', 'trainer')->where('trainer_date', $current_date)->orderBy('id', 'ASC')->get();
 

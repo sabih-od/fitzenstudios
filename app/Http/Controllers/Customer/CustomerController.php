@@ -27,6 +27,7 @@ class CustomerController extends Controller
         $currentMonth_start = $now->startOfMOnth()->format('Y-m-d');
         $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
 
+
         $demos = BookDemoSession::where('customer_id', Auth::user()->customer->id)
             ->with('Customer', 'Customer.trainer')->orderBy('id','DESC')->get();
         $demo_data = [];
@@ -39,12 +40,11 @@ class CustomerController extends Controller
             ->whereBetween('trainer_date', [$currentMonth_start,$currentMonth_end])
             ->where('status','!=','completed')
             ->orderBy('id', 'asc')->get();
-//        dd($upcoming_sessions);
 
         foreach ($upcoming_sessions as $demo) {
 
             $demo_data[$i]['id'] = $demo->id;
-            $demo_data[$i]['title'] = $demo->session_type;//$demo->goals;
+            $demo_data[$i]['title'] = $demo->session_type;
             $demo_data[$i]['start'] = $demo->trainer_date;
             $demo_data[$i]['description'] = $demo;
             $i++;
@@ -59,6 +59,7 @@ class CustomerController extends Controller
         $currentMonth_start_date = $request->start_date;
         $currentMonth_end_date = $request->end_date;
 
+
         $now = Carbon::now();
         $start_date = Carbon::parse(strtotime($currentMonth_start_date));
         $subDates = $now->diffInDays($start_date, false);
@@ -67,7 +68,9 @@ class CustomerController extends Controller
             $start_date->addDay();
         }
 
-        $currentMonth_start_dates = date('Y-m-d', strtotime($currentMonth_start_date));
+        $currentMonth_start_dates = $start_date->format('Y-m-d');
+
+//        $currentMonth_start_dates = date('Y-m-d', strtotime($currentMonth_start_date));
 
         $currentMonth_end_dates =date('Y-m-d',strtotime($currentMonth_end_date. ' -1 day'));
 
@@ -85,6 +88,7 @@ class CustomerController extends Controller
         foreach ($upcoming_sessions as $upcoming_session) {
             $new_upcoming_sessions[$upcoming_session->trainer_time][]= $upcoming_session;
         }
+
 
 
         $data = view('customer.upcoming-sessions', compact('upcoming_sessions', 'new_upcoming_sessions'))->render();
