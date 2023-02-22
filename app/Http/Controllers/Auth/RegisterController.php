@@ -20,8 +20,8 @@ class RegisterController extends Controller
 {
 
     use RegistersUsers;
-    public function redirectTo() 
-    {       
+    public function redirectTo()
+    {
         return '/customer/dashboard';
     }
     public function __construct()
@@ -60,9 +60,9 @@ class RegisterController extends Controller
                 'last_name'  => $data['l_name'],//substr( $user->name, strpos( $user->name, " ") + 1),
                 'email'      => $user->email,
                 'phone'      => $user->phone,
-                'time_zone'  => $data["time_zone"],
+                'timezone'  => $data["time_zone"],
                 "is_lead"    => 1,
-            ]); 
+            ]);
             Lead::create([
                 'user_id'     => $user->id,
                 'is_customer' => 0,
@@ -73,31 +73,31 @@ class RegisterController extends Controller
                 'note'        =>  $data['message'],
 
             ]);
-            
+
             $notification               = new Notification();
-            $notification->sender_id    = $user->id; 
-            $notification->receiver_id  = 1; 
-            $notification->notification = $data["l_name"] . " is registered on your website as a customer."; 
-            $notification->type         = "New Customer Registration"; 
+            $notification->sender_id    = $user->id;
+            $notification->receiver_id  = 1;
+            $notification->notification = $data["l_name"] . " is registered on your website as a customer.";
+            $notification->type         = "New Customer Registration";
             $notification->save();
 
-            $mailData = array(            
+            $mailData = array(
                 'to' => $data['email'],
-            );         
-    
+            );
+
             Mail::send('front.emails.thankyou-signup', $mailData, function($message) use($mailData){
                 $message->to($mailData['to'])->subject('Fitzen Studio - Thank you for Signing Up');
             });
 
             return $user;
-    
+
         } else {
             return redirect()->back()->with('error', 'Email already exist. Please try another one..!!');
         }
         // Mail::send('front.emails.book-demo', $mailData, function($message) use($mailData){
         //     $message->to($mailData['to'])->subject('Fitzen Studio - Book a demo session');
         // });
-        
+
     }
 
     public function CompleteRegistration(Request $request)
@@ -106,7 +106,7 @@ class RegisterController extends Controller
         if(isset($request->token)){
             $user = User::where('password',$request->token)->first();
         }
-         
+
         return view('auth.complete-registration', compact('user'));
     }
 
@@ -119,7 +119,7 @@ class RegisterController extends Controller
             $user->save();
             $request->merge(['email' => $user->email]);
             $credentials = $request->only('email', 'password');
-            
+
             if (auth()->attempt($credentials)) {
                 return redirect('trainer/dashboard')->
                 with('success','Registration Completed Successfully.');

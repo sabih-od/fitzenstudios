@@ -41,52 +41,82 @@ class TrainerPortalController extends Controller
 
         $user_id = Auth::user()->id;
         $get_trainer_id = Trainer::where('user_id', $user_id)->pluck('id')->first();
+//        dd($get_trainer_id);
 
         $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')
             ->whereBetween('trainer_date', [$currentMonth_start, $currentMonth_end])
             ->where('trainer_id', $get_trainer_id)->where('status', '!=', 'completed')
-            ->where('status', '!=', 'canceled')->orderBy('trainer_date','asc' )->get();
+            ->where('status', '!=', 'canceled')
+            ->orderBy('trainer_date')
+            ->get()
+            ->map(function ($item) {
+                $item_zone = $item->timeZone->timezone_value;
+                $zone = $item->trainer->timeZone->timezone_value ?? $item_zone;
 
-        $new_upcoming_sessions = $upcoming_sessions->groupBy(function ($item) {
+                $dt = $item->trainer_date . " " . $item->trainer_time;
+                if (Carbon::hasFormat($dt, "Y-m-d H:i:s")) {
+                    $item->date_time_carbon = Carbon::createFromFormat(
+                        "Y-m-d H:i:s",
+                        $dt,
+                        $item_zone
+                    );
+                    $item->converted_time = (clone $item->date_time_carbon)->setTimezone($zone);
+                }elseif (Carbon::hasFormat($dt, "Y-m-d H:i")){
+                    $item->date_time_carbon = Carbon::createFromFormat(
+                        "Y-m-d H:i",
+                        $dt,
+                        $item_zone
+                    );
+                    $item->converted_time = (clone $item->date_time_carbon)->setTimezone($zone);
+                }
 
-            return $item->trainer_date . "_" . $item->trainer_time;
-        });
+                return $item;
+            })
+            ->groupBy(function ($item) {
+                return $item->trainer_date . "_" . $item->trainer_time;
+            })
+            ->map(function ($item) {
+                return $item[0];
+            });
+
+//        $new_upcoming_sessions = $upcoming_sessions->groupBy(function ($item) {
+//
+//            return $item->trainer_date . "_" . $item->trainer_time;
+//        });
 
         $demo_data = [];
         $i = 0;
-        foreach ($new_upcoming_sessions as $demo) {
-            $demo_data[$i]['id'] = $demo[0]->id;
-            $demo_data[$i]['title'] = $demo[0]->session_type;//$demo->goals;
-            $demo_data[$i]['start'] = $demo[0]->trainer_date;
-            $demo_data[$i]['description'] = $demo[0]->notes;
+        foreach ($upcoming_sessions as $demo) {
+            $demo_data[$i]['id'] = $demo->id;
+            $demo_data[$i]['title'] = $demo->session_type;//$demo->goals;
+            $demo_data[$i]['start'] = $demo->converted_time->format('Y-m-d');
+            $demo_data[$i]['description'] = $demo->notes;
             $i++;
         }
 
 
-        return view('trainer.dashboard', compact('upcoming_sessions', 'new_upcoming_sessions', 'demo_data'));
+        return view('trainer.dashboard', compact('upcoming_sessions', 'demo_data'));
     }
 
     public function calendardatafetch(Request $request)
     {
 
-        $currentMonth_start_date = $request->start_date;
-        $currentMonth_end_date = $request->end_date;
-
         $now = Carbon::now();
-        $start_date = Carbon::parse(strtotime($currentMonth_start_date));
+        $user_id = \Illuminate\Support\Facades\Auth::user()->id;
+        $get_trainer_id = Trainer::where('user_id', $user_id)->pluck('id')->first();
+        $trainer_zone = $get_trainer_id->timeZone->timezone_value ?? $now->getTimezone();
+        $now->setTimezone($trainer_zone);
+
+        $start_date = Carbon::createFromFormat('D M d Y', $request->start_date, $trainer_zone);
+        $end_date = Carbon::createFromFormat('D M d Y', $request->end_date, $trainer_zone)->subDay();
+
         $subDates = $now->diffInDays($start_date, false);
-        if($subDates < 0){
+        if ($subDates < 0) {
             $start_date = $start_date->subtract('days', $subDates);
-            $start_date->addDay();
         }
 
         $currentMonth_start_dates = $start_date->format('Y-m-d');
-
-        $currentMonth_end_dates = date('Y-m-d', strtotime($currentMonth_end_date . ' -1 day'));
-
-
-        $user_id = Auth::user()->id;
-        $get_trainer_id = Trainer::where('user_id', $user_id)->pluck('id')->first();
+        $currentMonth_end_dates = $end_date->format('Y-m-d');
 
         $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')
             ->whereBetween('trainer_date', [$currentMonth_start_dates, $currentMonth_end_dates])
@@ -94,8 +124,31 @@ class TrainerPortalController extends Controller
             ->where('trainer_id', $get_trainer_id)
             ->where('status', '!=', 'completed')
             ->where('status', '!=', 'canceled')
-            ->orderBy('trainer_date', 'asc')
-            ->get();
+            ->orderBy('trainer_date')
+            ->get()
+            ->map(function ($item) {
+                $item_zone = $item->timeZone->timezone_value;
+                $zone = $item->trainer->timeZone->timezone_value ?? $item_zone;
+
+                $dt = $item->trainer_date . " " . $item->trainer_time;
+                if (Carbon::hasFormat($dt, "Y-m-d H:i:s")) {
+                    $item->date_time_carbon = Carbon::createFromFormat(
+                        "Y-m-d H:i:s",
+                        $dt,
+                        $item_zone
+                    );
+                    $item->converted_time = (clone $item->date_time_carbon)->setTimezone($zone);
+                }elseif (Carbon::hasFormat($dt, "Y-m-d H:i")){
+                    $item->date_time_carbon = Carbon::createFromFormat(
+                        "Y-m-d H:i",
+                        $dt,
+                        $item_zone
+                    );
+                    $item->converted_time = (clone $item->date_time_carbon)->setTimezone($zone);
+                }
+
+                return $item;
+            });
 
 
         $new_upcoming_sessions = $upcoming_sessions->groupBy(function ($item) {
