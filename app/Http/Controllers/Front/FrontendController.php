@@ -180,7 +180,7 @@ class FrontendController extends Controller
 
         $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->first();
         $session = CustomerToTrainer::where('id', $request->session_id)->first();
-
+         $time_zone=$session->time_zone;
         if ($request->request_by == "customer") {
             $timezone = Customer::select('time_zone')->where('id', $session->customer_id)->first();
         } else {
@@ -194,7 +194,9 @@ class FrontendController extends Controller
             $session_request->request_by             = $request->request_by;
             $session_request->new_session_date       = $request->new_session_date;
             $session_request->new_session_time       = $request->new_session_time;
-            $session_request->time_zone              = $timezone->time_zone;
+            // $session_request->time_zone              = $time_zone;
+            $session_request->time_zone              = 1;
+
             $session_request->reason                 = $request->reason;
             $session_request->save();
 
@@ -222,7 +224,7 @@ class FrontendController extends Controller
             $session_request->request_by             = $request->request_by;
             $session_request->new_session_date       = $request->new_session_date;
             $session_request->new_session_time       = $request->new_session_time;
-            $session_request->time_zone              = $timezone->time_zone;
+            $session_request->time_zone              = $time_zone;
             $session_request->reason                 = $request->reason;
             $session_request->save();
 
