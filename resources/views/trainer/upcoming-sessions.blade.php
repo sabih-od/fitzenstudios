@@ -9,9 +9,7 @@
             </div>
             <div class="content">
                 <div>
-                    @if ($key == 0)
-                        <h3>{{ $upcoming_session[0]->session_type }}</h3>
-                    @endif
+                    <h3>{{ $upcoming_session[0]->session_type }}</h3>
 
                     @foreach($upcoming_session as $key => $item)
                         <p> {{ $item["customer"]->first_name.' '.$item["customer"]->last_name }}</p>

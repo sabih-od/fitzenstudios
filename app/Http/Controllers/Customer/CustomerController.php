@@ -23,29 +23,25 @@ class CustomerController extends Controller
 {
     public function dashboard()
     {
-
         $now = Carbon::now();
         $currentMonth_start = $now->startOfMOnth()->format('Y-m-d');
         $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
-
-
         $demos = BookDemoSession::where('customer_id', Auth::user()->customer->id)
             ->with('Customer', 'Customer.trainer')->orderBy('id', 'DESC')->get();
         $demo_data = [];
         $i = 0;
-
         $user_id = Auth::user()->id;
         $get_cust_id = Customer::where('user_id', $user_id)->first();
         $upcoming_sessions = CustomerToTrainer::with('timeZone', 'customer', 'trainer', 'reviews')
             ->where('customer_id', $get_cust_id->id)
-            ->whereBetween('trainer_date', [$currentMonth_start, $currentMonth_end])
+            ->whereDate('trainer_date', '>=', $currentMonth_start)
             ->where('status', '!=', 'completed')
-            ->orderBy('trainer_date')
+            ->orderBy('trainer_date','ASC')
+            ->orderBy('trainer_time', 'ASC')
             ->get()
-            ->map(function ($item) {
-                $item_zone = $item->timeZone->timezone_value;
+            ->map(function ($item) use ($now) {
+                $item_zone = $item->timeZone->timezone_value ?? $now->getTimezone();
                 $zone = $item->customer->timeZone->timezone_value ?? $item_zone;
-
                 $dt = $item->trainer_date . " " . $item->trainer_time;
                 if (Carbon::hasFormat($dt, "Y-m-d H:i:s")) {
                     $item->date_time_carbon = Carbon::createFromFormat(
@@ -62,7 +58,6 @@ class CustomerController extends Controller
                     );
                     $item->converted_time = (clone $item->date_time_carbon)->setTimezone($zone);
                 }
-
                 return $item;
             })
             ->groupBy(function ($item) {
@@ -71,17 +66,13 @@ class CustomerController extends Controller
             ->map(function ($item) {
                 return $item[0];
             });
-//        dd($upcoming_sessions->toArray());
-
         foreach ($upcoming_sessions as $demo) {
-
             $demo_data[$i]['id'] = $demo->id;
             $demo_data[$i]['title'] = $demo->session_type;
             $demo_data[$i]['start'] = $demo->converted_time->format('Y-m-d');
             $demo_data[$i]['description'] = $demo;
             $i++;
         }
-
         return view('customer.dashboard', compact('demo_data', 'upcoming_sessions'));
     }
 
@@ -112,10 +103,11 @@ class CustomerController extends Controller
             ->where('customer_id', $get_cust_id->id)
             ->whereBetween('trainer_date', [$currentMonth_start_dates, $currentMonth_end_dates])
             ->where('status', '!=', 'completed')
-            ->orderBy('trainer_date')
+            ->orderBy('trainer_date','ASC')
+            ->orderBy('trainer_time', 'ASC')
             ->get()
-            ->map(function ($item) {
-                $item_zone = $item->timeZone->timezone_value;
+            ->map(function ($item) use ($now) {
+                $item_zone = $item->timeZone->timezone_value ?? $now->getTimezone();
                 $zone = $item->customer->timeZone->timezone_value ?? $item_zone;
 
                 $dt = $item->trainer_date . " " . $item->trainer_time;

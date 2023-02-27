@@ -17,7 +17,7 @@ Re-Schedule Session Requests
                             <th >Request By</th>
                             <th>Session Name</th>
                             <th>New Session Date</th>
-                            <th>New Session Time</th>
+                            <th>Time Zone</th>
                             <th>Reason</th>
                             <th>Status</th>    
                             <th width= "15%">Action</th> 
@@ -31,13 +31,20 @@ Re-Schedule Session Requests
                                     <td>{{ ucfirst($item->request_by) }}</td>
                                     <td>{{ $item["sessions"][0]->session_type }}</td>
                                     <td>{{ date('d-m-Y', strtotime($item->new_session_date))}}</td>
-                                    <td>{{ $item->new_session_time }}</td>
+                                    <td>{{ $item->timeZone->abbreviation }}</td>
+                                  
+                                  
                                     <td>{{ $item->reason }}</td>
                                     <td>{{ $item->status }}</td>
                                     <td>
-                                       <a href="{{ url('admin/approve-request/'.$item->id) }}" class="btn btn-success">Approve</a>
-                                        <button class="btn btn-sm btn-danger" onclick="Delete('{{$item->id}}');" > 
-                                            <i class="fa fa-trash"></i>
+                                       <!--<a href="{{ url('admin/approve-request/'.$item->id) }}" class="btn btn-success">Approve</a>-->
+                                       <form action="{{ url('admin/approve-request/'.$item->id) }}" method="post">    
+                                            @csrf
+                                             <input type="hidden" name="time_zone" value="{{$item->timeZone->id }} "> 
+                                             <input type="submit"value="Approve" class="btn btn-success">
+                                        </form>
+                                        <button class="btn btn-danger" onclick="Delete('{{$item->id}}');" > 
+                                            <i class="fa fa-trash"></i> Delete
                                         </button>               
                                         <form action="{{url('admin/delete-schedule-request')}}" id="deleteRow{{$item->id}}" method="POST" style="display: none;">    
                                             @csrf                              
@@ -53,6 +60,7 @@ Re-Schedule Session Requests
                                     </td>
                                 </tr>
                             @endforelse
+                        
                         </tbody>
                     </table>
                 </div>

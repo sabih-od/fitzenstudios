@@ -41,16 +41,13 @@ class TrainerPortalController extends Controller
 
         $user_id = Auth::user()->id;
         $get_trainer_id = Trainer::where('user_id', $user_id)->pluck('id')->first();
-//        dd($get_trainer_id);
-
         $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')
             ->whereBetween('trainer_date', [$currentMonth_start, $currentMonth_end])
             ->where('trainer_id', $get_trainer_id)->where('status', '!=', 'completed')
             ->where('status', '!=', 'canceled')
-            ->orderBy('trainer_date')
             ->get()
-            ->map(function ($item) {
-                $item_zone = $item->timeZone->timezone_value;
+            ->map(function ($item) use ($now) {
+                $item_zone = $item->timeZone->timezone_value ?? $now->getTimezone();
                 $zone = $item->trainer->timeZone->timezone_value ?? $item_zone;
 
                 $dt = $item->trainer_date . " " . $item->trainer_time;
@@ -69,7 +66,6 @@ class TrainerPortalController extends Controller
                     );
                     $item->converted_time = (clone $item->date_time_carbon)->setTimezone($zone);
                 }
-
                 return $item;
             })
             ->groupBy(function ($item) {
@@ -78,12 +74,7 @@ class TrainerPortalController extends Controller
             ->map(function ($item) {
                 return $item[0];
             });
-
-//        $new_upcoming_sessions = $upcoming_sessions->groupBy(function ($item) {
-//
-//            return $item->trainer_date . "_" . $item->trainer_time;
-//        });
-
+        
         $demo_data = [];
         $i = 0;
         foreach ($upcoming_sessions as $demo) {
@@ -93,8 +84,6 @@ class TrainerPortalController extends Controller
             $demo_data[$i]['description'] = $demo->notes;
             $i++;
         }
-
-
         return view('trainer.dashboard', compact('upcoming_sessions', 'demo_data'));
     }
 
@@ -124,10 +113,11 @@ class TrainerPortalController extends Controller
             ->where('trainer_id', $get_trainer_id)
             ->where('status', '!=', 'completed')
             ->where('status', '!=', 'canceled')
-            ->orderBy('trainer_date')
+            ->orderBy('trainer_date','ASC')
+            ->orderBy('trainer_time', 'ASC')
             ->get()
-            ->map(function ($item) {
-                $item_zone = $item->timeZone->timezone_value;
+            ->map(function ($item) use ($now) {
+                $item_zone = $item->timeZone->timezone_value ?? $now->getTimezone();
                 $zone = $item->trainer->timeZone->timezone_value ?? $item_zone;
 
                 $dt = $item->trainer_date . " " . $item->trainer_time;

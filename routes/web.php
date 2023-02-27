@@ -119,7 +119,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('performance-detail/{id}',[AdminCustomerController::class,'PerformanceDetail'])->name('performance-detail');
     Route::get('reschedule-requests',[AdminCustomerController::class,'RescheduleRequests'])->name('reschedule-requests');
     Route::post('delete-schedule-request',[AdminCustomerController::class,'DeleteRescheduleRequest']);
-    Route::get('approve-request/{id}',[AdminCustomerController::class,'ApproveRequest']);
+    Route::post('approve-request/{id}',[AdminCustomerController::class,'ApproveRequest']);
     Route::get('customer-detail/{id}',[AdminCustomerController::class,'CustomerDetail'])->name('customer-detail');
     Route::get('contracts', [AdminCustomerController::class, 'Contracts']);
     Route::get('view-contract/{id}', [AdminCustomerController::class, 'ViewContract']);
