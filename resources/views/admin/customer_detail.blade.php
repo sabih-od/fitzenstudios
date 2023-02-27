@@ -223,9 +223,9 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="">Time Zone</label>
+                                                    <label for="">Times Zone</label>
                                                     <input class="form-control" disabled type="text"
-                                                           value="{{$detail->time_zone}}">
+                                                           value="{{ $detail->timeZone->abbreviation ?? $detail->time_zone }}">
                                                 </div>
                                             </div>
                                             {{-- <div class="col-md-6">
@@ -593,7 +593,7 @@
                                                 <div class="form-group">
                                                     <label for="">Time Zone</label> <input class="form-control"
                                                                                            disabled type="text"
-                                                                                           value="{{ $detail->timezone }}">
+                                                                                           value="">
                                                 </div>
                                             </div>
                                             {{-- <div class="col-md-6">

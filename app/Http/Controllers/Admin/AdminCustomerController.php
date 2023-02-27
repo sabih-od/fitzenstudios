@@ -324,7 +324,7 @@ class AdminCustomerController extends Controller
             "participant_video" => " ",
             "time_zone" => $timezone->timezone_value
         ];
-        
+
         try {
             $resp = $this->update($session->meeting_id, $data);
             if ($resp['success']) {
@@ -332,17 +332,17 @@ class AdminCustomerController extends Controller
                 $trainer_id = $session->trainer_id;
                 $customer = Customer::where('id', $customer_id)->first();
                 $trainer = Trainer::where('id', $trainer_id)->first();
-    
+
                 $customerDateTime = new DateTime($sessionDate . '' . $sessionTime, new DateTimeZone($timezone->timezone_value));
                 $customerDateTime->setTimezone(new DateTimeZone($timezone->timezone_value));
                 $customerDate = $customerDateTime->format('Y-m-d');
                 $customerTime = $customerDateTime->format('H:i:s');
-    
+
                 $trainerDateTime = new DateTime($sessionDate . '' . $sessionTime, new DateTimeZone($timezone->timezone_value));
                 $trainerDateTime->setTimezone(new DateTimeZone($timezone->timezone_value));
                 $trainerDate = $trainerDateTime->format('Y-m-d');
                 $trainerTime = $trainerDateTime->format('H:i:s');
-    
+
                 $update_session = CustomerToTrainer::find($reschedule_request->customer_to_trainer_id);
                 $update_session->trainer_date = $sessionDate;
                 $update_session->trainer_time = $sessionTime;
@@ -352,13 +352,13 @@ class AdminCustomerController extends Controller
                 $update_session->customer_timezone_date = $customerDate;
                 $update_session->customer_timezone_time = $customerTime;
                 $update_session->save();
-    
-    
+
+
                 $update_status = RescheduleRequest::find($reschedule_id);
                 $update_status->status = "Approved";
                 $update_status->save();
-    
-    
+
+
                 $mailData_customer = array(
                     'to' => $customer['email'],
                     'name' => $customer['first_name'] . ' ' . $customer['last_name'],
@@ -366,9 +366,9 @@ class AdminCustomerController extends Controller
                     'join_url' => $update_session->join_url,
                     "start_date" => date('d-m-Y', strtotime($customerDate)),
                     "start_time" => $customerTime,
-    
+
                 );
-    
+
                 $mailData_trainer = array(
                     'to' => $trainer['email'],
                     'name' => $trainer['name'],
@@ -377,39 +377,39 @@ class AdminCustomerController extends Controller
                     "start_date" => date('d-m-Y', strtotime($trainerDate)),
                     "start_time" => $trainerTime,
                 );
-    
+
                 Mail::send('admin.emails.assigntrainer-customer', $mailData_customer, function ($message) use ($mailData_customer) {
                     $message->to($mailData_customer['to'])->subject('Fitzen Studio - Assign Trainer');
                 });
-    
+
                 Mail::send('admin.emails.assigntrainer-trainer', $mailData_trainer, function ($message) use ($mailData_trainer) {
                     $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Trainer');
                 });
-    
+
                 $notification_to_trainer = new Notification();
                 $notification_to_trainer->sender_id = FacadesAuth::user()->id;
                 $notification_to_trainer->receiver_id = $trainer->user_id;
                 $notification_to_trainer->notification = "Admin approved re-schedule session request";
                 $notification_to_trainer->type = "Re-Schedule Session";
                 $notification_to_trainer->save();
-    
+
                 $notification_to_customer = new Notification();
                 $notification_to_customer->sender_id = FacadesAuth::user()->id;
                 $notification_to_customer->receiver_id = $customer->user_id;
                 $notification_to_customer->notification = "Admin approved re-schedule session request";
                 $notification_to_customer->type = "Re-Schedule Session";
                 $notification_to_customer->save();
-    
+
                 return redirect('admin/reschedule-requests')->with('success', 'Re-Scheduled Request approved successfully...!!');
-    
+
             } else {
                 return redirect()->back()->with('error', 'Oops! Something went wrong.');
-            }    
+            }
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
-            
-        } 
-        
+
+        }
+
 
     }
 
@@ -505,7 +505,7 @@ class AdminCustomerController extends Controller
                     return $btn;
                 })
                 ->rawColumns(['action'])
-                ->make(true);;
+                ->make(true);
         }
         return view('admin.customers.list', compact('trainers'));
 
@@ -773,8 +773,8 @@ class AdminCustomerController extends Controller
         $resp = $this->delete($session->meeting_id);
 
         if ($resp['success']) {
-            
-            
+
+
             $session->status = "canceled";
             $session=$time_zone;
             $session->save();
