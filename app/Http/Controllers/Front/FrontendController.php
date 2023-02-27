@@ -194,9 +194,8 @@ class FrontendController extends Controller
             $session_request->request_by             = $request->request_by;
             $session_request->new_session_date       = $request->new_session_date;
             $session_request->new_session_time       = $request->new_session_time;
-            // $session_request->time_zone              = $time_zone;
-            $session_request->time_zone              = 1;
-
+            $session_request->time_zone              = $time_zone;
+//            $session_request->time_zone              = 1;
             $session_request->reason                 = $request->reason;
             $session_request->save();
 
