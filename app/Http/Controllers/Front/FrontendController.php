@@ -144,8 +144,6 @@ class FrontendController extends Controller
 
 
 
-
-
     }
 
     public function editDemoRequest(Request $request) {
