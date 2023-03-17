@@ -19,26 +19,15 @@ Create Session
                     <h2 class="secHeading">Create Session</h2>
                 </div>
                 <div class="col-md-12">
-                    @if(count($errors) > 0 )
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <ul class="p-0 m-0" style="list-style: none;">
-                                @foreach($errors->all() as $error)
-                                    <li>{{$error}}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
                     <div class="profile-wrap">
                         <form method="POST" action="{{ route('admin.adminAssignTrainer') }}" enctype="multipart/form-data" id="assignTrainer">
                             @csrf
                             <div class="row">
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="">Trainer</label>
-                                        <select class="form-control" name="trainer_id" id="trainer_id" >
+                                        <select class="form-control" name="trainer_id" id="trainer_id" required>
                                             <option value="">Select Trainer</option>
                                             @if(count($trainers) > 0)
                                                 @foreach($trainers as $trainer)
@@ -51,7 +40,7 @@ Create Session
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="">Customers</label>
-                                        <select class="form-control js-example-basic-multiple" name="customer_id[]"  multiple="multiple" id="customer_id" >
+                                        <select class="form-control js-example-basic-multiple" name="customer_id[]"  multiple="multiple" id="customer_id" required>
                                             <option value="">Select Customer</option>
                                                 @if(count($customers) > 0)
                                                     @foreach ($customers as $item)
@@ -66,15 +55,23 @@ Create Session
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="">Session Type</label>
-                                       <input type="text" class="form-control" name="session_type" value="{{ old('session_type', '') }}" >
+                                       <input type="text" class="form-control" name="session_type" value="{{ old('session_type', '') }}" required>
                                     </div>
                                 </div>
+                                {{-- <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">Session Duration</label>
+                                        <input type="number" name="session_duration" class="form-control" required>
+                                    </div>
+                                </div> --}}
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="">Time Zone</label>
                                         <select name="time_zone" id="time_zone" class="form-control">
                                             @if(count($zones) > 0)
                                                 @foreach ($zones as $item)
+                                                    {{-- <option value="{{ $item->timezone_value }}" {{ old('time_zone', '') == $item->timezone_value ? 'selected' : '' }}>{{ $item->zone_name.' '.$item->time_zone }}</option>--}}
+    {{--                                            <!--<input type="hidden"value="{{ $item->id}}"name="time_zone">-->--}}
                                                     <option value="{{ $item->id}}" {{ old('time_zone', '') == $item->id ? 'selected' : '' }}>{{ $item->zone_name.' '.$item->time_zone }}</option>
                                                 @endforeach
                                             @endif
@@ -87,6 +84,19 @@ Create Session
                                         <textarea placeholder="Write Message" class="form-control" name="notes">{{ old('notes', '') }}</textarea>
                                     </div>
                                 </div>
+                                {{-- <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">Date</label>
+                                        <input type="date" placeholder="Select Date" class="form-control" id="simpleDataInput" name="trainer_date" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">Time</label>
+                                        <input type="time" placeholder="Select Time" class="form-control" name="trainer_time" id="trainer_time" required>
+                                    </div>
+                                </div>
+                              --}}
                                 <div class="col-md-12">
                                     <table class="table" id="customFields">
                                         <tr>
@@ -98,10 +108,10 @@ Create Session
 
                                             <tr valign="top">
                                                 <td>
-                                                    <input type="date" placeholder="Select Date" class="form-control" name="trainer_date[]" >
+                                                    <input type="date" placeholder="Select Date" class="form-control" name="trainer_date[]" required>
                                                 </td>
                                                 <td>
-                                                    <input type="time" placeholder="Select Time" class="form-control" name="trainer_time[]" >
+                                                    <input type="time" placeholder="Select Time" class="form-control" name="trainer_time[]" required>
 
                                                 </td>
                                                 <td style="text-align: center;">
@@ -130,7 +140,7 @@ Create Session
         });
         $(document).ready(function(){
         $(".addCF").click(function(){
-            $("#customFields").append('<tr valign="top"><td><input type="date" placeholder="Select Date" class="form-control" name="trainer_date[]" > </td><td> <input type="time" placeholder="Select Time" class="form-control" name="trainer_time[]" ></td><td style="text-align:center"><a href="javascript:void(0);" class="remCF"><i style="color: red;" class="fa-solid fa-trash-can"></i></a></td></tr>');
+            $("#customFields").append('<tr valign="top"><td><input type="date" placeholder="Select Date" class="form-control" name="trainer_date[]" required> </td><td> <input type="time" placeholder="Select Time" class="form-control" name="trainer_time[]" required></td><td style="text-align:center"><a href="javascript:void(0);" class="remCF"><i style="color: red;" class="fa-solid fa-trash-can"></i></a></td></tr>');
         });
         $("#customFields").on('click','.remCF',function(){
             $(this).parent().parent().remove();
