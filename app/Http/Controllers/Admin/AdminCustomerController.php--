@@ -31,11 +31,10 @@ use DateTimeZone;
 use Hash;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Validation\Rule;
-use App\Traits\PHPCustomMail;
 
 class AdminCustomerController extends Controller
 {
-    use ZoomMeetingTrait, PHPCustomMail;
+    use ZoomMeetingTrait;
 
     const MEETING_TYPE_INSTANT = 1;
     const MEETING_TYPE_SCHEDULE = 2;
@@ -44,31 +43,15 @@ class AdminCustomerController extends Controller
 
     public function index(Request $request)
     {
-        return view('admin.customers.index')->with('customers', Customer::where('is_lead', 0)->orderBy('id', 'DESC')->get());
+        $customers = Customer::where('is_lead', 0)->orderBy('id', 'DESC')->get();
+        return view('admin.customers.index', compact('customers'));
     }
 
-    public function customerRegistration(Request $request)
+    public function CustomerRegistration(Request $request)
     {
-        $request->validate(
-            [
-                'f_name' => 'required',
-                'l_name' => 'required',
-                'email' => 'required|unique:users,email',
-                'time_zone' => 'required',
-                'phone' => 'required'
-            ],
-            [
-                'f_name.required' => 'The first name field is required.',
-                'l_name.required' => 'At last name field is required.',
-                'email.required' => 'The email field is required.',
-                'email.unique' => 'This email is already taken. Choose another one then try again!',
-                'time_zone.required' => 'The timezone field is required.',
-                'phone.required' => 'The phone field is required.',
-            ]
-        );
-        try {
 
-            DB::beginTransaction();
+        $check_user = User::where('email', $request->email)->first();
+        if ($check_user == null) {
 
             $user = User::create([
                 'name' => $request->f_name . ' ' . $request->l_name,
@@ -81,8 +64,8 @@ class AdminCustomerController extends Controller
 
             Customer::create([
                 'user_id' => $user->id,
-                'first_name' => $request->f_name,
-                'last_name' => $request->l_name,
+                'first_name' => $request->f_name,//explode(' ', $user->name)[0],
+                'last_name' => $request->l_name,//substr( $user->name, strpos( $user->name, " ") + 1),
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'time_zone' => $request->time_zone,
@@ -103,18 +86,14 @@ class AdminCustomerController extends Controller
                 'to' => $request->email,
                 'pass' => $request->password
             );
+            Mail::send('front.emails.thankyou-signup-customer', $mailData, function ($message) use ($mailData) {
+                $message->to($mailData['to'])->subject('Fitzen Studio - Signing Up');
+            });
 
-            $view = view('front.emails.thankyou-signup-customer')
-                ->with('to', $request->email)
-                ->with('pass', $request->password)
-                ->render();
-            $this->customphpmailer('noreply@fitzenstudios.com', $mailData['to'], 'Fitzen Studio - Signing Up', $view);
+            return redirect()->back()->with('success', 'Customer created successfully...!!');
 
-            DB::commit();
-            return redirect()->back()->with('success', 'Customer is successfully created.');
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            return redirect()->back()->with('error', $exception->getMessage());
+        } else {
+            return redirect()->back()->with('error', 'Email already exist. Please try another one..!!');
         }
     }
 
@@ -318,6 +297,7 @@ class AdminCustomerController extends Controller
 
     public function DeleteRescheduleRequest(Request $request)
     {
+
         $delete_row = RescheduleRequest::where('id', $request->id)->delete();
         return redirect('admin/reschedule-requests')->with('success', 'Request Deleted Successfully..!!');
     }
@@ -435,52 +415,49 @@ class AdminCustomerController extends Controller
 
     public function UpdateSessionStatus(Request $request)
     {
-        try {
-            $update = CustomerToTrainer::find($request->session_id);
-            $update->status = $request->status;
-            $update->save();
-            return redirect()->back()->with('success', 'Session Status Updated successfully.');
-        } catch (\Exception $exception) {
-            return redirect()->back()->with('error', $exception->getMessage());
-        }
+
+        $update = CustomerToTrainer::find($request->session_id);
+        $update->status = $request->status;
+        $update->save();
+
+        return redirect()->back()->with('success', 'Session Status Updated successfully...!!');
     }
 
     public function PerformanceDetail($id)
     {
-        return view('admin.performance_detail')
-            ->with('detail', Performance::with('customer')->where('session_id', $id)->first());
+        $detail = Performance::with('customer')->where('session_id', $id)->first();
+        return view('admin.performance_detail', compact('detail'));
     }
 
     public function CustomerDetail($customer_id)
     {
+
         $detail = Customer::find($customer_id);
         $cust_detail = CustomerDetail::where('customer_id', $customer_id)->first();
         $schedules = CustomerToTrainer::with('customer', 'trainer')->where('customer_id', $customer_id)->get();
         $performances = Performance::with('trainer', 'session')->where('customer_id', $customer_id)->get();
         $payments = Payment::where('customer_id', $customer_id)->orderBy('id', 'DESC')->get();
+
+
         return view('admin.customer_detail', compact('detail', 'schedules', 'cust_detail', 'performances', 'payments'));
     }
 
     public function destroy($id, Request $request)
     {
-        try {
-            $customer = Customer::find($id);
-            CustomerToTrainer::where('customer_id', $id)->delete();
-            BookDemoSession::where('customer_id', $id)->delete();
+        $customer = Customer::find($id);
+        CustomerToTrainer::where('customer_id', $id)->delete();
+        BookDemoSession::where('customer_id', $id)->delete();
 
-            $user_id = $customer->user_id;
-            User::where('id', $user_id)->delete();
-            $customer->delete();
-
-            return redirect()->back()->with('success', 'Customer is successfully deleted.');
-        } catch (\Exception $exception) {
-            return redirect()->back()->with('error', $exception->getMessage());
-        }
+        $user_id = $customer->user_id;
+        User::where('id', $user_id)->delete();
+        $customer->delete();
+        return redirect()->back()->with('success', 'Customer Deleted Successfully.');
     }
 
     public function profile($id)
     {
-        return view('admin.customers.profile')->with('customer', Customer::find($id));
+        $customer = Customer::find($id);
+        return view('admin.customers.profile', compact('customer'));
     }
 
     public function Schedule(Request $request)
@@ -543,64 +520,52 @@ class AdminCustomerController extends Controller
 
     public function ViewContract($contract_id)
     {
-        return view('admin.contract_view')->with('contract', Contract::where('id', $contract_id)->first());
+
+        $contract = Contract::where('id', $contract_id)->first();
+        return view('admin.contract_view', compact('contract'));
     }
 
     public function AddPayment(Request $request)
     {
-        try {
-            DB::beginTransaction();
 
-            $payment = new Payment();
-            $payment->customer_id = $request->customer_id;
-            $payment->invoice = $request->invoice;
-            $payment->customer_name = $request->customer_name;
-            $payment->customer_email = $request->customer_email;
-            $payment->payment = $request->payment;
-            $payment->save();
+        $payment = new Payment();
+        $payment->customer_id = $request->customer_id;
+        $payment->invoice = $request->invoice;
+        $payment->customer_name = $request->customer_name;
+        $payment->customer_email = $request->customer_email;
+        $payment->payment = $request->payment;
+        $payment->save();
 
-            $get_user_id = Customer::where('id', $request->customer_id)->pluck('user_id')->first();
+        $get_user_id = Customer::where('id', $request->customer_id)->pluck('user_id')->first();
 
-            $notification = new Notification();
-            $notification->sender_id = Auth::user()->id;
-            $notification->receiver_id = $get_user_id;
-            $notification->notification = "Admin send you a payment request.";
-            $notification->type = "Payment";
-            $notification->save();
+        $notification = new Notification();
+        $notification->sender_id = Auth::user()->id;
+        $notification->receiver_id = $get_user_id;
+        $notification->notification = "Admin send you a payment request.";
+        $notification->type = "Payment";
+        $notification->save();
 
-            DB::commit();
-            return redirect()->back()->with('success', 'Payment sent successfully.');
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            return redirect()->back()->with('error', $exception->getMessage());
-        }
+        return redirect()->back()->with('success', 'Payment sent successfully...!!!');
     }
 
     public function adminAssignTrainer(Request $request)
     {
-        $request->validate(
-            [
+        /*$request->validate([
             'trainer_id' => ['required', Rule::exists('trainers', 'id')],
             'customer_id' => ['required', 'array', function ($attr, $value, $fail) {
-                if (!$value || !is_array($value)) {
-                    return;
-                }
+                if (!$value || !is_array($value)) return;
+                dd(Customer::query()->whereIn('id', $value)->exists());
+//                if(!Customer::query()->whereIn('id', $value)->exists())
             }],
             'session_type' => 'required',
             'time_zone' => ['required', Rule::exists('time_zones', 'id')],
             'notes' => 'required',
-            ],
-            [
-                'trainer_id.required' => 'The trainer field is required.',
-                'customer_id.required' => 'At least one customer is required.',
-                'session_type.required' => 'The session type field is required.',
-                'time_zone.required' => 'The timezone field is required.',
-                'notes.required' => 'The notes field is required.',
-            ]
-        );
+        ]);*/
+//        dd($request->all());
 
         if ($request->customer_id != null) {
             $customer = Customer::whereIn('id', $request->customer_id)->get();
+            // $customer_id = $request->customer_id;
             $trainer_id = $request->trainer_id;
             $trainer = Trainer::where('id', $trainer_id)->first();
 
@@ -614,6 +579,61 @@ class AdminCustomerController extends Controller
                             $date->setTimezone(new DateTimeZone($timezone->timezone_value));
                             $sessionDate = $date->format('Y-m-d');
                             $sessionTime = $date->format('H:i:s');
+
+                            // if($trainer->time_zone == "America/Washington") {
+
+                            //     date_default_timezone_set('America/Los_Angeles');
+                            //     $sess_time        = $request->trainer_date[$key].' '.$request->trainer_time[$key];
+                            //     $datetime         = new DateTime($sess_time);
+                            //     $trainer_timeZone = new DateTimeZone("America/Chicago");
+                            //     $datetime->setTimezone($trainer_timeZone);
+                            //     $trainer_timezone_date = $datetime->format('d-m-Y');
+                            //     $trainer_timezone_date = $datetime->format('Y-m-d');
+                            //     // add one extra hour in time
+                            //     $train_time            = $datetime->format('H:i');
+                            //     $timestamp             = strtotime($train_time) + 60*60; // 10:09 + 1 hour
+                            //     $trainer_timezone_time =  date('H:i', $timestamp);
+
+                            // } else {
+
+                            //     date_default_timezone_set('America/Los_Angeles');
+                            //     $sess_time = $request->trainer_date[$key].' '.$request->trainer_time[$key];
+                            //     $datetime  = new DateTime($sess_time);
+
+                            //     // echo $datetime->format('Y-m-d H:i:s') . "<br>";
+                            //     $trainer_timeZone = new DateTimeZone($trainer->time_zone);
+
+                            //     $datetime->setTimezone($trainer_timeZone);
+                            //     // $trainer_timezone_date =  $datetime->format('d-m-Y');
+                            //     // $trainer_timezone_time =  $datetime->format('H:i');
+                            //     $trainer_timezone_date =  $datetime->format('Y-m-d');
+                            //     $trainer_timezone_time =  $datetime->format('H:i');
+                            // }
+
+                            // if($value->time_zone == "America/Washington") {
+
+                            //     $sesss_time            = $request->trainer_date[$key].' '.$request->trainer_time[$key];
+                            //     $newdatetime           = new DateTime($sesss_time);
+                            //     $customer_timeZone     = new DateTimeZone("America/Chicago");
+                            //     $newdatetime->setTimezone($customer_timeZone);
+                            //     $customer_timezone_date =  $newdatetime->format('Y-m-d');
+
+                            //     // add one extra hour in time
+                            //     $cust_time              = $datetime->format('H:i');
+                            //     $cust_timestamp         = strtotime($cust_time) + 60*60; // 10:09 + 1 hour
+                            //     $customer_timezone_time =  date('H:i', $cust_timestamp);
+
+                            // } else {
+
+                            //     $sesss_time            = $request->trainer_date[$key].' '.$request->trainer_time[$key];
+                            //     $newdatetime           = new DateTime($sesss_time);
+                            //     $customer_timeZone     = new DateTimeZone($value->time_zone);
+                            //     $newdatetime->setTimezone($customer_timeZone);
+                            //     $customer_timezone_date =  $newdatetime->format('Y-m-d');
+                            //     $customer_timezone_time =  $newdatetime->format('H:i');
+                            // }
+
+//                            dd($trainer->timeZone->timezone_value, $value->timeZone->timezone_value);
 
                             $meeting_data = [
                                 "topic" => $request->session_type,
@@ -639,6 +659,20 @@ class AdminCustomerController extends Controller
                             $customer_timezone_date = $customerDate->format('Y-m-d');
                             $customer_timezone_time = $customerDate->format('H:i:s');
 
+                            // $mailData = array(
+
+                            //     'first_name'   => $value->first_name,
+                            //     'last_name'    => $value->last_name,
+                            //     'email'        => $value->email,
+                            //     'phone'        => $value->phone,
+                            //     'session_date' => $request->trainer_date[$key],
+                            //     'session_time' => $request->trainer_time[$key],
+                            //     'to'           => $value["email"],
+                            // );
+
+                            // Mail::send('front.emails.session_request', $mailData, function($message) use($mailData){
+                            //     $message->to($mailData['to'])->subject('Fitzen Studio - Session Request');
+                            // });
                             $mailData_customer = array(
                                 'to' => $value->email,
                                 'name' => $value->first_name . ' ' . $value->last_name,
@@ -664,6 +698,19 @@ class AdminCustomerController extends Controller
                             Mail::send('admin.emails.assigntrainer-trainer', $mailData_trainer, function ($message) use ($mailData_trainer) {
                                 $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Customer');
                             });
+
+
+                            // $demo                             = new BookDemoSession();
+                            // $demo->customer_id                = $value->id;
+                            // $demo->first_name                 = $value->first_name;
+                            // $demo->last_name                  = $value->last_name;
+                            // $demo->email                      = $value->email;
+                            // $demo->phone                      = $value->phone;
+                            // $demo->session_date               = $request->trainer_date[$key];
+                            // $demo->session_time               = $request->trainer_time[$key];
+                            // $demo->status                     = "trainer_assigned";
+                            // $demo->save();
+
 
                             $cust_to_trainer = new CustomerToTrainer();
                             $cust_to_trainer->start_url = $resp["data"]["start_url"];
@@ -702,9 +749,12 @@ class AdminCustomerController extends Controller
                     }
                 }
                 DB::commit();
+
                 return redirect()->back()->with('success', 'Trainer Assigned Successfully.');
+
             } catch (\Exception $e) {
                 DB::rollBack();
+//                dd($e);
                 return redirect()->back()->with('error', $e->getMessage());
             }
         }
@@ -712,22 +762,29 @@ class AdminCustomerController extends Controller
 
     public function Sessions()
     {
-        return view('admin.sessions')
-            ->with('upcoming_sessions', CustomerToTrainer::with('customer', 'trainer', 'sessions', 'timeZone')->orderBy('id', 'DESC')->get());
+        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer', 'sessions', 'timeZone')->orderBy('id', 'DESC')->get();
+        return view('admin.sessions', compact('upcoming_sessions'));
     }
 
     public function CancelSession(Request $request)
     {
         $session = CustomerToTrainer::find($request->customer_to_trainer_id);
+        $time_zone=$session->time_zone;
         $resp = $this->delete($session->meeting_id);
-        if (!$resp['success']) {
+
+        if ($resp['success']) {
+
+
+            $session->status = "canceled";
+            $session=$time_zone;
+            $session->save();
+
+            return redirect()->back()->with('success', 'Session Cancelled Successfully..!!');
+
+        } else {
+
             return redirect()->back()->with('error', 'Oops! Something went wrong. Session has not cancelled.');
+
         }
-
-        $session->status = "canceled";
-        $session = $session->time_zone;
-        $session->save();
-
-        return redirect()->back()->with('success', 'Session Cancelled Successfully..!!');
     }
 }

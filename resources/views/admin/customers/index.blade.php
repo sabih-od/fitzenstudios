@@ -38,8 +38,21 @@ Customers
 @endsection
 
 @section('content')
-
     <div class="row">
+        <div class="col-md-12">
+            @if(count($errors) > 0 )
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <ul class="p-0 m-0" style="list-style: none;">
+                        @foreach($errors->all() as $error)
+                            <li>{{$error}}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+        </div>
         <div class="col-md-6">
             <h2 class="secHeading">Customers</h2>
         </div>
@@ -64,8 +77,8 @@ Customers
                                         <div class="form-group">
                                             <label for="username">First name<span style="color: red">*</span></label>
                                             <input id="f_name" type="text" class="form-control @error('f_name') is-invalid @enderror" name="f_name"
-                                                value="{{ old('f_name') }}" required autocomplete="f_name" autofocus
-                                                placeholder="First Name">
+                                                value="{{ old('f_name') }}" autocomplete="f_name" autofocus
+                                                placeholder="First Name" required>
                                             @error('f_name')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -77,8 +90,8 @@ Customers
                                         <div class="form-group">
                                             <label for="username">Last Name<span style="color: red">*</span></label>
                                             <input id="l_name" type="text" class="form-control @error('l_name') is-invalid @enderror" name="l_name"
-                                                value="{{ old('l_name') }}" required autocomplete="l_name" autofocus
-                                                placeholder="Last Name">
+                                                value="{{ old('l_name') }}" autocomplete="l_name" autofocus
+                                                placeholder="Last Name" required>
                                             @error('l_name')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -105,7 +118,7 @@ Customers
                                             <label for="password">Password<span style="color: red">*</span></label>
                                             <input id="password" type="password"
                                                 class="form-control @error('password') is-invalid @enderror" name="password"
-                                                required autocomplete="new-password">
+                                                 autocomplete="new-password" required>
                                             @error('password')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -118,14 +131,15 @@ Customers
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="timezone">Time Zone<span style=" color: red">*</span></label>
-                                            <select name="time_zone" id="time_zone" required class=" form-control">
+                                            <select name="time_zone" id="time_zone" class="form-control" required>
                                                 <option value="">Select Time Zone</option>
-                                                @forelse ($timezones as $time)
-                                                <option value="{{ $time->timezone_value }}">
-                                                    {{ $time->zone_name.' '.$time->time_zone }}</option>
-                                                @empty
-
-                                                @endforelse
+                                                @if(count($timezones) > 0)
+                                                    @foreach ($timezones as $time)
+                                                        <option value="{{ $time->timezone_value }}">
+                                                            {{ $time->zone_name.' '.$time->time_zone }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                         </div>
                                     </div>
@@ -134,7 +148,7 @@ Customers
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label style="display:block;" for="phone">Phone<span style=" color: red">*</span></label>
-                                            <input type="tel" name="phone" class="form-control" required id="phone" style="width: 100% !important">
+                                            <input type="tel" name="phone" class="form-control"  id="phone" style="width: 100% !important" required>
                                             @if ($errors->has('phone'))
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $errors->first('phone') }}</strong>
@@ -163,9 +177,8 @@ Customers
             </div>
         </div>
     </div>
-
     <div class="row align-items-center mt-4">
-        @foreach($customers as $customer)
+        @forelse($customers as $customer)
             <div class="col-md-4 col-sm-6">
                 <a href="{{ url('admin/customer-detail/'.$customer->id) }}" class="userCard">
                     <div class="delBtn inrBtn">
@@ -196,7 +209,13 @@ Customers
                     </div>
                 </a>
             </div>
-        @endforeach
+        @empty
+            <div class="col-md-12 col-sm-12">
+                <h5 class="text-center">
+                    No record found.
+                </h5>
+            </div>
+        @endforelse
     </div>
 
 @endsection
@@ -210,7 +229,6 @@ Customers
 <script src="{{asset('build/js/intlTelInput.js')}}"></script>
 
 <script type="text/javascript">
-
     var input = document.querySelector("#phone");
     window.intlTelInput(input, {
         utilsScript: "{{ asset('build/js/utils.js')}}",
@@ -234,6 +252,5 @@ Customers
     function CustomerDetail(customer_id) {
         window.location.href = `{{ url('admin/customer-detail/`+customer_id+`') }}`;
     }
-
 </script>
 @endpush
