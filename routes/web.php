@@ -52,7 +52,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/admin/login', [AdminController::class,'login']);
 Route::prefix('admin')->middleware('auth')->group(function () {
 
-    Route::post('customer-register', [AdminCustomerController::class, 'CustomerRegistration']);
+    Route::post('customer-register', [AdminCustomerController::class, 'customerRegistration']);
     Route::resource('/leads', LeadsController::class);
     Route::resource('/categories', CategoryController::class);
     Route::resource('homepage',HomePageCMSController::class);
@@ -109,7 +109,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/customers',[AdminCustomerController::class, 'index'])->name('customer.index');
     Route::post('/customer/create',[AdminCustomerController::class, 'store'])->name('customer.create');
     Route::post('/customer/assign/trainer',[AdminCustomerController::class, 'assignTrainer'])->name('customer.assignTrainer');
-    Route::post('/admin-assign-trainer',[AdminCustomerController::class, 'AdminassignTrainer'])->name('admin.assignCustomer');
+    Route::post('/admin-assign-trainer',[AdminCustomerController::class, 'adminAssignTrainer'])->name('admin.adminAssignTrainer');
 
     Route::delete('/customer/delete/{id}',[AdminCustomerController::class, 'destroy'])->name('customer.destroy');
     Route::get('/customer-profile/{id}',[AdminCustomerController::class, 'profile'])->name('profile');
