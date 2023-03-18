@@ -32,7 +32,7 @@ Re-Schedule Session Requests
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ ucfirst($item->request_by) }}</td>
-                                    <td>{{ isset($item["sessions"]) ? $item["sessions"][0]->session_type : '---' }}</td>
+                                    <td>{{ isset($item["sessions"][0]) ? $item["sessions"][0]->session_type : '---' }}</td>
                                     <td>{{ date('d-m-Y', strtotime($item->new_session_date))}}</td>
 
                                     <td>{{ $item->new_session_time}}</td>
