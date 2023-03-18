@@ -20,6 +20,6 @@ class Customer extends Model
     }
 
     public function timeZone() {
-        return $this->hasOne(TimeZone::class, 'id', 'timezone');
+        return $this->hasOne(TimeZone::class, 'id', 'time_zone');
     }
 }

@@ -734,15 +734,12 @@
                                                 <th>Email</th>
                                                 <th>Payment</th>
                                                 <th>Date</th>
-
                                                 <th>Status</th>
-                                                {{-- <div class="table-col"><span>Details</span></div> --}}
                                             </tr>
                                             </thead>
                                             <tbody>
                                             @forelse ($payments as $item)
-
-                                                <tr class="table-row">
+                                                <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $item->invoice }}</td>
                                                     <td>{{ $item->customer_name }}</td>
@@ -767,7 +764,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td><span>No Payments Yet...!!</span></td>
+                                                    <td colspan="100%" class="text-center"><span>No Payments Yet...!!</span></td>
                                                 </tr>
                                             @endforelse
                                             </tbody>

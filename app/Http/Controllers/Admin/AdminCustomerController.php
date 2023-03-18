@@ -17,13 +17,10 @@ use App\Models\RescheduleRequest;
 use App\Models\CustomerDetail;
 use App\Models\Notification;
 use App\Traits\ZoomMeetingTrait;
-use Firebase\JWT\JWT;
-use GuzzleHttp\Client;
 use App\Models\Contract;
 use App\Models\Payment;
 use App\Models\Lead;
 use App\Models\TimeZone;
-
 use File;
 use Auth;
 use DateTime;
@@ -453,12 +450,12 @@ class AdminCustomerController extends Controller
 
     public function CustomerDetail($customer_id)
     {
-        $detail = Customer::find($customer_id);
-        $cust_detail = CustomerDetail::where('customer_id', $customer_id)->first();
-        $schedules = CustomerToTrainer::with('customer', 'trainer')->where('customer_id', $customer_id)->get();
-        $performances = Performance::with('trainer', 'session')->where('customer_id', $customer_id)->get();
-        $payments = Payment::where('customer_id', $customer_id)->orderBy('id', 'DESC')->get();
-        return view('admin.customer_detail', compact('detail', 'schedules', 'cust_detail', 'performances', 'payments'));
+        return view('admin.customer_detail')
+            ->with('detail', Customer::find($customer_id))
+            ->with('cust_detail', CustomerDetail::where('customer_id', $customer_id)->first())
+            ->with('schedules', CustomerToTrainer::with('customer', 'trainer')->where('customer_id', $customer_id)->get())
+            ->with('performances', Performance::with('trainer', 'session')->where('customer_id', $customer_id)->get())
+            ->with('payments', Payment::where('customer_id', $customer_id)->orderBy('id', 'DESC')->get());
     }
 
     public function destroy($id, Request $request)
@@ -599,114 +596,99 @@ class AdminCustomerController extends Controller
             ]
         );
 
-        if ($request->customer_id != null) {
+        try {
+            DB::beginTransaction();
+
             $customer = Customer::whereIn('id', $request->customer_id)->get();
+
             $trainer_id = $request->trainer_id;
             $trainer = Trainer::where('id', $trainer_id)->first();
 
-            try {
-                DB::beginTransaction();
-                foreach ($customer as $value) {
-                    if ($request->trainer_date != null) {
-                        foreach ($request->trainer_date as $key => $trainer_date) {
-                            $timezone = TimeZone::find($request->time_zone);
-                            $date = new DateTime($request->trainer_date[$key] . '' . $request->trainer_time[$key], new DateTimeZone($timezone->timezone_value));
-                            $date->setTimezone(new DateTimeZone($timezone->timezone_value));
-                            $sessionDate = $date->format('Y-m-d');
-                            $sessionTime = $date->format('H:i:s');
+            foreach ($customer as $value) {
+                foreach ($request->trainer_date as $key => $trainer_date) {
+                    $timezone = TimeZone::find($request->time_zone);
+                    $date = new DateTime($request->trainer_date[$key] . '' . $request->trainer_time[$key], new DateTimeZone($timezone->timezone_value));
+                    $date->setTimezone(new DateTimeZone($timezone->timezone_value));
+                    $sessionDate = $date->format('Y-m-d');
+                    $sessionTime = $date->format('H:i:s');
+                    $sessionDateTime = $sessionDate . '' . $sessionTime;
 
-                            $meeting_data = [
-                                "topic" => $request->session_type,
-                                "start_time" => $sessionDate . ' ' . $sessionTime,
-                                "duration" => 180,
-                                "agenda" => "Weekly Session",
-                                "host_video" => "",
-                                "participant_video" => "",
-                                // "time_zone" => 'America/New_York',
-                                "time_zone" => $timezone->timezone_value,
+                    $resp = $this->create([
+                        "topic" => $request->session_type,
+                        "start_time" => $sessionDateTime,
+                        "duration" => 180,
+                        "agenda" => "Weekly Session",
+                        "host_video" => "",
+                        "participant_video" => "",
+                        "time_zone" => $timezone->timezone_value
+                    ]);
 
-                            ];
+                    $trainerDate = new DateTime($sessionDateTime, new DateTimeZone($resp['data']['timezone']));
+                    $trainerDate->setTimezone(new DateTimeZone($trainer->timeZone->timezone_value));
+                    $trainer_timezone_date = $trainerDate->format('Y-m-d');
+                    $trainer_timezone_time = $trainerDate->format('H:i:s');
 
-                            $resp = $this->create($meeting_data);
+                    $customerDate = new DateTime($sessionDateTime, new DateTimeZone($resp['data']['timezone']));
+                    $customerDate->setTimezone(new DateTimeZone($value->timeZone->timezone_value));
+                    $customer_timezone_date = $customerDate->format('Y-m-d');
+                    $customer_timezone_time = $customerDate->format('H:i:s');
 
-                            $trainerDate = new DateTime($sessionDate . '' . $sessionTime, new DateTimeZone($resp['data']['timezone']));
-                            $trainerDate->setTimezone(new DateTimeZone($trainer->timeZone->timezone_value));
-                            $trainer_timezone_date = $trainerDate->format('Y-m-d');
-                            $trainer_timezone_time = $trainerDate->format('H:i:s');
+                    $assignTrainerCustomerView = view('admin.emails.assigntrainer-customer')
+                        ->with('to', $value->email)
+                        ->with('name', $value->first_name . ' ' . $value->last_name)
+                        ->with('trainer', $trainer['name'])
+                        ->with('join_url', $resp["data"]["join_url"])
+                        ->with('start_date', date('d-m-Y', strtotime($customer_timezone_date)))
+                        ->with('start_time', $customer_timezone_time);
+                    $this->customphpmailer('noreply@fitzenstudios.com', $value->email, 'Fitzen Studio - Assign Trainer', $assignTrainerCustomerView);
 
-                            $customerDate = new DateTime($sessionDate . '' . $sessionTime, new DateTimeZone($resp['data']['timezone']));
-                            $customerDate->setTimezone(new DateTimeZone($value->timeZone->timezone_value));
-                            $customer_timezone_date = $customerDate->format('Y-m-d');
-                            $customer_timezone_time = $customerDate->format('H:i:s');
+                    $assignTrainerView = view('admin.emails.assigntrainer-trainer')
+                        ->with('to', $trainer['email'])
+                        ->with('name', $trainer['name'])
+                        ->with('start_url', $resp["data"]["start_url"])
+                        ->with('start_date', date('d-m-Y', strtotime($trainer_timezone_date)))
+                        ->with('start_time', $trainer_timezone_time);
+                    $this->customphpmailer('noreply@fitzenstudios.com', $trainer['email'], 'Fitzen Studio - Assign Customer', $assignTrainerView);
 
-                            $mailData_customer = array(
-                                'to' => $value->email,
-                                'name' => $value->first_name . ' ' . $value->last_name,
-                                'trainer' => $trainer['name'],
-                                'join_url' => $resp["data"]["join_url"],
-                                "start_date" => date('d-m-Y', strtotime($customer_timezone_date)),
-                                "start_time" => $customer_timezone_time,
-                                // "pass_code"  => $resp["data"]["password"],
-                            );
+                    $cust_to_trainer = new CustomerToTrainer();
+                    $cust_to_trainer->start_url = $resp["data"]["start_url"];
+                    $cust_to_trainer->join_url = $resp["data"]["join_url"];
+                    $cust_to_trainer->meeting_id = $resp["data"]["id"];
+                    $cust_to_trainer->customer_id = $value->id;
+                    $cust_to_trainer->trainer_id = $trainer_id;
+                    $cust_to_trainer->trainer_date = $request->trainer_date[$key];
+                    $cust_to_trainer->trainer_time = $request->trainer_time[$key];
+                    $cust_to_trainer->time_zone = $request->time_zone;
+                    $cust_to_trainer->notes = $request->notes;
+                    $cust_to_trainer->session_type = $request->session_type;
+                    $cust_to_trainer->trainer_timezone_date = $trainer_timezone_date;
+                    $cust_to_trainer->trainer_timezone_time = $trainer_timezone_time;
+                    $cust_to_trainer->customer_timezone_date = $customer_timezone_date;
+                    $cust_to_trainer->customer_timezone_time = $customer_timezone_time;
+                    $cust_to_trainer->save();
 
-                            Mail::send('admin.emails.assigntrainer-customer', $mailData_customer, function ($message) use ($mailData_customer) {
-                                $message->to($mailData_customer['to'])->subject('Fitzen Studio - Assign Trainer');
-                            });
+                    $notify = "You have a new session request by admin.";
 
-                            $mailData_trainer = array(
-                                'to' => $trainer['email'],
-                                'name' => $trainer['name'],
-                                // 'customer'   => $customer['first_name'] . ' ' . $customer['last_name'],
-                                'start_url' => $resp["data"]["start_url"],
-                                "start_date" => date('d-m-Y', strtotime($trainer_timezone_date)),
-                                "start_time" => $trainer_timezone_time,
-                            );
-                            Mail::send('admin.emails.assigntrainer-trainer', $mailData_trainer, function ($message) use ($mailData_trainer) {
-                                $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Customer');
-                            });
+                    $notification = new Notification();
+                    $notification->sender_id = FacadesAuth::user()->id;
+                    $notification->receiver_id = $value->user_id;
+                    $notification->notification = $notify;
+                    $notification->type = "Session Request";
+                    $notification->save();
 
-                            $cust_to_trainer = new CustomerToTrainer();
-                            $cust_to_trainer->start_url = $resp["data"]["start_url"];
-                            $cust_to_trainer->join_url = $resp["data"]["join_url"];
-                            $cust_to_trainer->meeting_id = $resp["data"]["id"];
-                            $cust_to_trainer->customer_id = $value->id;
-                            $cust_to_trainer->trainer_id = $trainer_id;
-                            $cust_to_trainer->trainer_date = $request->trainer_date[$key];
-                            $cust_to_trainer->trainer_time = $request->trainer_time[$key];
-                            $cust_to_trainer->time_zone = $request->time_zone;
-                            $cust_to_trainer->notes = $request->notes;
-                            $cust_to_trainer->session_type = $request->session_type;
-                            $cust_to_trainer->trainer_timezone_date = $trainer_timezone_date;
-                            $cust_to_trainer->trainer_timezone_time = $trainer_timezone_time;
-                            $cust_to_trainer->customer_timezone_date = $customer_timezone_date;
-                            $cust_to_trainer->customer_timezone_time = $customer_timezone_time;
-
-                            $cust_to_trainer->save();
-
-                            $notify = "You have a new Session request by admin";
-
-                            $notification = new Notification();
-                            $notification->sender_id = FacadesAuth::user()->id;
-                            $notification->receiver_id = $value->user_id;
-                            $notification->notification = $notify;
-                            $notification->type = "Session Request";
-                            $notification->save();
-
-                            $notification_trainer = new Notification();
-                            $notification_trainer->sender_id = FacadesAuth::user()->id;
-                            $notification_trainer->receiver_id = $trainer->user_id;
-                            $notification_trainer->notification = $notify;
-                            $notification_trainer->type = "Session Request";
-                            $notification_trainer->save();
-                        }
-                    }
+                    $notification_trainer = new Notification();
+                    $notification_trainer->sender_id = FacadesAuth::user()->id;
+                    $notification_trainer->receiver_id = $trainer->user_id;
+                    $notification_trainer->notification = $notify;
+                    $notification_trainer->type = "Session Request";
+                    $notification_trainer->save();
                 }
-                DB::commit();
-                return redirect()->back()->with('success', 'Trainer Assigned Successfully.');
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return redirect()->back()->with('error', $e->getMessage());
             }
+            DB::commit();
+            return redirect()->back()->with('success', 'Trainer Assigned Successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
