@@ -95,10 +95,8 @@ trait ZoomMeetingTrait
             ];
         } catch (GuzzleException $ex) {
             Log::error('ZoomJWT->create : '.$ex->getMessage());
-
             return $ex->getMessage();
         }
-
     }
 
     public function update($id, $data)
