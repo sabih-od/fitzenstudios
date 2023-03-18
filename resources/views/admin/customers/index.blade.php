@@ -135,7 +135,7 @@ Customers
                                                 <option value="">Select Time Zone</option>
                                                 @if(count($timezones) > 0)
                                                     @foreach ($timezones as $time)
-                                                        <option value="{{ $time->timezone_value }}">
+                                                        <option value="{{ $time->id }}">
                                                             {{ $time->zone_name.' '.$time->time_zone }}
                                                         </option>
                                                     @endforeach
