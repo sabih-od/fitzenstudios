@@ -13,17 +13,13 @@ use App\Models\Trainer;
 use App\Models\Customer;
 use App\Models\Lead;
 use App\Models\TimeZone;
-
 use App\Models\CustomerToTrainer;
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
-
         $requests = BookDemoSession::where('status', 'pending')->orderBy('id', 'DESC')->get();
-//        $sessions           = CustomerToTrainer::all();
-
         $sessions = CustomerToTrainer::with('customer', 'trainer')
             ->where('status', '!=', 'canceled')
             ->orderBy('trainer_date')
@@ -35,17 +31,8 @@ class AdminController extends Controller
                 return $item[0];
             });
         $start_date = date('Y-m-d');
-
         $now = Carbon::now();
         $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
-
-//        $start_date = Carbon::parse(strtotime($start_date));
-//        $subDates = $now->diffInDays($start_date, false);
-//        if($subDates < 0){
-//            $start_date = $start_date->subtract('days', $subDates);
-//            $start_date->addDay();
-//        }
-
         $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer')
             ->whereBetween('trainer_date', [$start_date, $currentMonth_end])
             ->where('status', '!=', 'canceled')
@@ -58,8 +45,6 @@ class AdminController extends Controller
                 return $item[0];
             })
             ->take(8);
-
-//        $upcoming_sessions  = CustomerToTrainer::with('customer', 'trainer')->where('trainer_date', $current_date)->orderBy('id', 'ASC')->get();
 
         $demo_data = [];
         $i = 0;
@@ -75,39 +60,40 @@ class AdminController extends Controller
             $demo_data[$i]['description'] = $demo;
             $i++;
         }
-
         return view('admin.dashboard', compact('upcoming_sessions', 'requests', 'sessions', 'demo_data', 'trainers', 'customers'));
     }
 
     public function ChangePassword(Request $request)
     {
+        try {
+            if ($request->method() == 'POST') {
+                if ($request->input('password') != $request->input('password_confirmation')) {
+                    return redirect()->back()->with(['error' => 'Password and confirm password does not match']);
+                }
 
-        if ($request->method() == 'POST') {
-            if ($request->input('password') != $request->input('password_confirmation')) {
-                return redirect()->back()->
-                with(['error' => 'Password and confirm password does not match']);
+                $user = User::findOrFail(Auth::id());
+                if (Hash::check($request->old_password, $user->password)) {
+                    $user->fill([
+                        'password' => Hash::make($request->password)
+                    ])->save();
+                    return redirect()->back()->with(['success' => 'Password changed']);
+                } else {
+                    return redirect()->back()->with(['error' => 'Old password does not match']);
+                }
             }
-
-            $user = User::findOrFail(Auth::id());
-            if (Hash::check($request->old_password, $user->password)) {
-                $user->fill([
-                    'password' => Hash::make($request->password)
-                ])->save();
-                return redirect()->back()->with(['success' => 'Password changed']);
-            } else {
-                return redirect()->back()->with(['error' => 'Old password does not match']);
-            }
-
+            return view('admin.change_password');
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
         }
-        return view('admin.change_password');
     }
 
     public function DemoSession($id)
     {
         $session = BookDemoSession::find($id);
         $session = $session->load('timeZone');
-        $trainers = Trainer::all();
-        return view('admin.demo_session', compact('session', 'trainers'));
+        return view('admin.demo_session')
+            ->with('session', $session)
+            ->with('trainers', Trainer::all());
     }
 
     public function login()
@@ -117,36 +103,28 @@ class AdminController extends Controller
 
     public function PermanentCustomer($lead_id)
     {
-        $update_lead = Lead::find($lead_id);
-        $update_lead->is_customer = 1;
-        $update_lead->save();
+        try {
+            $update_lead = Lead::findOrFail($lead_id);
+            $update_lead->is_customer = 1;
+            $update_lead->save();
 
-        $user_id = $update_lead->user_id;
-        $get_cust_id = Customer::where('user_id', $user_id)->first();
+            $user_id = $update_lead->user_id;
+            $get_cust_id = Customer::where('user_id', $user_id)->first();
 
-        $confirm_customer = Customer::find($get_cust_id->id);
-        $confirm_customer->is_lead = 0;
-        $confirm_customer->type = "permanent";
-        $confirm_customer->save();
+            $confirm_customer = Customer::findOrFail($get_cust_id->id);
+            $confirm_customer->is_lead = 0;
+            $confirm_customer->type = "permanent";
+            $confirm_customer->save();
 
-        $username = $update_lead->first_name . ' ' . $update_lead->last_name;
-        return redirect()->back()->with('success', 'Your Lead "' . $username . '" now confirms as an permanent customer...!!');
-
+            $username = $update_lead->first_name . ' ' . $update_lead->last_name;
+            return redirect()->back()->with('success', 'Your Lead "' . $username . '" now confirms as an permanent customer...!!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'This customer is not exists anymore.');
+        }
     }
 
     public function CreateSession(Request $request)
     {
-//        $customers = Customer::where('is_lead', 0)->get();
-//        $AdminCreateSession=new AdminCreateSession();
-//        $AdminCreateSession->trainer_id = $request->trainer_id;
-//        $AdminCreateSession->customer_id = $request->customer_id;
-//        $AdminCreateSession->session_type = $request->session_type;
-//        $AdminCreateSession->time_zone = $request->time_zone;
-//        $AdminCreateSession->notes = $request->notes;
-//        $AdminCreateSession->trainer_date = $request->trainer_date;
-//        $AdminCreateSession->trainer_time = $request->trainer_time;
-//        $AdminCreateSession->save();
-
         return view('admin.create_session')
             ->with('customers', Customer::get())
             ->with('trainers', Trainer::all())
