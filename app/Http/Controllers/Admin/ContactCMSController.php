@@ -14,7 +14,7 @@ use File;
 
 class ContactCMSController extends Controller
 {
-   
+
     public function index()
     {
         //
@@ -25,7 +25,7 @@ class ContactCMSController extends Controller
         //
     }
 
- 
+
     public function store(Request $request)
     {
         //
@@ -63,7 +63,7 @@ class ContactCMSController extends Controller
         {
             if(File::exists(public_path($dirPath.'/'.$request->banner_image))){
                 File::delete(public_path($dirPath.'/'.$request->banner_image));
-            }    
+            }
             $fileName = time().'-'.$request->banner_image->getClientOriginalName();
             $request->banner_image->move(public_path($dirPath), $fileName);
             $update->banner_image =  $dirPath.'/'.$fileName;
@@ -105,7 +105,7 @@ class ContactCMSController extends Controller
         return back();
     }
 
- 
+
     public function destroy($id)
     {
         //

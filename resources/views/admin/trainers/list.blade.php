@@ -20,8 +20,6 @@
                 <div class="col-md-4 col-sm-6">
                     <div class="userCard">
                         <!-- Button trigger modal -->
-
-
                         <!-- Modal -->
                         <div class="modal fade" id="exampleModal{{ $item->id }}" tabindex="-1" role="dialog"
                              aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -38,7 +36,7 @@
                                               enctype="multipart/form-data">
                                             @csrf
                                             <input type="hidden" name="trainer_id" value="{{ $item->id }}">
-                                            <input type="file" name="slip" class="form-control">
+                                            <input type="file" name="slip" class="form-control" required>
                                             <button class="btnStyle">Add Payment</button>
                                         </form>
                                     </div>
@@ -74,11 +72,13 @@
                     </div>
                 </div>
             @empty
+                <div class="col-md-12 col-sm-12">
+                    <h5 class="text-center">No record found.</h5>
+                </div>
             @endforelse
-
         </div>
     </div>
-    @php $timezones = App\Models\TimeZone::all(); @endphp
+
     <!-- Modal -->
     <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
@@ -103,19 +103,19 @@
                             <label for="trainer_name">Email<span style="color: red">*</span></label>
                             <input type="text" id="email" name="email" class="form-control" required/>
                         </div>
-
                         <div class="form-group">
                             <label for="timezone">Time Zone<span style="color: red">*</span></label>
                             <select name="time_zone" id="time_zone" class="form-control" required>
                                 <option value="">Select Time Zone</option>
-                                @forelse ($timezones as $time)
-                                    <option style="color: black !important" value="{{ $time->timezone_value }}">{{ $time->zone_name.' '.$time->time_zone }}</option>
-                                @empty
-                                @endforelse
+                                @if(count($timezones) > 0)
+                                    @foreach ($timezones as $time)
+                                        <option style="color: black !important" value="{{ $time->id }}">
+                                            {{ $time->zone_name.' '.$time->time_zone }}
+                                        </option>
+                                    @endforeach
+                                @endif
                             </select>
                         </div>
-
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -128,9 +128,7 @@
 @endsection
 
 @push('custom-js-scripts')
-
     <script type="text/javascript">
-
         $('body').on('click', '.addBtn', function () {
             $("#pkid").val(0);
             $("#trainer_name").val('');
@@ -160,11 +158,5 @@
             }
             return false;
         }
-
-        // $(document).on('click', '.add_payment', function() {
-        //     var trainer_id = $(this).data('id');
-        //     $('#addPayment'+trainer_id).modal('show');
-        // });
-
     </script>
 @endpush
