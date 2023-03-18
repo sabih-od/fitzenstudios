@@ -4,15 +4,14 @@ Demo Session Requests
 @endsection
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 @section('content')
-
 <div class="row">
     <div class="col-md-12">
         <h2 class="secHeading">Session Requests </h2>
     </div>
     <div class="col-md-12">
- 
+
         <div class="card">
-            <div class="card-body">                
+            <div class="card-body">
                 <div class="">
                     <table class="table" id = "gridView">
                         <thead class="thead-light" >
@@ -23,12 +22,11 @@ Demo Session Requests
                             <th>Goals</th>
                             <th>Message</th>
                             <th>Trainer</th>
-                            <th>Status</th>      
-                            <th width= "10%">Action</th> 
+                            <th>Status</th>
+                            <th width= "10%">Action</th>
                         </thead>
                         <tbody>
                             @forelse ($demos as $item)
-                               
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{$item->Customer->first_name .' '. $item->Customer->last_name}}</td>
@@ -38,33 +36,28 @@ Demo Session Requests
                                     <td>{{ $item->message }}</td>
                                     <td>{{ isset($item->Customer->trainer) ? $item->Customer->trainer->name : '' }}</td>
                                     <td>{{ $item->status }}</td>
-                                   
-
                                     <td>
-                                        {{-- <button class="btn btn-sm btn-warning" onclick="changeTrainer({{ $item->customer_id }}, this)" data-name="{{ $item->first_name.' '.$item->last_name }}" data-id="{{ $item->id }}" data-date="{{ date('mm-dd-yyyy', strtotime($item->session_date)) }}" data-time="{{ $item->session_time }}" data-trainer="{{ isset($item->Customer->trainer) ? $item->Customer->trainer->trainer_id : 0 }}">
-                                            <i class="fa fa-edit" aria-hidden="true"></i>
-                                        </button> --}}
                                         @if($item->status == "pending")
                                             <a href="{{ url('admin/demo-session/'.$item->id) }}" class="btn btn-sm btn-warning">
                                                 <i class="fa fa-plus" aria-hidden="true"></i>
-                                                
-                                            </a> 
+                                            </a>
                                         @else
                                         <a href="javascript:;" class="btn btn-sm btn-warning">
-                                            {{-- <i class="fa fa-plus" aria-hidden="true"></i> --}}
-                                        </a> 
+                                        </a>
                                         @endif
-                                        <button class="btn btn-sm btn-danger" onclick="Delete('{{$item->id}}');" > 
+                                        <button class="btn btn-sm btn-danger" onclick="Delete('{{$item->id}}');" >
                                             <i class="fa fa-trash"></i>
-                                        </button>               
-                                        <form action="{{url('admin/delete-session-request')}}" id="deleteRow{{$item->id}}" method="POST" style="display: none;">    
-                                            @csrf                              
-                                            <input type="hidden" name="id" value="{{$item->id}}">                     
+                                        </button>
+                                        <form action="{{url('admin/delete-session-request')}}" id="deleteRow{{$item->id}}" method="POST" style="display: none;">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{$item->id}}">
                                         </form>
                                     </td>
                                 </tr>
-                              
                             @empty
+                                <tr>
+                                    <td colspan="100%" class="text-center">No record found.</td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -89,12 +82,12 @@ Demo Session Requests
             <input type="hidden" id="session_id" name="session_id" value="0" />
 
             <div class="modal-body">
-              
+
                 <div class="form-group">
                     <label for="">Session Type</label>
                     <input type="text" class="form-control" name="session_type">
                 </div>
-                
+
                 <div class="form-group">
                     <label for="trainer_name">Trainer</label>
                     <select class="form-control" name="trainer_id" id="trainer_id" required>
@@ -115,17 +108,17 @@ Demo Session Requests
                         </div>
                         {{-- <label for="">Date</label>
                         <input type="date" placeholder="Select Date" class="form-control" id="simpleDataInput" name="trainer_date"> --}}
-                        
+
                         {{-- <input type="date" placeholder="Select Date" class="form-control" id="simpleDataInput" name="trainer_date"> --}}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="clockPicker2">Time</label>
                     <div class="input-group clockpicker" id="clockPicker2">
-                    <input type="time" class="form-control" name="trainer_time" id="trainer_time" required>                     
+                    <input type="time" class="form-control" name="trainer_time" id="trainer_time" required>
                     <div class="input-group-append">
                         <span class="input-group-text"><i class="fas fa-clock"></i></span>
-                    </div>                      
+                    </div>
                     </div>
                 </div>
                 <div class="col-md-10">
@@ -152,20 +145,20 @@ Demo Session Requests
 <script type="text/javascript">
 
     $(document).ready(function () {
-        
+
         // Bootstrap Date Picker
         $('#simple-date1 .input-group.date').datepicker({
             format: 'yyyy-mm-dd',
             todayBtn: 'linked',
             todayHighlight: true,
-            autoclose: true,        
+            autoclose: true,
         });
 
         $('#clockPicker2').clockpicker({
             autoclose: true
         });
 
-        $('#check-minutes').click(function(e){        
+        $('#check-minutes').click(function(e){
             e.stopPropagation();
             input.clockpicker('show').clockpicker('toggleView', 'minutes');
         });
@@ -192,11 +185,10 @@ Demo Session Requests
             event.preventDefault();
             var delete_id = '#deleteRow'+id;
             // console.log(delete_id);
-            $('#deleteRow'+id).submit(); 
+            $('#deleteRow'+id).submit();
             // document.getElementById('delete-form-' + id).submit();
         }
         return false;
     }
-alert();
 </script>
 @endpush

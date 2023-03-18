@@ -185,9 +185,16 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="">Time Zone</label>
-                                            <input type="text" name="time_zone"
-                                                   value="{{ isset($trainer->time_zone) ? $trainer->timeZone['abbreviation'] : ' ' }}"
-                                                   class="form-control">
+                                            <select name="time_zone" id="time_zone" class="form-control" required>
+                                                <option value="">Select Time Zone</option>
+                                                @if(count($timezones) > 0)
+                                                    @foreach ($timezones as $time)
+                                                        <option style="color: black !important" value="{{ $time->id }}" {{ $trainer->time_zone == $time->id ? 'selected' : '' }}>
+                                                            {{ $time->zone_name.' '.$time->time_zone }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-6">

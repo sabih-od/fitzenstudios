@@ -7,6 +7,9 @@ Re-Schedule Session Requests
 
 <div class="row">
     <div class="col-md-12">
+        <h2 class="secHeading">Re-Schedule Requests</h2>
+    </div>
+    <div class="col-md-12">
 
         <div class="card">
             <div class="card-body">
@@ -26,7 +29,6 @@ Re-Schedule Session Requests
                         </thead>
                         <tbody>
                             @forelse ($all_requests as $item)
-
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ ucfirst($item->request_by) }}</td>
@@ -57,12 +59,11 @@ Re-Schedule Session Requests
 
                             @empty
                                 <tr>
-                                    <td colspan="8">
-                                        <h6 style="text-align: center"><span class="alert alert-danger">No Request Available..!!</span></h6>
+                                    <td colspan="100%" class="text-center">
+                                        No record found.
                                     </td>
                                 </tr>
                             @endforelse
-
                         </tbody>
                     </table>
                 </div>

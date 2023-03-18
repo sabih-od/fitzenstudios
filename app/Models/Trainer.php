@@ -12,6 +12,6 @@ class Trainer extends Model
     use HasFactory;
 
     public function timeZone() {
-        return $this->hasOne(TimeZone::class, 'timezone_value','time_zone');
+        return $this->hasOne(TimeZone::class, 'id', 'time_zone');
     }
 }

@@ -162,15 +162,14 @@ trait ZoomMeetingTrait
             ];
 
             $response =  $this->client->delete($url.$path, $body);
-
             return [
                 'success' => $response->getStatusCode() === 204,
             ];
-
         } catch (\Exception $ex) {
             return [
                 'success' => false,
-                'message' => 'Oops! Something went wrong.'
+                'message' => 'Oops! Something went wrong.',
+                'exception' => $ex->getMessage()
             ];
         }
     }

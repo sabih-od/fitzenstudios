@@ -584,15 +584,17 @@ class AdminCustomerController extends Controller
                 }
             }],
             'session_type' => 'required',
+            'trainer_date.*' => 'required',
+            'trainer_time.*' => 'required',
             'time_zone' => ['required', Rule::exists('time_zones', 'id')],
-            'notes' => 'required',
             ],
             [
                 'trainer_id.required' => 'The trainer field is required.',
                 'customer_id.required' => 'At least one customer is required.',
                 'session_type.required' => 'The session type field is required.',
                 'time_zone.required' => 'The timezone field is required.',
-                'notes.required' => 'The notes field is required.',
+                'trainer_date.*.required' => 'The session date field is required.',
+                'trainer_time.*.required' => 'The session time field is required.',
             ]
         );
 
@@ -639,7 +641,8 @@ class AdminCustomerController extends Controller
                         ->with('trainer', $trainer['name'])
                         ->with('join_url', $resp["data"]["join_url"])
                         ->with('start_date', date('d-m-Y', strtotime($customer_timezone_date)))
-                        ->with('start_time', $customer_timezone_time);
+                        ->with('start_time', $customer_timezone_time)
+                        ->render();
                     $this->customphpmailer('noreply@fitzenstudios.com', $value->email, 'Fitzen Studio - Assign Trainer', $assignTrainerCustomerView);
 
                     $assignTrainerView = view('admin.emails.assigntrainer-trainer')
@@ -647,7 +650,8 @@ class AdminCustomerController extends Controller
                         ->with('name', $trainer['name'])
                         ->with('start_url', $resp["data"]["start_url"])
                         ->with('start_date', date('d-m-Y', strtotime($trainer_timezone_date)))
-                        ->with('start_time', $trainer_timezone_time);
+                        ->with('start_time', $trainer_timezone_time)
+                        ->render();
                     $this->customphpmailer('noreply@fitzenstudios.com', $trainer['email'], 'Fitzen Studio - Assign Customer', $assignTrainerView);
 
                     $cust_to_trainer = new CustomerToTrainer();
@@ -702,12 +706,12 @@ class AdminCustomerController extends Controller
     {
         $session = CustomerToTrainer::find($request->customer_to_trainer_id);
         $resp = $this->delete($session->meeting_id);
+
         if (!$resp['success']) {
             return redirect()->back()->with('error', 'Oops! Something went wrong. Session has not cancelled.');
         }
 
         $session->status = "canceled";
-        $session = $session->time_zone;
         $session->save();
 
         return redirect()->back()->with('success', 'Session Cancelled Successfully..!!');
