@@ -91,7 +91,7 @@
                     <p><b>Demo Start Time: </b><span id="d_start_time"></span></p>
                     <p><b>Goal: </b><span id="goal"></span></p>
                     <p><b>Message: </b><span id="message"></span></p>
-                    <p><b>Status: </b><span id="status"></span></p>
+                    <p><b>Status: </b><label class="badge badge-info"><span id="status"></span></label></p>
                     {{-- <a class="btn btn-primary" id="reschedule_btn" type="button">Re-schedule</a> --}}
                 </div>
             </div>
