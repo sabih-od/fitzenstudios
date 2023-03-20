@@ -123,7 +123,10 @@ class AdminCustomerController extends Controller
         $trainer = Trainer::where('id', $trainer_id)->first();
         $exist = CustomerToTrainer::where('customer_id', $customer_id)->first();
         $timezone = TimeZone::find($request->time_zone);
+        //dd($customer_id, $trainer_id, $customer, $trainer, $exist, $timezone);
         try {
+            DB::beginTransaction();
+
             $date = new DateTime($request->trainer_date . '' . $request->trainer_time, new DateTimeZone($timezone->timezone_value));
             $date->setTimezone(new DateTimeZone($timezone->timezone_value));
             $sessionDate = $date->format('Y-m-d');
@@ -137,18 +140,21 @@ class AdminCustomerController extends Controller
                 "participant_video" => "",
                 "time_zone" => $timezone->timezone_value
             ];
+            //dd($meeting_data);
             $resp = $this->create($meeting_data);
             //dd($resp, $trainer, $customer);
+            //dd($trainer->time_zone);
+
             $trainerDate = new DateTime($sessionDate . '' . $sessionTime, new DateTimeZone($resp['data']['timezone']));
-            $trainerDate->setTimezone(new DateTimeZone($trainer->time_zone));
+            $trainerDate->setTimezone(new DateTimeZone($timezone->timezone_value));
             $trainer_timezone_date = $trainerDate->format('Y-m-d');
             $trainer_timezone_time = $trainerDate->format('H:i:s');
 
             $customerDate = new DateTime($sessionDate . '' . $sessionTime, new DateTimeZone($resp['data']['timezone']));
-            $customerDate->setTimezone(new DateTimeZone($customer->timeZone->timezone_value ?? $timezone->timezone_value));
+            $customerDate->setTimezone(new DateTimeZone($timezone->timezone_value));
             $customer_timezone_date = $customerDate->format('Y-m-d');
             $customer_timezone_time = $customerDate->format('H:i:s');
-
+//            dd($trainerDate, $trainer_timezone_date, $trainer_timezone_time);
             // if($trainer->time_zone == "America/Washington") {
 
             //     date_default_timezone_set('America/Los_Angeles');
@@ -196,37 +202,55 @@ class AdminCustomerController extends Controller
             //     $customer_timezone_date =  $newdatetime->format('d-m-Y');
             //     $customer_timezone_time =  $newdatetime->format('H:i');
             // }
+//            $mailData_customer = array(
+//                'to' => $customer['email'],
+//                'name' => $customer['first_name'] . ' ' . $customer['last_name'],
+//                'trainer' => $trainer['name'],
+//                'join_url' => $resp["data"]["join_url"],
+//                // "start_date" => date('d-m-Y', strtotime($request->input('trainer_date'))),
+//                // "start_time" => $request->input('trainer_time'),
+//                "start_date" => $customer_timezone_date,
+//                "start_time" => $customer_timezone_time
+//            );
+//            Mail::send('admin.emails.assigntrainer-customer', $mailData_customer, function ($message) use ($mailData_customer) {
+//                $message->to($mailData_customer['to'])->subject('Fitzen Studio - Assign Trainer');
+//            });
 
-            $mailData_customer = array(
-                'to' => $customer['email'],
-                'name' => $customer['first_name'] . ' ' . $customer['last_name'],
-                'trainer' => $trainer['name'],
-                'join_url' => $resp["data"]["join_url"],
-                // "start_date" => date('d-m-Y', strtotime($request->input('trainer_date'))),
-                // "start_time" => $request->input('trainer_time'),
-                "start_date" => $customer_timezone_date,
-                "start_time" => $customer_timezone_time,
 
-            );
+//            $mailData_trainer = array(
+//                'to' => $trainer['email'],
+//                'name' => $trainer['name'],
+//                'customer' => $customer['first_name'] . ' ' . $customer['last_name'],
+//                'start_url' => $resp["data"]["start_url"],
+//                // "start_date" => date('d-m-Y', strtotime($request->input('trainer_date'))),
+//                // "start_time" => $request->input('trainer_time'),
+//                "start_date" => $trainer_timezone_date,
+//                "start_time" => $trainer_timezone_time
+//            );
+//            Mail::send('admin.emails.assigntrainer-trainer', $mailData_trainer, function ($message) use ($mailData_trainer) {
+//                $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Trainer');
+//            });
 
-            $mailData_trainer = array(
-                'to' => $trainer['email'],
-                'name' => $trainer['name'],
-                'customer' => $customer['first_name'] . ' ' . $customer['last_name'],
-                'start_url' => $resp["data"]["start_url"],
-                // "start_date" => date('d-m-Y', strtotime($request->input('trainer_date'))),
-                // "start_time" => $request->input('trainer_time'),
-                "start_date" => $trainer_timezone_date,
-                "start_time" => $trainer_timezone_time,
-            );
+            $assignTrainerCustomerHtml = view('admin.emails.assigntrainer-customer')
+                ->with('to', $customer['email'])
+                ->with('name', $customer['first_name'] . ' ' . $customer['last_name'])
+                ->with('trainer', $trainer['name'])
+                ->with('join_url', $resp["data"]["join_url"])
+                ->with('start_date', $customer_timezone_date)
+                ->with('start_time', $customer_timezone_time)
+                ->render();
+            $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], 'Fitzen Studio - Assign Trainer', $assignTrainerCustomerHtml);
 
-            Mail::send('admin.emails.assigntrainer-customer', $mailData_customer, function ($message) use ($mailData_customer) {
-                $message->to($mailData_customer['to'])->subject('Fitzen Studio - Assign Trainer');
-            });
+            $assignTrainerHtml = view('admin.emails.assigntrainer-trainer')
+                ->with('to', $trainer['email'])
+                ->with('name', $trainer['first_name'] . ' ' . $customer['last_name'])
+                ->with('customer', $customer['first_name'] . ' ' . $customer['last_name'])
+                ->with('start_url', $resp["data"]["start_url"])
+                ->with('start_date', $trainer_timezone_date)
+                ->with('start_time', $trainer_timezone_time)
+                ->render();
+            $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], 'Fitzen Studio - Assign Trainer', $assignTrainerHtml);
 
-            Mail::send('admin.emails.assigntrainer-trainer', $mailData_trainer, function ($message) use ($mailData_trainer) {
-                $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Trainer');
-            });
 
             if ($exist != null) {
                 CustomerToTrainer::where('customer_id', $customer_id)->update([
@@ -242,14 +266,9 @@ class AdminCustomerController extends Controller
                     'trainer_timezone_time' => $trainer_timezone_time,
                     'customer_timezone_date' => $customer_timezone_date,
                     'customer_timezone_time' => $customer_timezone_time,
-
-                    // 'time_zone' => $timezone->timezone_value
-                    'time_zone' => $request->time_zone
-
+                    'time_zone' => $timezone->id
                 ]);
-
             } else {
-
                 CustomerToTrainer::create([
                     'demo_session_id' => (int)$request->session_id,
                     'start_url' => $resp["data"]["start_url"],
@@ -265,11 +284,8 @@ class AdminCustomerController extends Controller
                     'trainer_timezone_time' => $trainer_timezone_time,
                     'customer_timezone_date' => $customer_timezone_date,
                     'customer_timezone_time' => $customer_timezone_time,
-                    'time_zone' => $request->time_zone
-
-                    // 'time_zone' => $timezone->timezone_value
+                    'time_zone' => $timezone->id
                 ]);
-
             }
 
             $update_status = BookDemoSession::find($request->session_id);
@@ -289,12 +305,11 @@ class AdminCustomerController extends Controller
             $notification_to_customer->notification = "Admin assigned you a trainer for your demo session request";
             $notification_to_customer->type = "Assign trainer to customer";
             $notification_to_customer->save();
-
-            return redirect()->back()->with('success', 'Trainer assigned successfully.');
+            DB::commit();
+            return redirect()->route('admin.sessions')->with('success', 'Trainer assigned successfully.');
         } catch (\Exception $e) {
-
+            DB::rollBack();
             return redirect()->back()->with('error', $e->getMessage() . " Line: " . $e->getLine());
-
         }
 
     }
@@ -321,17 +336,13 @@ class AdminCustomerController extends Controller
 
     public function ApproveRequest($reschedule_id)
     {
-
         $reschedule_request = RescheduleRequest::find($reschedule_id);
         $session = CustomerToTrainer::find($reschedule_request->customer_to_trainer_id);
         $timezone = TimeZone::find($session->time_zone);
-
-        //$date = new DateTime($reschedule_request->new_session_date . '' . $reschedule_request->new_session_time, new DateTimeZone($reschedule_request->time_zone));
         $date = new DateTime($reschedule_request->new_session_date . '' . $reschedule_request->new_session_time, new DateTimeZone($timezone->timezone_value));
         $date->setTimezone(new DateTimeZone($timezone->timezone_value));
         $sessionDate = $date->format('Y-m-d');
         $sessionTime = $date->format('H:i:s');
-
         $data = [
             "topic" => $session->session_type,
             "start_time" => $sessionDate . ' ' . $sessionTime,
@@ -343,6 +354,7 @@ class AdminCustomerController extends Controller
         ];
 
         try {
+            DB::beginTransaction();
             $resp = $this->update($session->meeting_id, $data);
             if ($resp['success']) {
                 $customer_id = $session->customer_id;
@@ -370,38 +382,54 @@ class AdminCustomerController extends Controller
                 $update_session->customer_timezone_time = $customerTime;
                 $update_session->save();
 
-
                 $update_status = RescheduleRequest::find($reschedule_id);
                 $update_status->status = "Approved";
                 $update_status->save();
 
+//                $mailData_customer = array(
+//                    'to' => $customer['email'],
+//                    'name' => $customer['first_name'] . ' ' . $customer['last_name'],
+//                    'trainer' => $trainer['name'],
+//                    'join_url' => $update_session->join_url,
+//                    "start_date" => date('d-m-Y', strtotime($customerDate)),
+//                    "start_time" => $customerTime
+//                );
+//                Mail::send('admin.emails.assigntrainer-customer', $mailData_customer, function ($message) use ($mailData_customer) {
+//                    $message->to($mailData_customer['to'])->subject('Fitzen Studio - Assign Trainer');
+//                });
 
-                $mailData_customer = array(
-                    'to' => $customer['email'],
-                    'name' => $customer['first_name'] . ' ' . $customer['last_name'],
-                    'trainer' => $trainer['name'],
-                    'join_url' => $update_session->join_url,
-                    "start_date" => date('d-m-Y', strtotime($customerDate)),
-                    "start_time" => $customerTime,
+//                $mailData_trainer = array(
+//                    'to' => $trainer['email'],
+//                    'name' => $trainer['name'],
+//                    'customer' => $customer['first_name'] . ' ' . $customer['last_name'],
+//                    'start_url' => $update_session->start_url,
+//                    "start_date" => date('d-m-Y', strtotime($trainerDate)),
+//                    "start_time" => $trainerTime
+//                );
+//                Mail::send('admin.emails.assigntrainer-trainer', $mailData_trainer, function ($message) use ($mailData_trainer) {
+//                    $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Trainer');
+//                });
 
-                );
+                $subject = 'Fitzen Studio - Assign Trainer';
+                $assignTrainerCustomerTemplate = view('admin.emails.assigntrainer-customer')
+                    ->with('to', $customer['email'])
+                    ->with('name', $customer['first_name'] . ' ' . $customer['last_name'])
+                    ->with('trainer', $trainer['name'])
+                    ->with('join_url', $update_session->join_url)
+                    ->with('start_date', date('d-m-Y', strtotime($customerDate)))
+                    ->with('start_time', $customerTime)
+                    ->render();
+                $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], $subject, $assignTrainerCustomerTemplate);
 
-                $mailData_trainer = array(
-                    'to' => $trainer['email'],
-                    'name' => $trainer['name'],
-                    'customer' => $customer['first_name'] . ' ' . $customer['last_name'],
-                    'start_url' => $update_session->start_url,
-                    "start_date" => date('d-m-Y', strtotime($trainerDate)),
-                    "start_time" => $trainerTime,
-                );
-
-                Mail::send('admin.emails.assigntrainer-customer', $mailData_customer, function ($message) use ($mailData_customer) {
-                    $message->to($mailData_customer['to'])->subject('Fitzen Studio - Assign Trainer');
-                });
-
-                Mail::send('admin.emails.assigntrainer-trainer', $mailData_trainer, function ($message) use ($mailData_trainer) {
-                    $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Trainer');
-                });
+                $assignTrainerTemplate = view('admin.emails.assigntrainer-trainer')
+                    ->with('to', $trainer['email'])
+                    ->with('name', $trainer['first_name'] . ' ' . $customer['last_name'])
+                    ->with('customer', $customer['first_name'] . ' ' . $customer['last_name'])
+                    ->with('start_url', $update_session->start_url)
+                    ->with('start_date', date('d-m-Y', strtotime($trainerDate)))
+                    ->with('start_time', $trainerTime)
+                    ->render();
+                $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], $subject, $assignTrainerTemplate);
 
                 $notification_to_trainer = new Notification();
                 $notification_to_trainer->sender_id = FacadesAuth::user()->id;
@@ -416,18 +444,15 @@ class AdminCustomerController extends Controller
                 $notification_to_customer->notification = "Admin approved re-schedule session request";
                 $notification_to_customer->type = "Re-Schedule Session";
                 $notification_to_customer->save();
-
+                DB::commit();
                 return redirect('admin/reschedule-requests')->with('success', 'Re-Scheduled Request approved successfully...!!');
-
             } else {
                 return redirect()->back()->with('error', 'Oops! Something went wrong.');
             }
         } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->with('error', $e->getMessage());
-
         }
-
-
     }
 
     public function UpdateSessionStatus(Request $request)

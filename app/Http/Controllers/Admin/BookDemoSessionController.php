@@ -62,30 +62,61 @@ class BookDemoSessionController extends Controller
        return view('admin.cms.demosessioncms',compact('content'));
     }
 
- 
+
     public function update(Request $request, $id)
     {
-        $dirPath = "uploads/images/contact";
-
-        $update          = DemoSessionCMS::find($id);
-        $update->heading = $request->heading;
-        $update->content = $request->content;
-        if($request->hasFile('image'))
-        {
-            if(File::exists(public_path($dirPath.'/'.$request->image))){
-                File::delete(public_path($dirPath.'/'.$request->image));
-            }    
-            $fileName = time().'-'.$request->image->getClientOriginalName();
-            $request->image->move(public_path($dirPath), $fileName);
-            $update->image =  $dirPath.'/'.$fileName;
+        $request->validate(
+            [
+                'heading' => 'required',
+                'content' => 'required',
+                'image' => 'required|mimes:jpeg,png,bmp,tiff|max:4096',
+            ],
+            [
+                'heading.required' => 'The heading field is required.',
+                'content.required' => 'The content is required.',
+                'image.required' => 'The image field is required.',
+                'image.mimes' => 'Only jpeg, png are allowed.',
+                'image.max' => 'Maximum 4096 size allowed to upload.'
+            ]
+        );
+        try {
+            $dirPath = "uploads/images/contact";
+            $update          = DemoSessionCMS::find($id);
+            if(!empty($update)) {
+                $update->heading = $request->heading;
+                $update->content = $request->content;
+                if($request->hasFile('image'))
+                {
+                    if(File::exists(public_path($dirPath.'/'.$request->image))){
+                        File::delete(public_path($dirPath.'/'.$request->image));
+                    }
+                    $fileName = time().'-'.$request->image->getClientOriginalName();
+                    $request->image->move(public_path($dirPath), $fileName);
+                    $update->image =  $dirPath.'/'.$fileName;
+                }
+                $update->save();
+            } else {
+                $create          = new DemoSessionCMS();
+                $create->heading = $request->heading;
+                $create->content = $request->content;
+                if($request->hasFile('image'))
+                {
+                    if(File::exists(public_path($dirPath.'/'.$request->image))){
+                        File::delete(public_path($dirPath.'/'.$request->image));
+                    }
+                    $fileName = time().'-'.$request->image->getClientOriginalName();
+                    $request->image->move(public_path($dirPath), $fileName);
+                    $create->image =  $dirPath.'/'.$fileName;
+                }
+                $create->save();
+            }
+            return back()->with('success', 'Successfully updated.');
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
         }
-        $update->save();
-
-        $content = DemoSessionCMS::find($id);
-        return view('admin.cms.demosessioncms',compact('content'));
     }
 
-  
+
     public function destroy($id)
     {
         //

@@ -5,7 +5,7 @@ Sessions
 
 @section('content')
     <main>
-        <div class="content-wrap">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6">
                     <h2 class="secHeading">Sessions</h2>
@@ -29,25 +29,25 @@ Sessions
                             </thead>
                             <tbody>
                                 @forelse ($sessions as $item)
-
                                     <tr>
                                         <td><span>{{ $loop->iteration }}</span></td>
                                         <td><span>{{ $item->customer->first_name}}</span></td>
-
                                         <td><span>{{ date('d-m-Y', strtotime(@$item->customer_timezone_date)) }}</span></td>
                                         <td><span>{{ date('h:i A', strtotime(@$item->customer_timezone_time)) }}</span></td>
-                                        <!--<td><span>{{ $item->demo_session_id != null ? date('d-m-Y', strtotime(@$item["sessions"]["session_date"])) : date('d-m-Y', strtotime(@$item->customer_timezone_date)) }}</span></td>-->
-                                        <!--<td><span>{{ $item->demo_session_id != null ? date('h:i A', strtotime(@$item["sessions"]["session_time"])) : date('h:i A', strtotime(@$item->customer_timezone_time)) }}</span></td>-->
-                                        <td><span>{{ @$item->timeZone->abbreviation }}</span></td>
-                                        {{--<td><span>{{@$item->abbreviation}}</span></td>--}}
+                                        <td><span>{{ @$item->timeZone->abbreviation ?? '---'}}</span></td>
+                                        <td><span>{{ $item["sessions"] != null ? $item["sessions"]["goals"] : $item->session_type }}</span></td>
+                                        <td><span>{{ $item["sessions"] != null ? $item["sessions"]["message"] : $item->notes }}</span></td>
 
-                                      
+                                    <!--<td><span>{{ $item->demo_session_id != null ? date('d-m-Y', strtotime(@$item["sessions"]["session_date"])) : date('d-m-Y', strtotime(@$item->customer_timezone_date)) }}</span></td>-->
+                                    <!--<td><span>{{ $item->demo_session_id != null ? date('h:i A', strtotime(@$item["sessions"]["session_time"])) : date('h:i A', strtotime(@$item->customer_timezone_time)) }}</span></td>-->
+                                    {{--<td><span>{{@$item->abbreviation}}</span></td>--}}
                                         <!--<td><span>{{ @$item["sessions"]["time_zone"] }}</span></td>-->
-                                        <td><span>{{ $item["sessions"] != null ? $item["sessions"]["goals"] : '' }}</span></td>
-                                        <td><span>{{ $item["sessions"] != null ? $item["sessions"]["message"] : '' }}</span></td>
                                         {{-- @if($item->status == "completed" && $item->id != $item["reviews"]["cust_to_trainer_id"]) --}}
-                                        @if($item["status"] == "completed")
+                                        {{-- <button class="btn btn-sm btn-danger cancel-session" onClick="Delete({{$item->id}});">
+                                                    Cancel Session
+                                                </button> --}}
 
+                                        @if($item["status"] == "completed")
                                             @php $check = App\Models\Performance::where('session_id',$item->id)->where('customer_id', $item->customer_id)->first(); @endphp
                                             @if($check != null)
                                                 <td>
@@ -59,10 +59,7 @@ Sessions
                                             @endif
                                         @elseif($item["status"] == "upcoming" || $item["status"] == "re-scheduled")
                                             <td>
-                                            {{-- <button class="btn btn-sm btn-danger cancel-session" onClick="Delete({{$item->id}});">
-                                                Cancel Session
-                                            </button> --}}
-                                            <a href="javascript:;" data-cust_to_trainer_id="{{ $item->id }}" class="btn-sm btn btn-danger cancel-session">Cancel Session</a></td>
+                                            <a href="javascript:;" data-cust_to_trainer_id="{{ $item->id }}" class="btn-sm btn btn-warning cancel-session">Cancel Session</a></td>
                                         @else
                                             <td>
                                                 <a href="javascript:;" class="btn btn-danger">Cancelled</a>
@@ -124,7 +121,6 @@ Sessions
                                     </div>
                                     </div>
                                 </div>
-
                                 <form action="{{ url('customer/cancel-session') }}" method="POST" id="cancelSession">
                                     @csrf
                                     <input type="hidden" name="customer_to_trainer_id" id="customer_to_trainer_id" value="">

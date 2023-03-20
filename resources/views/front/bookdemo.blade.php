@@ -28,7 +28,6 @@
         </style>
     </head>
     <body class="sb-nav-fixed">
-        @php $timezones = App\Models\TimeZone::all(); @endphp
         <main>
             <div class="booking-wrap">
                 <div class="container">
@@ -38,10 +37,8 @@
                             @if(session()->has('message') || session()->has('error'))
                                 <h2 class="secHeading"></h2>
                             @else
-                                <h2 class="secHeading">{{ $content->heading}}</h2>
+                                <h2 class="secHeading">{{ $content->heading ?? null }}</h2>
                             @endif
-                            {{-- <p>{!! $content->content !!}</p> --}}
-                           
                         </div>
                         @if(session()->has('message'))
                             <div class="col-md-12 alert alert-success" style="text-align: center">
@@ -82,7 +79,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="email">Email Address<span style="color: red">*</span></label>
-                                                <input type="email" name="email" placeholder="Your Email Address" class="form-control" value=" {{Auth::user()->email ?? ''}}" readonly> 
+                                                <input type="email" name="email" placeholder="Your Email Address" class="form-control" value=" {{Auth::user()->email ?? ''}}" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -115,7 +112,7 @@
 
                                                           <option style="color: black !important" value="{{ $time->id}}">{{ $time->zone_name.' '.$time->time_zone }}</option>
                                                       @empty
-                                                          
+
                                                       @endforelse
                                                 </select>
                                             </div>
@@ -137,7 +134,7 @@
                                             <button type="submit" class="btnStyle" data-wow-delay="0.6s"><span></span>BOOK SESSION</button>
                                         </div>
                                     </div>
-                                </form>  
+                                </form>
                             </div>
                         @endif
                     </div>

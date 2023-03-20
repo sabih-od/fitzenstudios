@@ -39,14 +39,16 @@
                                     <td><span>{{ $item["trainer"]["name"].' '.$item["trainer"]["last_name"] }}</span>
                                     </td>
                                     {{-- <td><span>{{ $item["trainer"]["email"] }}</span></td> --}}
+                                    <td><span>{{ date('d-m-Y', strtotime(@$item->customer_timezone_date)) }}</span></td>
+{{--                                    <td>--}}
+{{--                                        <span>{{ $item->demo_session_id != null ? date('d-m-Y', strtotime(@$item["sessions"]["session_date"])) : date('d-m-Y', strtotime(@$item->trainer_date)) }}</span>--}}
+{{--                                    </td>--}}
+{{--                                    <td>--}}
+{{--                                        <span>{{ $item->demo_session_id != null ? date('H:i', strtotime(@$item["sessions"]["session_time"])) : date('H:i', strtotime(@$item->trainer_time)) }}</span>--}}
+{{--                                    </td>--}}
+                                    <td><span>{{ date('h:i A', strtotime(@$item->customer_timezone_time)) }}</span></td>
                                     <td>
-                                        <span>{{ $item->demo_session_id != null ? date('d-m-Y', strtotime(@$item["sessions"]["session_date"])) : date('d-m-Y', strtotime(@$item->trainer_date)) }}</span>
-                                    </td>
-                                    <td>
-                                        <span>{{ $item->demo_session_id != null ? date('H:i', strtotime(@$item["sessions"]["session_time"])) : date('H:i', strtotime(@$item->trainer_time)) }}</span>
-                                    </td>
-                                    <td>
-                                        <span>{{ isset($item->time_zone) ? $item->timeZone['abbreviation'] ?? '---' : '---'  }}</span>
+                                        <span>{{ @$item->timeZone->abbreviation ?? '---'  }}</span>
                                     </td>
                                     {{-- @if($item->status == "completed" && $item->id != $item["reviews"]["cust_to_trainer_id"]) --}}
                                     @if($item->status == "completed")
