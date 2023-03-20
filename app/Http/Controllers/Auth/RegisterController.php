@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use App\Models\Customer;
+use App\Traits\PHPCustomMail;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -18,8 +19,7 @@ use App\Models\Lead;
 
 class RegisterController extends Controller
 {
-
-    use RegistersUsers;
+    use RegistersUsers, PHPCustomMail;
     public function redirectTo()
     {
         return '/customer/dashboard';
@@ -43,7 +43,6 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $check_user = User::where('email', $data['email'])->first();
-
         if($check_user == null) {
             $user =  User::create([
                 'name'     => $data['f_name'] . ' ' . $data['l_name'],
@@ -81,23 +80,15 @@ class RegisterController extends Controller
             $notification->type         = "New Customer Registration";
             $notification->save();
 
-            $mailData = array(
-                'to' => $data['email'],
-            );
-
-            Mail::send('front.emails.thankyou-signup', $mailData, function($message) use($mailData){
-                $message->to($mailData['to'])->subject('Fitzen Studio - Thank you for Signing Up');
-            });
-
+            $view = view('front.emails.thankyou-signup')
+                ->with('to', $data['email'])
+                ->render();
+            $this->customphpmailer('noreply@fitzenstudios.com', $data['email'], 'Fitzen Studio - Thank you for Signing Up', $view);
             return $user;
 
         } else {
             return redirect()->back()->with('error', 'Email already exist. Please try another one..!!');
         }
-        // Mail::send('front.emails.book-demo', $mailData, function($message) use($mailData){
-        //     $message->to($mailData['to'])->subject('Fitzen Studio - Book a demo session');
-        // });
-
     }
 
     public function CompleteRegistration(Request $request)

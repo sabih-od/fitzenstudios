@@ -191,7 +191,6 @@ Route::prefix('trainer')->middleware('auth')->group(function () {
     })->name('trainer.notification');
     Route::get('sessions',[TrainerPortalController::class, 'Sessions'])->name('sessions');
     Route::post('cancel-session', [TrainerPortalController::class, 'CancelSession']);
-
 });
 
 
