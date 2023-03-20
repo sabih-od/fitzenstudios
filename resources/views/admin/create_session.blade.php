@@ -9,6 +9,9 @@ Create Session
             color: var(--theme-color);
             font-size: 30px;
         }
+        .select2-selection.select2-selection--single {
+            height: 60px !important;
+        }
     </style>
 @endsection
 @section('content')
@@ -38,7 +41,7 @@ Create Session
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="">Trainer</label>
-                                        <select class="form-control" name="trainer_id" id="trainer_id" >
+                                        <select class="form-control trainer_id" name="trainer_id" id="trainer_id" >
                                             <option value="">Select Trainer</option>
                                             @if(count($trainers) > 0)
                                                 @foreach($trainers as $trainer)
@@ -51,8 +54,8 @@ Create Session
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="">Customers</label>
-                                        <select class="form-control js-example-basic-multiple" name="customer_id[]"  multiple="multiple" id="customer_id" >
-                                            <option value="">Select Customer</option>
+                                        <select class="form-control js-example-basic-multiple" name="customer_id[]"  multiple="multiple" id="customer_id">
+                                            <option value="" disabled>Select Customer</option>
                                                 @if(count($customers) > 0)
                                                     @foreach ($customers as $item)
                                                         <option value="{{ $item->id }}" {{ old('customer_id', '') == $item->id ? 'selected' : '' }}>
@@ -127,6 +130,7 @@ Create Session
     <script>
         $(document).ready(function () {
             $('.js-example-basic-multiple').select2();
+            $('.trainer_id').select2();
         });
         $(document).ready(function(){
         $(".addCF").click(function(){
