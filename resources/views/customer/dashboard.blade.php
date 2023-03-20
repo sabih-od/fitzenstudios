@@ -30,14 +30,8 @@
                     <div class="row">
                         <div class="col-md-12">
                             <h2 class="secHeading">Upcoming Sessions</h2>
-                            {{--                            @php--}}
-                            {{--                                $upcoming_session = json_decode($upcoming_sessions,true);--}}
-
-                            {{--                            @endphp--}}
-
                             <div id="upcoming_sessions_month"></div>
                         </div>
-
 
                         <!-- Re-Schedule Modal -->
                         <div class="modal fade" id="rescheduleMessage" tabindex="-2" role="dialog"
@@ -97,6 +91,7 @@
                     <p><b>Demo Start Time: </b><span id="d_start_time"></span></p>
                     <p><b>Goal: </b><span id="goal"></span></p>
                     <p><b>Message: </b><span id="message"></span></p>
+                    <p><b>Status: </b><span id="status"></span></p>
                     {{-- <a class="btn btn-primary" id="reschedule_btn" type="button">Re-schedule</a> --}}
                 </div>
             </div>
@@ -117,7 +112,7 @@
         $(document).ready(function () {
             var calendarEl = document.getElementById('demo_calendar');
             var demos = @json($demo_data);
-            // console.log(demos)
+            console.log(demos)
             const date = new Date();
 
             function handleDatesRender(arg) {
@@ -132,9 +127,7 @@
                 datesRender: function (info) {
                     var startDate = new Date(info.view.calendar.state.dateProfile.currentRange.start).toDateString()
                     var endDate = new Date(info.view.calendar.state.dateProfile.currentRange.end).toDateString()
-                    console.log(startDate);
                     $.ajax({
-
                         url: "{{route('customer-site-calendar-data-fetch')}}",
                         type: "post",
                         dataType: 'json',
@@ -148,48 +141,43 @@
                     });
                 },
 
-
                 header: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridWeek, dayGridMonth,'
                 },
 
-
-                // header: {
-                //     left: 'prev,next today',
-                //     center: 'title',
-                //     right: 'dayGridWeek,dayGridMonth,'
-                // },
-
                 firstDay: 1,
                 dateClick: function () {
                     $('.session-popup').slideDown(500);
                 },
                 events: demos,
+                eventRender: function(event, element) {
+                    if(event.event.rendering == "canceled" || event.event.rendering == "cancelled") {
+                        event.el.classList.add("bg-danger")
+                        event.el.classList.add("border-danger")
+                    }
+                },
                 eventClick: function (event, jsEvent, view) {
-                    console.log(event.event._def);
                     $('#modalHeaderText').html(event.event._def.title);
 
-                    $('#trainer').text(event.event.extendedProps.description.customer.trainer.name);
-                    $('#start_date').html(event.event.extendedProps.description.customer.trainer
-                        .trainer_date);
-                    $('#start_time').html(event.event.extendedProps.description.customer.trainer
-                        .trainer_time);
+                    $('#trainer').text(event.event.extendedProps.description.trainer.name);
+                    $('#start_date').html(event.event.extendedProps.description.trainer_date);
+                    $('#start_time').html(event.event.extendedProps.description.trainer_time);
 
-                    $('#goal').html(event.event.extendedProps.description.goals);
-                    $('#message').html(event.event.extendedProps.description.message);
-                    $('#d_start_date').html(event.event.extendedProps.description.customer.trainer.customer_timezone_date);
-                    $('#d_start_time').html(event.event.extendedProps.description.customer.trainer.customer_timezone_time);
+                    $('#goal').html(event.event.extendedProps.description.hasOwnProperty('goals') ? event.event.extendedProps.description.goals : '---');
+                    $('#message').html(event.event.extendedProps.description.notes);
+                    $('#d_start_date').html(event.event.extendedProps.description.customer_timezone_date);
+                    $('#d_start_time').html(event.event.extendedProps.description.customer_timezone_time);
                     $('#session_date').val(event.event.extendedProps.description.session_date);
                     $('#session_time').val(event.event.extendedProps.description.session_time);
                     $('#demo_goal').val(event.event.extendedProps.description.goals);
-                    $('#demo_message').val(event.event.extendedProps.description.message);
+                    $('#demo_message').val(event.event.extendedProps.description.notes);
                     $('#demo_id').val(event.event._def.publicId);
-                    // $('#eventUrl').attr('href',event.url);
+                    let status = event.event.extendedProps.description.status == 'canceled' ? 'Cancelled' : event.event.extendedProps.description.status.toUpperCase();
+                    $('#status').html(status);
                     $('#calendarModal').modal();
-                },
-
+                }
             });
             calendar.render();
         });
@@ -218,7 +206,6 @@
             $("#upcoming_sessions_month").show();
 
         });
-
     </script>
 
 @endsection

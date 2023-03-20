@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Models\TimeZone;
+use App\Traits\PHPCustomMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Models\HomepageCMS;
 use App\Models\AboutUsCMS;
@@ -28,16 +31,16 @@ use Carbon;
 use File;
 class FrontendController extends Controller
 {
-    public function index() {
-//        dd(bcrypt('admin!@#'));
-//        dd(\Hash::make('admin!@#'));
+    use PHPCustomMail;
 
+    public function index() {
         $content = HomepageCMS::find(1);
         return view('front.index',compact('content'));
     }
     public function BookDemo() {
-        $content = DemoSessionCMS::find(1);
-        return view('front.bookdemo',compact('content'));
+        return view('front.bookdemo')
+            ->with('content', DemoSessionCMS::find(1))
+            ->with('timezones', TimeZone::all());
     }
     public function AboutUs() {
         $content = AboutUsCMS::find(1);
@@ -52,47 +55,57 @@ class FrontendController extends Controller
         $content = ContactCMS::find(1);
         return view('front.contactus', compact('content'));
     }
+
     public function PrivacyPolicy() {
         $content = PrivacyPolicyCMS::find(1);
         return view('front.privacypolicy',compact('content'));
     }
+
     public function TermsAndConditions() {
         $content = TermsCMS::find(1);
         return view('front.terms',compact('content'));
     }
+
     public function ContactFormSubmit(Request $request) {
+        try {
+            $inquiry             = new ContactInquiry();
+            $inquiry->first_name = $request->first_name;
+            $inquiry->last_name  = $request->last_name;
+            $inquiry->email      = $request->email;
+            $inquiry->phone      = $request->phone;
+            $inquiry->message    = $request->message;
+            $inquiry->save();
 
-        $inquiry             = new ContactInquiry();
-        $inquiry->first_name = $request->first_name;
-        $inquiry->last_name  = $request->last_name;
-        $inquiry->email      = $request->email;
-        $inquiry->phone      = $request->phone;
-        $inquiry->message    = $request->message;
-        $inquiry->save();
+            $name     = $request->first_name.' '.$request->last_name;
+//        $mailData = array(
+//            'name'        => $name,
+//            'email'       => $request->email,
+//            'userMessage' => $request->message,
+//            'phone'       => $request->phone,
+//            // 'to'          => $setting->email,
+//            'to'          => "info@fitzen.studio",
+//        );
+            //        Mail::send('front.emails.contact-us', $mailData, function($message) use($mailData){
+//            $message->to($mailData['to'])->subject('Fitzen Studio - Contact Us');
+//        });
 
-        $name     = $request->first_name.' '.$request->last_name;
-        $mailData = array(
-            'name'        => $name,
-            'email'       => $request->email,
-            'userMessage' => $request->message,
-            'phone'       => $request->phone,
-            // 'to'          => $setting->email,
-            'to'          => "info@fitzen.studio",
-        );
-
-        Mail::send('front.emails.contact-us', $mailData, function($message) use($mailData){
-            $message->to($mailData['to'])->subject('Fitzen Studio - Contact Us');
-        });
-
-        return redirect()->back()->with('message','Your Inquiry Submitted successfull. we will contact you shortly!');
+            $view = view('front.emails.contact-us')
+                ->with('name', $name)
+                ->with('email', $request->email)
+                ->with('userMessage', $request->message)
+                ->with('phone', $request->phone)
+                ->render();
+            $this->customphpmailer('noreply@fitzenstudios.com', env('to_email'), 'Fitzen Studio - Contact Us', $view);
+            return redirect()->back()->with('success', 'Your Inquiry Submitted successful. we will contact you shortly!');
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
     }
     public function SubmitDemoRequest(Request $request) {
 
         $customer = Customer::where('user_id', Auth::user()->id)->first();
         $check    = BookDemoSession::where('customer_id', $customer->id)->first();
-
         if($check == null) {
-
             try {
                 //code...
                 $demo               = new BookDemoSession();
@@ -107,25 +120,34 @@ class FrontendController extends Controller
                 $demo->message      = $request->message;
                 $demo->customer_id  = $customer->id;
                 $demo->save();
-                $mailData = array(
+//                $mailData = array(
+//                    'first_name'   => $request->first_name,
+//                    'last_name'    => $request->last_name,
+//                    'email'        => $request->email,
+//                    'phone'        => $request->phone,
+//                    'session_date' => $request->session_date,
+//                    'session_time' => $request->session_time,
+//                    'goals'        => $request->goals,
+//                    'user_message' => $request->message,
+//                    'to'           => config("app.mail_from_address"),
+//                );
+//                Mail::send('front.emails.session_request', $mailData, function($message) use($mailData){
+//                    $message->to($mailData['to'])->subject('Fitzen Studio - Session Request');
+//                });
 
-                    'first_name'   => $request->first_name,
-                    'last_name'    => $request->last_name,
-                    'email'        => $request->email,
-                    'phone'        => $request->phone,
-                    'session_date' => $request->session_date,
-                    'session_time' => $request->session_time,
-                    'goals'        => $request->goals,
-                    'user_message' => $request->message,
-                    'to'           => config("app.mail_from_address"),
-                );
-
-                Mail::send('front.emails.session_request', $mailData, function($message) use($mailData){
-                    $message->to($mailData['to'])->subject('Fitzen Studio - Session Request');
-                });
+                $view = view('front.emails.session_request')
+                    ->with('first_name', $request->first_name)
+                    ->with('last_name', $request->last_name)
+                    ->with('email', $request->email)
+                    ->with('phone', $request->phone)
+                    ->with('session_date', $request->session_date)
+                    ->with('session_time', $request->session_time)
+                    ->with('goals', $request->goals)
+                    ->with('user_message', $request->message)
+                    ->render();
+                $this->customphpmailer('noreply@fitzenstudios.com', env('to_email'), 'Fitzen Studio - Session Request', $view);
 
                 $notify = "You have a new demo request from ".$request->first_name.' '.$request->last_name;
-
                 $notification               = new Notification();
                 $notification->sender_id    = Auth::user()->id;
                 $notification->receiver_id  = 1;
@@ -174,69 +196,59 @@ class FrontendController extends Controller
     }
 
     public function RescheduleRequest(Request $request) {
+        try {
+            DB::beginTransaction();
+            $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->first();
+            $session = CustomerToTrainer::where('id', $request->session_id)->first();
+            $time_zone = $session->time_zone;
+            //dd($time_zone);
+//        if ($request->request_by == "customer") {
+//            $time_zone = Customer::select('time_zone')->where('id', $session->customer_id)->first();
+//        } else {
+//            $time_zone = Trainer::select('time_zone')->where('id', $session->trainer_id)->first();
+//        }
+            if ($check == null) {
+                $session_request                         = new RescheduleRequest();
+                $session_request->customer_to_trainer_id = $request->session_id;
+                $session_request->request_by             = $request->request_by;
+                $session_request->new_session_date       = $request->new_session_date;
+                $session_request->new_session_time       = $request->new_session_time;
+                $session_request->time_zone              = $time_zone;
+                $session_request->reason                 = $request->reason;
+                $session_request->save();
 
+                $notification               = new Notification();
+                $notification->sender_id    = Auth::user()->id;
+                $notification->receiver_id  = 1;
+                $notification->notification = "Demo Request is Re-Scheduled by ".$request->request_by;
+                $notification->type         = "ReSchedule Session";
+                $notification->save();
 
-        $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->first();
-        $session = CustomerToTrainer::where('id', $request->session_id)->first();
-         $time_zone=$session->time_zone;
-        if ($request->request_by == "customer") {
-            $timezone = Customer::select('time_zone')->where('id', $session->customer_id)->first();
-        } else {
-            $timezone = Trainer::select('time_zone')->where('id', $session->trainer_id)->first();
-        }
-
-        if ( $check == null) {
-
-            $session_request                         = new RescheduleRequest();
-            $session_request->customer_to_trainer_id = $request->session_id;
-            $session_request->request_by             = $request->request_by;
-            $session_request->new_session_date       = $request->new_session_date;
-            $session_request->new_session_time       = $request->new_session_time;
-            $session_request->time_zone              = $time_zone;
-//            $session_request->time_zone              = 1;
-            $session_request->reason                 = $request->reason;
-            $session_request->save();
-
-            $notification               = new Notification();
-            $notification->sender_id    = Auth::user()->id;
-            $notification->receiver_id  = 1;
-            $notification->notification = "Demo Request is Re-Scheduled by ".$request->request_by;
-            $notification->type         = "ReSchedule Session";
-            $notification->save();
-
-
-            if($request->request_by == "customer") {
-
-                return redirect('customer/dashboard')->with('success', 'Request Added successfully');
-            } else {
+                DB::commit();
+                if($request->request_by == "customer") {
+                    return redirect('customer/dashboard')->with('success', 'Request Added successfully');
+                }
                 return redirect('trainer/dashboard')->with('success', 'Request Added successfully');
-
-            }
-
-
-        } else {
-
-            $session_request                         = RescheduleRequest::find($check->id);
-            $session_request->customer_to_trainer_id = $request->session_id;
-            $session_request->request_by             = $request->request_by;
-            $session_request->new_session_date       = $request->new_session_date;
-            $session_request->new_session_time       = $request->new_session_time;
-            $session_request->time_zone              = $time_zone;
-            $session_request->reason                 = $request->reason;
-            $session_request->save();
-
-            if($request->request_by == "customer") {
-
-                return redirect('customer/dashboard')->with('success', 'Request Added successfully');
             } else {
+                $session_request                         = RescheduleRequest::find($check->id);
+                $session_request->customer_to_trainer_id = $request->session_id;
+                $session_request->request_by             = $request->request_by;
+                $session_request->new_session_date       = $request->new_session_date;
+                $session_request->new_session_time       = $request->new_session_time;
+                $session_request->time_zone              = $time_zone;
+                $session_request->reason                 = $request->reason;
+                $session_request->save();
+
+                DB::commit();
+                if($request->request_by == "customer") {
+                    return redirect('customer/dashboard')->with('success', 'Request Added successfully');
+                }
                 return redirect('trainer/dashboard')->with('success', 'Request Added successfully');
-
             }
-
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $exception->getMessage());
         }
-
-
-
     }
 
     public function subscribeNewsletter(Request $request) {

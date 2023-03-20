@@ -6,8 +6,20 @@ Demo Session CMS
 @section('content')
 <div class="row">
     <div class="col-lg-12">
-        <div class="card mb-12">            
-            <div class="card-body">               
+        @if(count($errors) > 0 )
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <ul class="p-0 m-0" style="list-style: none;">
+                    @foreach($errors->all() as $error)
+                        <li>{{$error}}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <div class="card mb-12">
+            <div class="card-body">
                 <form action="{{ route('demosessioncms.update',1) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
@@ -16,23 +28,22 @@ Demo Session CMS
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="">Heading</label>
-                                <input type="text" class="form-control" name="heading" value="{{ $content->heading ?? '' }}">
+                                <input type="text" class="form-control" name="heading" value="{{ $content->heading ?? old('heading') }}">
                             </div>
                         </div>
                     </div>
-           
+
 
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="">Content</label>
-                                <textarea id="content" name="content" rows="6" cols="50" class="ckeditor form-control">{{ $content->content }}</textarea>
-                                {{-- <input type="text" class="form-control" name="link_one" value="{{ $content->link_one ?? '' }}"> --}}
+                                <textarea id="content" name="content" rows="6" cols="50" class="ckeditor form-control">{{ $content->content ?? old('content') }}</textarea>
                             </div>
                         </div>
                     </div>
-    
-                  
+
+
 
                     <div class="row">
                         <div class="col-md-6">
@@ -42,11 +53,11 @@ Demo Session CMS
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <img src="{{ asset($content->image) }}" width="200px" height="auto" alt="">
+                            <img src="{{ isset($content->image) ? asset($content->image) : old('image') }}" width="200px" height="auto" alt="">
                         </div>
                     </div>
-                
-                
+
+
                     <div class="row">
                         <div class="col-md-12">
                             <div class="text-center">
@@ -56,7 +67,7 @@ Demo Session CMS
                         </div>
                     </div>
                 </form>
-                   
+
             </div>
         </div>
     </div>
@@ -66,6 +77,6 @@ Demo Session CMS
 @push('custom-js-scripts')
 <script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
 <script type="text/javascript">
-   
+
 </script>
 @endpush
