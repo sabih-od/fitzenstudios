@@ -6,7 +6,6 @@
                     <span>{{ $item->converted_time->format('M') }}</h2>
             </div>
             <div class="content">
-
                 <div>
                     <h3>{{ $item->session_type }}</h3>
                     <p> {{ $item["customer"]->first_name.' '.$item["customer"]->last_name }}</p>
@@ -84,35 +83,41 @@
                         @endif
 
                     </div>
-                    @if($item->status == "completed")
-                        <span class="badge badge-success">{{$item->status}}</span>
-                    @elseif($item->status == "re-scheduled")
-                        <span class="badge badge-warning">{{$item->status }}</span>
-                    @elseif($item->status == "cancelled")
-                        <span class="badge badge-danger">{{$item->status}}</span>
-                    @elseif($item->status == "upcoming")
-                        <span class="badge badge-primary">{{$item->status }}</span>
+                    @if(isset($item->request_session) && $item->request_session->status === 'pending')
+                        <span class="badge badge-danger">Applied for reschedule</span>
+                    @else
+                        @if($item->status == "completed")
+                            <span class="badge badge-success">{{$item->formatted_status}}</span>
+                        @elseif($item->status == "re-scheduled")
+                            <span class="badge badge-warning">{{$item->formatted_status }}</span>
+                        @elseif($item->status == "cancelled" || $item->status == "canceled")
+                            <span class="badge badge-danger">Cancelled</span>
+                        @elseif($item->status == "upcoming")
+                            <span class="badge badge-primary">{{$item->formatted_status }}</span>
+                        @endif
                     @endif
                 </div>
                 <div class="btnWrap">
-
-
                     <span>{{$item->converted_time->format('h:i A')}}</span>
-
                     {{--                    <span>{{  date('h:i A', strtotime($item->customer_timezone_time)) }}</span>--}}
                     {{-- <p class="zone">{{ $item->time_zone ?? "" }}</p> --}}
+
                     @if($item->status == "completed")
                         <a href="{{ url('customer/performance-detail/'.$item->id) }}">View Performance</a>
                         {{-- <a href="{{ url('trainer/add-customer-performance/'.$item->id)}}">ADD
                         PERFORMANCE</a>
                         <a href="{{ url('trainer/add-customer-details/'.$item->customer_id)}}">ADD
                             Details</a> --}}
+                            {{--                    <a href="{{ url('customer/cancel-session/'.$item->id) }}">Cancel Session</a>--}}
                     @elseif($item->status == "upcoming")
                         <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="mb-2"style="width: 150px;">JOIN MEETING</a>
-
-{{--                    <a href="{{ url('customer/cancel-session/'.$item->id) }}">Cancel Session</a>--}}
                         <a href="#" class="mb-2 cancel-session btn- btn-danger" data-cust_to_trainer_id="{{ $item->id }}">Cancel Session</a>
+                    @elseif($item->status == "re-scheduled")
+                        <a href="#"  data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}">JOIN MEETING</a>
+                        <a href="javascript:;" class="cancel-session btn- btn-danger" data-cust_to_trainer_id="{{ $item->id }}">Cancel Session</a>
+                    @endif
 
+                    @if(!isset($item->request_session))
                         @php
                             $user_id     = Auth::user()->id;
                             $get_cust_id = App\Models\Customer::where('user_id',
@@ -121,19 +126,14 @@
                             $now  = \Carbon\Carbon::now();
                             $diff = $date->diffInHours($now);
                         @endphp
-
                         @if($diff >= 6)
                             <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}"style="width: 150px;">RE-SCHEDULE</a>
                         @else
                             <a href="#" data-toggle="modal" data-target="#rescheduleMessage"class="">RE-SCHEDULE</a>
-                        @endif
-
-                    @elseif($item->status == "re-scheduled")
-                        <a href="#"  data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}">JOIN MEETING</a>
-                        <a href="javascript:;" class="cancel-session btn- btn-danger" data-cust_to_trainer_id="{{ $item->id }}">Cancel Session</a>
-                @else
+                    @endif
                 @endif
-                <!-- Begin Join Meeting Popup -->
+
+                    <!-- Begin Join Meeting Popup -->
                     <div class=" modal fade joinMeetingModal" id="joinMeetingModal{{$loop->iteration}}"
                          tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg">

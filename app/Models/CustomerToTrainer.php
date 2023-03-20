@@ -11,6 +11,10 @@ class CustomerToTrainer extends Model
     use HasFactory;
     protected $guarded = [];
 
+    public function getFormattedStatusAttribute() {
+        return ucfirst($this->status);
+    }
+
     public function customer(){
         return $this->hasOne(Customer::class, 'id', 'customer_id')->withDefault();
     }
@@ -22,17 +26,21 @@ class CustomerToTrainer extends Model
     public function sessions() {
         return $this->hasOne(BookDemoSession::class, 'id', 'demo_session_id');
     }
+
     public function reviews() {
         return $this->belongsTo(Review::class, 'id','cust_to_trainer_id');
+    }
+
+    public function request_session() {
+        return $this->hasOne(RescheduleRequest::class, 'customer_to_trainer_id', 'id');
     }
 
     // public function timeZone() {
     //     return $this->hasOne(TimeZone::class, 'timezone_value','time_zone');
     // }
-    
-    
+
     public function timeZone() {
         return $this->hasOne(TimeZone::class, 'id','time_zone');
     }
-    
+
 }

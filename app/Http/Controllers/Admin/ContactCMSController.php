@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CustomerToTrainer;
 use Illuminate\Http\Request;
 use App\Models\ContactCMS;
 use App\Models\ContactInquiry;
@@ -87,12 +88,13 @@ class ContactCMSController extends Controller
     public function SessionRequest() {
         $demos    = BookDemoSession::with('Customer', 'Customer.trainer')->orderBy('id','DESC')->get();
         $trainers = Trainer::get();
-        return view('admin.demo_request',compact('demos', 'trainers'));
+        return view('admin.demo_request', compact('demos', 'trainers'));
 
     }
 
     public function DeleteSessionRequest(Request $request) {
         BookDemoSession::where('id',$request->id)->delete();
+        CustomerToTrainer::where('demo_session_id', $request->id)->delete();
         return back();
     }
     public function NewsLetter() {

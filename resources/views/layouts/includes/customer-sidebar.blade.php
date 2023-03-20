@@ -1,8 +1,8 @@
 
-@php    
+@php
     $cust_id       = App\Models\Customer::where('user_id', Auth::user()->id)->pluck('id')->first();
     $check_request = App\Models\BookDemoSession::where('customer_id', $cust_id)->first();
-    $check_contract = App\Models\Contract::where('customer_id', $cust_id)->first();    
+    $check_contract = App\Models\Contract::where('customer_id', $cust_id)->first();
 @endphp
     <div id="layoutSidenav_nav">
         <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
@@ -35,15 +35,15 @@
                             <img src="{{ asset('themes/customer/assets/images/invoice.png') }}" alt="">
                         </div>
                         Invoices & Payment
-                    </a> 
-            
+                    </a>
+
                     <a class="nav-link" href="{{url('customer/profile')}}">
                         <div class="sb-nav-link-icon"><img src="{{ asset('themes/customer/assets/images/person.png') }}" alt=""></div>
                         Profile
                     </a>
-                    
+
                     @if(@$check_request->status == "completed" && $check_contract == null)
-                        
+
                         <a class="nav-link" href="{{url('customer/contract')}}">
                             <div class="sb-nav-link-icon"><img src="{{ asset('themes/customer/assets/images/invoice.png') }}" alt=""></div>
                             Contract

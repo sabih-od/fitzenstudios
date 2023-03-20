@@ -35,15 +35,15 @@ Demo Session Requests
                                     <td>{{ $item->goals }}</td>
                                     <td>{{ $item->message }}</td>
                                     <td>{{ isset($item->Customer->trainer) ? $item->Customer->trainer->name : '' }}</td>
-                                    <td>{{ $item->status }}</td>
+                                    <td><label class="badge badge-info">
+                                            {{ ucfirst(str_replace('_', ' ', $item->status)) }}
+                                        </label>
+                                    </td>
                                     <td>
                                         @if($item->status == "pending")
                                             <a href="{{ url('admin/demo-session/'.$item->id) }}" class="btn btn-sm btn-warning">
                                                 <i class="fa fa-plus" aria-hidden="true"></i>
                                             </a>
-                                        @else
-                                        <a href="javascript:;" class="btn btn-sm btn-warning">
-                                        </a>
                                         @endif
                                         <button class="btn btn-sm btn-danger" onclick="Delete('{{$item->id}}');" >
                                             <i class="fa fa-trash"></i>

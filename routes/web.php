@@ -125,7 +125,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('view-contract/{id}', [AdminCustomerController::class, 'ViewContract']);
     Route::post('add-payment', [AdminCustomerController::class, 'AddPayment']);
 
-    Route::get('sessions',[AdminCustomerController::class, 'Sessions'])->name('sessions');
+    Route::get('sessions',[AdminCustomerController::class, 'Sessions'])->name('admin.sessions');
     Route::post('cancel-session', [AdminCustomerController::class, 'CancelSession']);
 
 
