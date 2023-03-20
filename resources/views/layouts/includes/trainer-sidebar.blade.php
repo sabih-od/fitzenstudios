@@ -38,13 +38,13 @@
                     </div>
                     Payment History
                 </a>
-
-{{--                <a class="nav-link" href="{{url('trainer/profile')}}">--}}
-
-                                <a class="nav-link" href="{{url('trainer/profile/'.$item->id)}}">
+                @if(!is_null($item))
+                {{--                <a class="nav-link" href="{{url('trainer/profile')}}">--}}
+                <a class="nav-link" href="{{url('trainer/profile/'.$item->id)}}">
                     <div class="sb-nav-link-icon"><img src="{{ asset('themes/customer/assets/images/person.png') }}" alt=""></div>
                     Profile
                 </a>
+                    @endif
             </div>
         </div>
     </nav>
