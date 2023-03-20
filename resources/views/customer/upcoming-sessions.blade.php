@@ -117,7 +117,7 @@
                         <a href="javascript:;" class="cancel-session btn- btn-danger" data-cust_to_trainer_id="{{ $item->id }}">Cancel Session</a>
                     @endif
 
-                    @if(!isset($item->request_session) && $item->status !== 'canceled' || $item->status !== 'cancelled')
+                    @if(isset($item->request_session) && $item->status !== 'canceled' || $item->status !== 'cancelled')
                         @php
                             $user_id     = Auth::user()->id;
                             $get_cust_id = App\Models\Customer::where('user_id',
