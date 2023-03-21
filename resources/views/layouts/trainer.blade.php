@@ -17,7 +17,7 @@
     <!-- Calandar CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
-    <script src="{{asset('themes/admin/vendor/clock-picker/clockpicker.js')}}"></script>
+    <link href="{{ asset('themes/admin/vendor/clock-picker/clockpicker.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/trainer/css/slick.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/trainer/css/slick-theme.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/trainer/css/styles.css') }}"  />
@@ -101,6 +101,11 @@
 <script src="{{ asset('themes/admin/js/slick.min.js') }}"></script>
 <script src="{{ asset('themes/admin/js/scripts.js') }}"></script>
 <script src="{{ asset('themes/admin/js/custom.min.js') }}"></script>
+  <script>
+      $('[name="session_time"]').clockpicker({
+          autoclose: true
+      });
+  </script>
 @yield('js')
 </body>
 
