@@ -37,15 +37,18 @@ class FrontendController extends Controller
         $content = HomepageCMS::find(1);
         return view('front.index',compact('content'));
     }
+
     public function BookDemo() {
         return view('front.bookdemo')
             ->with('content', DemoSessionCMS::find(1))
             ->with('timezones', TimeZone::all());
     }
+
     public function AboutUs() {
         $content = AboutUsCMS::find(1);
         return view('front.about',compact('content'));
     }
+
     public function FAQS() {
         $faqs    = FAQCMS::all();
         $content = FaqBannerCMS::find(1);
@@ -159,40 +162,34 @@ class FrontendController extends Controller
             } catch (\Exception $e) {
                 return redirect()->back()->with('error',$e->getMessage());
             }
-
         } else {
             return redirect()->back()->with('error', 'You already submitted request for demo session..!!');
         }
-
-
-
     }
 
     public function editDemoRequest(Request $request) {
+        try {
+            $customer = Customer::where('user_id', Auth()->id())->first();
 
-        $customer = Customer::where('user_id', Auth()->id())->first();
+            $demo               = BookDemoSession::find($request->demo_id);
+            $demo->session_date = $request->session_date;
+            $demo->session_time = $request->session_time;
+            $demo->goals        = $request->goals;
+            $demo->message      = $request->message;
+            $demo->customer_id  = $customer->id;
+            $demo->update();
 
-        $demo               = BookDemoSession::find($request->demo_id);
-        $demo->session_date = $request->session_date;
-        $demo->session_time = $request->session_time;
-        $demo->goals        = $request->goals;
-        $demo->message      = $request->message;
-        $demo->customer_id  = $customer->id;
-        $demo->update();
-
-        $mailData = array(
-            'session_date' => $request->session_date,
-            'session_time' => $request->session_time,
-            'goals'        => $request->goals,
-            'user_message' => $request->message,
-            'to'           => "info@fitzen.studio",
-        );
-
-        Mail::send('front.emails.session_request', $mailData, function($message) use($mailData){
-            $message->to($mailData['to'])->subject('Fitzen Studio - Session Request Updated');
-        });
-
-        return redirect()->back()->with('success','Demo session schedule updated');
+            $view = view('front.emails.session_request')
+                ->with('session_date', $request->session_date)
+                ->with('session_time', $request->session_time)
+                ->with('goals', $request->goals)
+                ->with('user_message', $request->message)
+                ->render();
+            $this->customphpmailer('noreply@fitzenstudios.com', env('to_email'), 'Fitzen Studio - Session Request Updated', $view);
+            return redirect()->back()->with('success','Demo session schedule updated.');
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
     }
 
     public function RescheduleRequest(Request $request) {
@@ -252,11 +249,8 @@ class FrontendController extends Controller
     }
 
     public function subscribeNewsletter(Request $request) {
-
-        try{
-
+        try {
             if($request->method() == 'POST'){
-
                 $email = $request->email;
                 $json  = array('status' => false);
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -277,14 +271,10 @@ class FrontendController extends Controller
                     $letter->email = $email;
                     $letter->save();
 
-                    $mailData = array(
-                        'email'        => $request->email,
-                        'to'           => "info@fitzen.studio",
-                    );
-
-                    Mail::send('front.emails.newsletter', $mailData, function($message) use($mailData){
-                        $message->to($mailData['to'])->subject('Fitzen Studio - Newsletter');
-                    });
+                    $view = view('front.emails.newsletter')
+                        ->with('email', $request->email)
+                        ->render();
+                    $this->customphpmailer('noreply@fitzenstudios.com', env('to_email'), 'Fitzen Studio - Newsletter', $view);
 
                     $notification               = new Notification();
                     $notification->sender_id    = 1;
@@ -296,19 +286,14 @@ class FrontendController extends Controller
                     $json['status']  = true;
                     $json["success"] =  "Success: You Have Successfully Subscribed";
                 }
-
-
                 return $json;
             }
         }catch (\Exception $ex){
-
-
             $json           = array();
             $json['status'] = false;
             $json['error']  = "Whoops!! Something went wrong ";
             return $json;
         }
-
     }
 
     public function ThankYouForRegistration(){
@@ -326,47 +311,50 @@ class FrontendController extends Controller
     }
 
 
-    public function UpdateLoginCMS(Request $request) {
+    public function UpdateLoginCMS(Request $request)
+    {
+        try {
+            $dirPath = "uploads/images/login";
 
-        $dirPath = "uploads/images/login";
-
-        $content              = LoginCms::find(1);
-        $content->banner_text = $request->banner_text;
-        if($request->hasFile('banner_image'))
-        {
-            if(File::exists(public_path($dirPath.'/'.$request->banner_image))){
-                File::delete(public_path($dirPath.'/'.$request->banner_image));
+            $content              = LoginCms::find(1);
+            $content->banner_text = $request->banner_text;
+            if($request->hasFile('banner_image'))
+            {
+                if(File::exists(public_path($dirPath.'/'.$request->banner_image))){
+                    File::delete(public_path($dirPath.'/'.$request->banner_image));
+                }
+                $fileName = time().'-'.$request->banner_image->getClientOriginalName();
+                $request->banner_image->move(public_path($dirPath), $fileName);
+                $content->banner_image =  $dirPath.'/'.$fileName;
             }
-            $fileName = time().'-'.$request->banner_image->getClientOriginalName();
-            $request->banner_image->move(public_path($dirPath), $fileName);
-
-            $content->banner_image =  $dirPath.'/'.$fileName;
+            $content->save();
+            return redirect()->back()->with('success','Data Updated Successfully....!!!');
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
         }
-        $content->save();
-
-        return redirect()->back()->with('success','Data Updated Successfully....!!!');
     }
 
-    public function UpdateSignupCMS(Request $request) {
+    public function UpdateSignupCMS(Request $request)
+    {
+        try {
+            $dirPath = "uploads/images/signup";
 
-        $dirPath = "uploads/images/signup";
-
-        $content              = SignupCms::find(1);
-        $content->banner_text = $request->banner_text;
-        if($request->hasFile('banner_image'))
-        {
-            if(File::exists(public_path($dirPath.'/'.$request->banner_image))){
-                File::delete(public_path($dirPath.'/'.$request->banner_image));
+            $content              = SignupCms::find(1);
+            $content->banner_text = $request->banner_text;
+            if($request->hasFile('banner_image'))
+            {
+                if(File::exists(public_path($dirPath.'/'.$request->banner_image))){
+                    File::delete(public_path($dirPath.'/'.$request->banner_image));
+                }
+                $fileName = time().'-'.$request->banner_image->getClientOriginalName();
+                $request->banner_image->move(public_path($dirPath), $fileName);
+                $content->banner_image =  $dirPath.'/'.$fileName;
             }
-            $fileName = time().'-'.$request->banner_image->getClientOriginalName();
-            $request->banner_image->move(public_path($dirPath), $fileName);
+            $content->save();
 
-            $content->banner_image =  $dirPath.'/'.$fileName;
+            return redirect()->back()->with('success','Data Updated Successfully....!!!');
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
         }
-        $content->save();
-
-        return redirect()->back()->with('success','Data Updated Successfully....!!!');
     }
-
-    //
 }
