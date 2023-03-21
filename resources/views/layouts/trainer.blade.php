@@ -17,12 +17,14 @@
     <!-- Calandar CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <script src="{{asset('themes/admin/vendor/clock-picker/clockpicker.js')}}"></script>
     <link rel="stylesheet" href="{{ asset('assets/trainer/css/slick.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/trainer/css/slick-theme.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/trainer/css/styles.css') }}"  />
     <link rel="stylesheet" href="{{ asset('assets/trainer/css/custom.min.css') }}"  />
     <link rel="stylesheet" href="{{ asset('assets/trainer/css/main.css') }}"  />
     <link rel="stylesheet" href="{{ asset('assets/trainer/css/responsive.min.css') }}">
+
 
     @yield('style')
 </head>
@@ -87,6 +89,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
 <!-- Calandar JS -->
+  <script src="{{asset('themes/admin/vendor/clock-picker/clockpicker.js')}}"></script>
 <script src="https://unpkg.com/@fullcalendar/core@4.3.0/main.min.js"></script>
 <script src="https://unpkg.com/@fullcalendar/interaction@4.3.0/main.min.js"></script>
 <script src="https://unpkg.com/@fullcalendar/daygrid@4.3.0/main.min.js"></script>

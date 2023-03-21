@@ -124,7 +124,7 @@
                                                     <i class="fa-regular fa-clock"
                                                        style="position: absolute;right:0;margin-top:44px;margin-right: 43px;"></i>
 
-                                                    <input type="time" name="new_session_time"
+                                                    <input type="text" name="new_session_time" id="new_session_time"
                                                            class="form-control " required>
 
                                                 </div>
@@ -157,3 +157,8 @@
 @empty
     <h2 style="text-align: center;">Currently No sessions available..!!</h2>
 @endforelse
+<script>
+    $('#new_session_time').clockpicker({
+        autoclose: true
+    });
+</script>
