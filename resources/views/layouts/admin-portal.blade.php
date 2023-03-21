@@ -109,7 +109,6 @@
   <script src="{{ asset('themes/admin/js/custom.min.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
 
-
   @stack('custom-js-scripts')
     @yield('js')
 </body>
