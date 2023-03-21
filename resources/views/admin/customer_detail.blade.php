@@ -60,10 +60,6 @@
                                     </div>
                                     <div class="profileContent">
                                         <h3>{{ ucfirst($detail->first_name).' '.ucfirst($detail->last_name) }}</h3>
-                                        <h4>Customer</h4>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                            tempor incididunt
-                                            ut labore et dolore magna aliqua. Ut enim ad minim veniam,</p>
                                     </div>
                                 </div>
                                 <div class="d-flex mb-4 justify-content-between align-items-center">
@@ -116,76 +112,76 @@
 
                                     </div>
                                 </form>
-                                <div class="customer-btn">
-                                    <ul class="nav nav-tabs" id="myTab2" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <a aria-controls="General" aria-selected="true" class="nav-link active"
-                                               data-toggle="tab" href="#general" id="general-tab"
-                                               role="tab">General</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <a aria-controls="Fitness" aria-selected="false" class="nav-link"
-                                               data-toggle="tab" href="#fitness" id="fitness-tab"
-                                               role="tab">Fitness Objective & Workout</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <a aria-controls="workout" aria-selected="false" class="nav-link"
-                                               data-toggle="tab" href="#workout" id="workout-tab" role="tab">Focus
-                                                of tte workout & Injuries</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <a aria-controls="medical" aria-selected="false" class="nav-link"
-                                               data-toggle="tab" href="#medical" id="medical-tab"
-                                               role="tab">Medical Condition</a>
-                                        </li>
-                                    </ul>
-                                </div>
+{{--                                <div class="customer-btn">--}}
+{{--                                    <ul class="nav nav-tabs" id="myTab2" role="tablist">--}}
+{{--                                        <li class="nav-item" role="presentation">--}}
+{{--                                            <a aria-controls="General" aria-selected="true" class="nav-link active"--}}
+{{--                                               data-toggle="tab" href="#general" id="general-tab"--}}
+{{--                                               role="tab">General</a>--}}
+{{--                                        </li>--}}
+{{--                                        <li class="nav-item" role="presentation">--}}
+{{--                                            <a aria-controls="Fitness" aria-selected="false" class="nav-link"--}}
+{{--                                               data-toggle="tab" href="#fitness" id="fitness-tab"--}}
+{{--                                               role="tab">Fitness Objective & Workout</a>--}}
+{{--                                        </li>--}}
+{{--                                        <li class="nav-item" role="presentation">--}}
+{{--                                            <a aria-controls="workout" aria-selected="false" class="nav-link"--}}
+{{--                                               data-toggle="tab" href="#workout" id="workout-tab" role="tab">Focus--}}
+{{--                                                of tte workout & Injuries</a>--}}
+{{--                                        </li>--}}
+{{--                                        <li class="nav-item" role="presentation">--}}
+{{--                                            <a aria-controls="medical" aria-selected="false" class="nav-link"--}}
+{{--                                               data-toggle="tab" href="#medical" id="medical-tab"--}}
+{{--                                               role="tab">Medical Condition</a>--}}
+{{--                                        </li>--}}
+{{--                                    </ul>--}}
+{{--                                </div>--}}
                                 <div class="tab-content" id="myTabContent2">
                                     <div aria-labelledby="home-tab" class="tab-pane fade show active" id="general"
                                          role="tabpanel">
                                         <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">First Name</label>
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{  ucfirst($detail->first_name) ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Last Name</label>
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{  ucfirst($detail->last_name) ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Email</label>
-                                                    <input class="form-control" disabled type="email"
-                                                           value="{{ $detail->email }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Phone</label>
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{ $detail->phone ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Gender</label>
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{ $detail->gender ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Date Of Brith</label>
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{ date('d-m-Y', strtotime($detail->dob)) ?? '' }}">
-                                                </div>
-                                            </div>
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">First Name</label>--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{  ucfirst($detail->first_name) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Last Name</label>--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{  ucfirst($detail->last_name) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Email</label>--}}
+{{--                                                    <input class="form-control" disabled type="email"--}}
+{{--                                                           value="{{ $detail->email }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Phone</label>--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{ $detail->phone ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Gender</label>--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{ $detail->gender ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Date Of Brith</label>--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{ date('d-m-Y', strtotime($detail->dob)) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Age</label>
@@ -235,20 +231,20 @@
                                                     </select>
                                                 </div>
                                             </div> --}}
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">No. of Sessions in a Week</label>
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{ $detail->sessions_in_week ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Type of Training</label>
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{ $cust_detail->training_type ?? ''}}">
-                                                </div>
-                                            </div>
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">No. of Sessions in a Week</label>--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{ $detail->sessions_in_week ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Type of Training</label>--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{ $cust_detail->training_type ?? ''}}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Trainer Assigned</label>
@@ -264,374 +260,374 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div aria-labelledby="fitness-tab" class="tab-pane fade" id="fitness"
-                                         role="tabpanel">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">First Name</label> <input class="form-control"
-                                                                                            disabled type="text"
-                                                                                            value="{{  ucfirst($detail->first_name) ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Last Name</label> <input class="form-control"
-                                                                                           disabled type="text"
-                                                                                           value="{{  ucfirst($detail->last_name) ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Email</label> <input class="form-control" disabled
-                                                                                       type="email"
-                                                                                       value="{{  $detail->email ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Phone</label> <input class="form-control" disabled
-                                                                                       type="text"
-                                                                                       value="{{  $detail->phone ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Gender</label> <input class="form-control"
-                                                                                        disabled type="text"
-                                                                                        value="{{  $detail->gender ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Date Of Brith</label> <input class="form-control"
-                                                                                               disabled type="text"
-                                                                                               value="{{ date('d-m-Y', strtotime($detail->dob)) ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Age</label> <input class="form-control" disabled
-                                                                                     type="text"
-                                                                                     value="{{ $detail->age ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Weight</label> <input class="form-control"
-                                                                                        disabled type="text"
-                                                                                        value="{{ $detail->weight ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Nationality</label> <input class="form-control"
-                                                                                             disabled type="text"
-                                                                                             value="{{ $detail->nationality ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Country of Residence</label> <input
-                                                        class="form-control" disabled type="text"
-                                                        value="{{ $detail->residence ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">City</label> <input class="form-control" disabled
-                                                                                      type="text"
-                                                                                      value="{{ $detail->city ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Time Zone</label> <input class="form-control"
-                                                                                           disabled type="text"
-                                                                                           value="{{ $detail->timeZone->abbreviation ?? '' }}">
-                                                </div>
-                                            </div>
-                                            {{-- <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Days Available <span id="selectedId"></span></label>
-                                                    <select id="selecteddays" multiple>
-                                                    </select>
-                                                </div>
-                                            </div> --}}
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">No. of Sessions in a Week</label> <input
-                                                        class="form-control" disabled type="text"
-                                                        value="{{ $detail->sessions_in_week ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Type of Training</label>
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{ $cust_detail->training_type ?? ''}}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Trainer Assigned</label>
-                                                    @if(count($schedules) > 0) {
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{ ucfirst($schedules[0]['trainer']->name).' '.ucfirst($schedules[0]['trainer']->last_name) ?? '' }}">
-                                                    @else
-                                                        <input class="form-control" disabled type="text"
-                                                               value="No Trainer Assigned Yet">
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div aria-labelledby="workout-tab" class="tab-pane fade" id="workout"
-                                         role="tabpanel">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">First Name</label> <input class="form-control"
-                                                                                            disabled type="text"
-                                                                                            value="{{  ucfirst($detail->first_name) ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Last Name</label> <input class="form-control"
-                                                                                           disabled type="text"
-                                                                                           value="{{  ucfirst($detail->last_name) ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Email</label> <input class="form-control" disabled
-                                                                                       type="email"
-                                                                                       value="{{  $detail->email ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Phone</label> <input class="form-control" disabled
-                                                                                       type="text"
-                                                                                       value="{{  $detail->phone ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Gender</label> <input class="form-control"
-                                                                                        disabled type="text"
-                                                                                        value="{{  $detail->gender ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Date Of Brith</label> <input class="form-control"
-                                                                                               disabled type="text"
-                                                                                               value="{{ date('d-m-Y', strtotime($detail->dob)) ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Age</label> <input class="form-control" disabled
-                                                                                     type="text"
-                                                                                     value="{{  $detail->age ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Weight</label> <input class="form-control"
-                                                                                        disabled type="text"
-                                                                                        value="{{  $detail->weight ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Nationality</label> <input class="form-control"
-                                                                                             disabled type="text"
-                                                                                             value="{{ $detail->nationality ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Country of Residence</label> <input
-                                                        class="form-control" disabled type="text"
-                                                        value="{{ $detail->residence ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">City</label> <input class="form-control" disabled
-                                                                                      type="text"
-                                                                                      value="{{ $detail->city ?? ''}}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Time Zone</label> <input class="form-control"
-                                                                                           disabled type="text"
-                                                                                           value="{{ $detail->timezone }}">
-                                                </div>
-                                            </div>
-                                            {{-- <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Days Available <span id="selectedId"></span></label>
-                                                    <select id="selecteddays" multiple>
-                                                    </select>
-                                                </div>
-                                            </div> --}}
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">No. of Sessions in a Week</label> <input
-                                                        class="form-control" disabled type="text"
-                                                        value="{{ $detail->sessions_in_week ?? ''}}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Type of Training</label>
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{ $cust_detail->training_type ?? ''}}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Trainer Assigned</label>
-                                                    @if(count($schedules) > 0) {
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{ ucfirst($schedules[0]['trainer']->name).' '.ucfirst($schedules[0]['trainer']->last_name) ?? '' }}">
-                                                    @else
-                                                        <input class="form-control" disabled type="text"
-                                                               value="No Trainer Assigned Yet">
-                                                    @endif
-                                                    {{-- <input class="form-control" disabled type="text" value="{{ ucfirst($schedules[0]['trainer']->name).' '.ucfirst($schedules[0]['trainer']->last_name) ?? '' }}"> --}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div aria-labelledby="medical-tab" class="tab-pane fade" id="medical"
-                                         role="tabpanel">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">First Name</label> <input class="form-control"
-                                                                                            disabled type="text"
-                                                                                            value="{{  ucfirst($detail->first_name) ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Last Name</label> <input class="form-control"
-                                                                                           disabled type="text"
-                                                                                           value="{{  ucfirst($detail->last_name) ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Email</label> <input class="form-control" disabled
-                                                                                       type="email"
-                                                                                       value="{{  $detail->email ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Phone</label> <input class="form-control" disabled
-                                                                                       type="text"
-                                                                                       value="{{  $detail->phone ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Gender</label> <input class="form-control"
-                                                                                        disabled type="text"
-                                                                                        value="{{  $detail->gender ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Date Of Brith</label> <input class="form-control"
-                                                                                               disabled type="text"
-                                                                                               value="{{ date('d-m-Y', strtotime($detail->dob)) ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Age</label> <input class="form-control" disabled
-                                                                                     type="text"
-                                                                                     value="{{  $detail->age ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Weight</label> <input class="form-control"
-                                                                                        disabled type="text"
-                                                                                        value="{{  $detail->weight ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Nationality</label> <input class="form-control"
-                                                                                             disabled type="text"
-                                                                                             value="{{ $detail->nationality ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Country of Residence</label> <input
-                                                        class="form-control" disabled type="text"
-                                                        value="{{ $detail->residence ?? '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">City</label> <input class="form-control" disabled
-                                                                                      type="text"
-                                                                                      value="{{ $detail->city ?? ''}}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Time Zone</label> <input class="form-control"
-                                                                                           disabled type="text"
-                                                                                           value="">
-                                                </div>
-                                            </div>
-                                            {{-- <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Days Available <span id="selectedId"></span></label>
-                                                    <select id="selecteddays" multiple>
-                                                    </select>
-                                                </div>
-                                            </div> --}}
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">No. of Sessions in a Week</label> <input
-                                                        class="form-control" disabled type="text"
-                                                        value="{{ $detail->sessions_in_week ?? ''}}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Type of Training</label>
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{ $cust_detail->training_type ?? ''}}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Trainer Assigned</label>
-                                                    @if(count($schedules) > 0) {
-                                                    <input class="form-control" disabled type="text"
-                                                           value="{{ ucfirst($schedules[0]['trainer']->name).' '.ucfirst($schedules[0]['trainer']->last_name) ?? '' }}">
-                                                    @else
-                                                        <input class="form-control" disabled type="text"
-                                                               value="No Trainer Assigned Yet">
-                                                    @endif
-                                                    {{-- <input class="form-control" disabled type="text" value="{{ ucfirst($schedules[0]['trainer']->name).' '.ucfirst($schedules[0]['trainer']->last_name) ?? '' }}"> --}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+{{--                                    <div aria-labelledby="fitness-tab" class="tab-pane fade" id="fitness"--}}
+{{--                                         role="tabpanel">--}}
+{{--                                        <div class="row">--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">First Name</label> <input class="form-control"--}}
+{{--                                                                                            disabled type="text"--}}
+{{--                                                                                            value="{{  ucfirst($detail->first_name) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Last Name</label> <input class="form-control"--}}
+{{--                                                                                           disabled type="text"--}}
+{{--                                                                                           value="{{  ucfirst($detail->last_name) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Email</label> <input class="form-control" disabled--}}
+{{--                                                                                       type="email"--}}
+{{--                                                                                       value="{{  $detail->email ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Phone</label> <input class="form-control" disabled--}}
+{{--                                                                                       type="text"--}}
+{{--                                                                                       value="{{  $detail->phone ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Gender</label> <input class="form-control"--}}
+{{--                                                                                        disabled type="text"--}}
+{{--                                                                                        value="{{  $detail->gender ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Date Of Brith</label> <input class="form-control"--}}
+{{--                                                                                               disabled type="text"--}}
+{{--                                                                                               value="{{ date('d-m-Y', strtotime($detail->dob)) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Age</label> <input class="form-control" disabled--}}
+{{--                                                                                     type="text"--}}
+{{--                                                                                     value="{{ $detail->age ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Weight</label> <input class="form-control"--}}
+{{--                                                                                        disabled type="text"--}}
+{{--                                                                                        value="{{ $detail->weight ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Nationality</label> <input class="form-control"--}}
+{{--                                                                                             disabled type="text"--}}
+{{--                                                                                             value="{{ $detail->nationality ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Country of Residence</label> <input--}}
+{{--                                                        class="form-control" disabled type="text"--}}
+{{--                                                        value="{{ $detail->residence ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">City</label> <input class="form-control" disabled--}}
+{{--                                                                                      type="text"--}}
+{{--                                                                                      value="{{ $detail->city ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Time Zone</label> <input class="form-control"--}}
+{{--                                                                                           disabled type="text"--}}
+{{--                                                                                           value="{{ $detail->timeZone->abbreviation ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            --}}{{-- <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label>Days Available <span id="selectedId"></span></label>--}}
+{{--                                                    <select id="selecteddays" multiple>--}}
+{{--                                                    </select>--}}
+{{--                                                </div>--}}
+{{--                                            </div> --}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">No. of Sessions in a Week</label> <input--}}
+{{--                                                        class="form-control" disabled type="text"--}}
+{{--                                                        value="{{ $detail->sessions_in_week ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Type of Training</label>--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{ $cust_detail->training_type ?? ''}}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Trainer Assigned</label>--}}
+{{--                                                    @if(count($schedules) > 0) {--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{ ucfirst($schedules[0]['trainer']->name).' '.ucfirst($schedules[0]['trainer']->last_name) ?? '' }}">--}}
+{{--                                                    @else--}}
+{{--                                                        <input class="form-control" disabled type="text"--}}
+{{--                                                               value="No Trainer Assigned Yet">--}}
+{{--                                                    @endif--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                    <div aria-labelledby="workout-tab" class="tab-pane fade" id="workout"--}}
+{{--                                         role="tabpanel">--}}
+{{--                                        <div class="row">--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">First Name</label> <input class="form-control"--}}
+{{--                                                                                            disabled type="text"--}}
+{{--                                                                                            value="{{  ucfirst($detail->first_name) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Last Name</label> <input class="form-control"--}}
+{{--                                                                                           disabled type="text"--}}
+{{--                                                                                           value="{{  ucfirst($detail->last_name) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Email</label> <input class="form-control" disabled--}}
+{{--                                                                                       type="email"--}}
+{{--                                                                                       value="{{  $detail->email ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Phone</label> <input class="form-control" disabled--}}
+{{--                                                                                       type="text"--}}
+{{--                                                                                       value="{{  $detail->phone ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Gender</label> <input class="form-control"--}}
+{{--                                                                                        disabled type="text"--}}
+{{--                                                                                        value="{{  $detail->gender ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Date Of Brith</label> <input class="form-control"--}}
+{{--                                                                                               disabled type="text"--}}
+{{--                                                                                               value="{{ date('d-m-Y', strtotime($detail->dob)) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Age</label> <input class="form-control" disabled--}}
+{{--                                                                                     type="text"--}}
+{{--                                                                                     value="{{  $detail->age ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Weight</label> <input class="form-control"--}}
+{{--                                                                                        disabled type="text"--}}
+{{--                                                                                        value="{{  $detail->weight ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Nationality</label> <input class="form-control"--}}
+{{--                                                                                             disabled type="text"--}}
+{{--                                                                                             value="{{ $detail->nationality ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Country of Residence</label> <input--}}
+{{--                                                        class="form-control" disabled type="text"--}}
+{{--                                                        value="{{ $detail->residence ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">City</label> <input class="form-control" disabled--}}
+{{--                                                                                      type="text"--}}
+{{--                                                                                      value="{{ $detail->city ?? ''}}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Time Zone</label> <input class="form-control"--}}
+{{--                                                                                           disabled type="text"--}}
+{{--                                                                                           value="{{ $detail->timezone }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            --}}{{-- <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label>Days Available <span id="selectedId"></span></label>--}}
+{{--                                                    <select id="selecteddays" multiple>--}}
+{{--                                                    </select>--}}
+{{--                                                </div>--}}
+{{--                                            </div> --}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">No. of Sessions in a Week</label> <input--}}
+{{--                                                        class="form-control" disabled type="text"--}}
+{{--                                                        value="{{ $detail->sessions_in_week ?? ''}}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Type of Training</label>--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{ $cust_detail->training_type ?? ''}}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Trainer Assigned</label>--}}
+{{--                                                    @if(count($schedules) > 0) {--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{ ucfirst($schedules[0]['trainer']->name).' '.ucfirst($schedules[0]['trainer']->last_name) ?? '' }}">--}}
+{{--                                                    @else--}}
+{{--                                                        <input class="form-control" disabled type="text"--}}
+{{--                                                               value="No Trainer Assigned Yet">--}}
+{{--                                                    @endif--}}
+{{--                                                    --}}{{-- <input class="form-control" disabled type="text" value="{{ ucfirst($schedules[0]['trainer']->name).' '.ucfirst($schedules[0]['trainer']->last_name) ?? '' }}"> --}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                    <div aria-labelledby="medical-tab" class="tab-pane fade" id="medical"--}}
+{{--                                         role="tabpanel">--}}
+{{--                                        <div class="row">--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">First Name</label> <input class="form-control"--}}
+{{--                                                                                            disabled type="text"--}}
+{{--                                                                                            value="{{  ucfirst($detail->first_name) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Last Name</label> <input class="form-control"--}}
+{{--                                                                                           disabled type="text"--}}
+{{--                                                                                           value="{{  ucfirst($detail->last_name) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Email</label> <input class="form-control" disabled--}}
+{{--                                                                                       type="email"--}}
+{{--                                                                                       value="{{  $detail->email ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Phone</label> <input class="form-control" disabled--}}
+{{--                                                                                       type="text"--}}
+{{--                                                                                       value="{{  $detail->phone ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Gender</label> <input class="form-control"--}}
+{{--                                                                                        disabled type="text"--}}
+{{--                                                                                        value="{{  $detail->gender ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Date Of Brith</label> <input class="form-control"--}}
+{{--                                                                                               disabled type="text"--}}
+{{--                                                                                               value="{{ date('d-m-Y', strtotime($detail->dob)) ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Age</label> <input class="form-control" disabled--}}
+{{--                                                                                     type="text"--}}
+{{--                                                                                     value="{{  $detail->age ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Weight</label> <input class="form-control"--}}
+{{--                                                                                        disabled type="text"--}}
+{{--                                                                                        value="{{  $detail->weight ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Nationality</label> <input class="form-control"--}}
+{{--                                                                                             disabled type="text"--}}
+{{--                                                                                             value="{{ $detail->nationality ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Country of Residence</label> <input--}}
+{{--                                                        class="form-control" disabled type="text"--}}
+{{--                                                        value="{{ $detail->residence ?? '' }}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">City</label> <input class="form-control" disabled--}}
+{{--                                                                                      type="text"--}}
+{{--                                                                                      value="{{ $detail->city ?? ''}}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Time Zone</label> <input class="form-control"--}}
+{{--                                                                                           disabled type="text"--}}
+{{--                                                                                           value="">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            --}}{{-- <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label>Days Available <span id="selectedId"></span></label>--}}
+{{--                                                    <select id="selecteddays" multiple>--}}
+{{--                                                    </select>--}}
+{{--                                                </div>--}}
+{{--                                            </div> --}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">No. of Sessions in a Week</label> <input--}}
+{{--                                                        class="form-control" disabled type="text"--}}
+{{--                                                        value="{{ $detail->sessions_in_week ?? ''}}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Type of Training</label>--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{ $cust_detail->training_type ?? ''}}">--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group">--}}
+{{--                                                    <label for="">Trainer Assigned</label>--}}
+{{--                                                    @if(count($schedules) > 0) {--}}
+{{--                                                    <input class="form-control" disabled type="text"--}}
+{{--                                                           value="{{ ucfirst($schedules[0]['trainer']->name).' '.ucfirst($schedules[0]['trainer']->last_name) ?? '' }}">--}}
+{{--                                                    @else--}}
+{{--                                                        <input class="form-control" disabled type="text"--}}
+{{--                                                               value="No Trainer Assigned Yet">--}}
+{{--                                                    @endif--}}
+{{--                                                    --}}{{-- <input class="form-control" disabled type="text" value="{{ ucfirst($schedules[0]['trainer']->name).' '.ucfirst($schedules[0]['trainer']->last_name) ?? '' }}"> --}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
                                 </div>
                             </div>
                         </div>

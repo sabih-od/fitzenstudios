@@ -208,6 +208,8 @@
             $("#upcoming_sessions_month").show();
 
         });
+
     </script>
 
 @endsection
+

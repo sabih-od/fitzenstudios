@@ -17,6 +17,7 @@
     <!-- Calandar CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <link href="{{ asset('themes/admin/vendor/clock-picker/clockpicker.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('themes/customer/css/slick.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('themes/customer/css/slick-theme.min.css') }}" />
     <link href="{{ asset('themes/customer/css/styles.css') }}" rel="stylesheet" />
@@ -95,6 +96,7 @@
 <!-- Calandar JS -->
 <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="{{asset('themes/admin/vendor/clock-picker/clockpicker.js')}}"></script>
 <script src="{{ asset('themes/customer/js/slick.min.js') }}"></script>
 <script src="{{ asset('themes/customer/js/scripts.js') }}"></script>
 <script src="{{ asset('themes/customer/js/custom.min.js') }}"></script>
