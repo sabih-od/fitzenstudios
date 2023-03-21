@@ -10,28 +10,39 @@
             <div class="content">
                 <div>
                     <h3>{{ $upcoming_session[0]->session_type }}</h3>
+                    <p>Attendant(s): <strong>{{ count($upcoming_session) }}</strong></p>
+                    <br>
+{{--                    @foreach($upcoming_session as $key => $upcoming_session[0])--}}
+{{--                        <p> {{ $upcoming_session[0]["customer"]->first_name.' '.$upcoming_session[0]["customer"]->last_name }}</p>--}}
+{{--                    @endforeach--}}
 
-                    @foreach($upcoming_session as $key => $item)
-                        <p> {{ $item["customer"]->first_name.' '.$item["customer"]->last_name }}</p>
-                    @endforeach
-
-                    @if($upcoming_session[0]->status == "completed")
-                        <span class="badge badge-success mb-3">{{ ucfirst($upcoming_session[0]->status) }}</span>
-                    @elseif($upcoming_session[0]->status == "re-scheduled")
-                        <span class="badge badge-warning mb-3">{{ ucfirst($upcoming_session[0]->status) }}</span>
-                    @elseif($upcoming_session[0]->status == "canceled")
-                        <span class="badge badge-danger mb-3">{{ ucfirst($upcoming_session[0]->status) }}</span>
-                    @elseif($upcoming_session[0]->status == "upcoming")
-                        <span class="badge badge-primary mb-3">{{ ucfirst($upcoming_session[0]->status) }}</span>
+                    @if(isset($upcoming_session[0]->request_session) && $upcoming_session[0]->request_session->status === 'pending')
+                        <span class="badge badge-danger">Applied for reschedule</span>
+                    @else
+                        @if($upcoming_session[0]->status == "completed")
+                            <span class="badge badge-success">{{$upcoming_session[0]->formatted_status}}</span>
+                        @elseif($upcoming_session[0]->status == "re-scheduled")
+                            <span class="badge badge-warning">{{$upcoming_session[0]->formatted_status }}</span>
+                        @elseif($upcoming_session[0]->status == "cancelled" || $upcoming_session[0]->status == "canceled")
+                            <span class="badge badge-danger">Cancelled</span>
+                        @elseif($upcoming_session[0]->status == "upcoming")
+                            <span class="badge badge-primary">{{$upcoming_session[0]->formatted_status }}</span>
+                        @endif
                     @endif
+
+{{--                    @if($upcoming_session[0]->status == "completed")--}}
+{{--                        <span class="badge badge-success mb-3">{{ ucfirst($upcoming_session[0]->status) }}</span>--}}
+{{--                    @elseif($upcoming_session[0]->status == "re-scheduled")--}}
+{{--                        <span class="badge badge-warning mb-3">{{ ucfirst($upcoming_session[0]->status) }}</span>--}}
+{{--                    @elseif($upcoming_session[0]->status == "canceled")--}}
+{{--                        <span class="badge badge-danger mb-3">{{ ucfirst($upcoming_session[0]->status) }}</span>--}}
+{{--                    @elseif($upcoming_session[0]->status == "upcoming")--}}
+{{--                        <span class="badge badge-primary mb-3">{{ ucfirst($upcoming_session[0]->status) }}</span>--}}
+{{--                    @endif--}}
 
                 </div>
                 <div class="btnWrap">
-{{--                    <span>{{ date('h:i:A', strtotime($item->trainer_timezone_time))}}</span>--}}
-
-
                     <span>{{ $upcoming_session[0]->converted_time->format('h:i A')}}</span>
-
 
                     @if($upcoming_session[0]->status == "completed")
                         @if($upcoming_session[0]->demo_session_id != null)
@@ -45,15 +56,17 @@
                         <a href="{{ url('trainer/add-customer-details/'.$upcoming_session[0]->customer_id)}}">ADD Details</a>
 
                     @elseif($upcoming_session[0]->status == "upcoming")
-
                         <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"
                            class="mb-3" style="width: 131px;!important;text-align: center;">JOIN</a>
-                        <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}">RE-SCHEDULE</a>
+                        @if(empty($upcoming_session[0]->request_session))
+                            <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}">RE-SCHEDULE</a>
+                        @endif
                     @else
                         <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"
                            class="text-center" style="width: 131px;!important">JOIN</a>
-                @endif
-                <!-- Begin Join Meeting Popup -->
+                    @endif
+
+                    <!-- Begin Join Meeting Popup -->
                     <div class="modal fade joinMeetingModal" id="joinMeetingModal{{$loop->iteration}}"
                          tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg">
@@ -68,16 +81,13 @@
                                         <a href="#" class="text-dark"
                                            style="background-color: #f8f9fa">{{ $upcoming_session[0]->notes }}</a>
                                     </div>
-                                    {{-- <div class="text-right"><a href="{{ url('trainer/dashboard') }}"
-                                    class="text-dark" style="background-color:#fff"><i
-                                        class="fas fa-share"></i></a>
-                                </div> --}}
                                     <a target="blank" href="{{ $upcoming_session[0]->start_url }}" class="btnStyle">Join Now</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- END Join Meeting Popup -->
+
                     <!-- Re-Schedule Modal -->
                     <div class="modal fade" id="rescheduleModal{{$loop->iteration}}" tabindex="-1"
                          role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

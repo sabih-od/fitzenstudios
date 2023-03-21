@@ -12,7 +12,6 @@
                     <div class="rate p-0">
                         @if($item["reviews"])
                             @if($item["reviews"]["rating"] == 5)
-
                                 <input type="radio" id="star5" name="rating" checked value="5" />
                                 <label for="star5" title="text">5 stars</label>
                                 <input type="radio" id="star4" name="rating" checked value="4" />
@@ -81,7 +80,6 @@
                                 <label for="star1" title="text">1 star</label>
                             @endif
                         @endif
-
                     </div>
                     @if(isset($item->request_session) && $item->request_session->status === 'pending')
                         <span class="badge badge-danger">Applied for reschedule</span>
@@ -99,16 +97,8 @@
                 </div>
                 <div class="btnWrap">
                     <span>{{$item->converted_time->format('h:i A')}}</span>
-                    {{--                    <span>{{  date('h:i A', strtotime($item->customer_timezone_time)) }}</span>--}}
-                    {{-- <p class="zone">{{ $item->time_zone ?? "" }}</p> --}}
-
                     @if($item->status == "completed")
                         <a href="{{ url('customer/performance-detail/'.$item->id) }}">View Performance</a>
-                        {{-- <a href="{{ url('trainer/add-customer-performance/'.$item->id)}}">ADD
-                        PERFORMANCE</a>
-                        <a href="{{ url('trainer/add-customer-details/'.$item->customer_id)}}">ADD
-                            Details</a> --}}
-                            {{--                    <a href="{{ url('customer/cancel-session/'.$item->id) }}">Cancel Session</a>--}}
                     @elseif($item->status == "upcoming")
                         <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"class="mb-2"style="width: 150px;">JOIN MEETING</a>
                         <a href="#" class="mb-2 cancel-session btn- btn-danger" data-cust_to_trainer_id="{{ $item->id }}">Cancel Session</a>
@@ -126,10 +116,13 @@
                             $now  = \Carbon\Carbon::now();
                             $diff = $date->diffInHours($now);
                         @endphp
-                        @if($diff >= 6)
-                            <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}"style="width: 150px;">RE-SCHEDULE</a>
-                        @else
-                            <a href="#" data-toggle="modal" data-target="#rescheduleMessage"class="">RE-SCHEDULE</a>
+
+                        @if(empty($item->request_session))
+                            @if($diff >= 6)
+                                <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}"style="width: 150px;">RE-SCHEDULE</a>
+                            @else
+                                <a href="#" data-toggle="modal" data-target="#rescheduleMessage"class="">RE-SCHEDULE</a>
+                        @endif
                     @endif
                 @endif
 
@@ -149,11 +142,6 @@
                                         <a href="#" class="text-dark"
                                            style="background-color: #f8f9fa">{{ $item->notes }}</a>
                                     </div>
-                                    {{-- <div class="text-right"><a
-                                                    href="{{ url('trainer/dashboard') }}"
-                                    class="text-dark" style="background-color:#fff"><i
-                                        class="fas fa-share"></i></a>
-                                </div> --}}
                                     <a target="blank" href="{{ $item->start_url }}" class="btnStyle">Join
                                         Now</a>
 

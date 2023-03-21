@@ -44,7 +44,7 @@ Re-Schedule Session Requests
                                        <!--<a href="{{ url('admin/approve-request/'.$item->id) }}" class="btn btn-success">Approve</a>-->
                                        <form action="{{ url('admin/approve-request/'.$item->id) }}" method="post">
                                             @csrf
-                                             <input type="hidden" name="time_zone" value="{{$item->timeZone->id }} ">
+                                             <input type="hidden" name="time_zone" value="{{ $item->timeZone->id }} ">
                                              <input type="submit"value="Approve" class="btn btn-success">
                                         </form>
                                         <button class="btn btn-danger" onclick="Delete('{{$item->id}}');" >
