@@ -15,6 +15,7 @@
         <!-- Calandar CSS -->
         <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+        <link href="{{ asset('themes/admin/vendor/clock-picker/clockpicker.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('themes/customer/css/slick.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('themes/customer/css/slick-theme.min.css') }}" />
         <link href="{{ asset('themes/customer/css/styles.css') }}" rel="stylesheet" />
@@ -98,7 +99,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="">Select Time<span style="color: red">*</span></label>
-                                                <input type="time" name="session_time" class="form-control" placeholder="Select Time" required>
+                                                <input type="text" name="session_time" class="form-control" placeholder="Select Time" required>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -145,6 +146,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+        <script src="{{asset('themes/admin/vendor/clock-picker/clockpicker.js')}}"></script>
+
         <!-- Calandar JS -->
         <script src="https://unpkg.com/@fullcalendar/core@4.3.0/main.min.js"></script>
         <script src="https://unpkg.com/@fullcalendar/interaction@4.3.0/main.min.js"></script>
@@ -152,6 +155,7 @@
         <script src="https://unpkg.com/@fullcalendar/timegrid@4.3.0/main.min.js"></script>
         <script src="https://unpkg.com/@fullcalendar/list@4.3.0/main.min.js"></script>
         <!-- Calandar JS -->
+
         <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script> -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="{{ asset('themes/customer/js/slick.min.js') }}"></script>
@@ -160,6 +164,9 @@
         <script src="{{asset('themes/admin/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
         <script>
               $('.js-example-basic-single').select2();
+              $('[name="session_time"]').clockpicker({
+                  autoclose: true
+              });
         </script>
     </body>
 </html>

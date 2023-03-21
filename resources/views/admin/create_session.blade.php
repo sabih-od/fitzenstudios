@@ -104,7 +104,7 @@ Create Session
                                                     <input type="date" placeholder="Select Date" class="form-control" name="trainer_date[]" >
                                                 </td>
                                                 <td>
-                                                    <input type="time" placeholder="Select Time" class="form-control" name="trainer_time[]" >
+                                                    <input type="text" placeholder="Select Time" class="form-control" name="trainer_time[]" >
 
                                                 </td>
                                                 <td style="text-align: center;">
@@ -134,11 +134,19 @@ Create Session
         });
         $(document).ready(function(){
         $(".addCF").click(function(){
-            $("#customFields").append('<tr valign="top"><td><input type="date" placeholder="Select Date" class="form-control" name="trainer_date[]" required></td><td> <input type="time" placeholder="Select Time" class="form-control" name="trainer_time[]" required></td><td style="text-align:center"><a href="javascript:void(0);" class="remCF"><i style="color: red;" class="fa-solid fa-trash-can"></i></a></td></tr>');
+            $("#customFields").append('<tr valign="top"><td><input type="date" placeholder="Select Date" class="form-control" name="trainer_date[]" required></td><td> <input type="text" placeholder="Select Time" class="form-control" name="trainer_time[]" required></td><td style="text-align:center"><a href="javascript:void(0);" class="remCF"><i style="color: red;" class="fa-solid fa-trash-can"></i></a></td></tr>');
+            $('[name="trainer_time[]"]').clockpicker({
+                autoclose: true
+            });
         });
         $("#customFields").on('click','.remCF',function(){
             $(this).parent().parent().remove();
         });
+
     });
+
+        $('[name="trainer_time[]"]').clockpicker({
+            autoclose: true
+        });
     </script>
 @endsection
