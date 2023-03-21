@@ -87,9 +87,9 @@ Dashboard
                         <p><b>Session Start Date: </b><span id="trainer_date"></span></p>
                         <p><b>Session Start Time: </b><span id="trainer_time"></span></p>
                         <p><b>Time Zone: </b><span id="admin_time_zone"></span></p>
-                        <p><b>Session Status: </b><span id="session_status"></span></p>
-                        <a href="#" data-toggle="modal" data-target="#joinMeetingModal" class="btnStyle">JOIN
-                            MEETING</a>
+                        <p><b>Session Status: </b><label class="badge badge-info"><span id="session_status"></span></label></p>
+{{--                        <a href="#" data-toggle="modal" data-target="#joinMeetingModal" class="btnStyle">JOIN--}}
+{{--                            MEETING</a>--}}
 {{--                        <a href="javascript:;" id="add_cust_url" class="btnStyle">add customer Details</a>--}}
                     </div>
                 </div>
@@ -119,6 +119,7 @@ Dashboard
         function handleDatesRender(arg) {
             // console.log('viewType1:', arg.view.calendar.state.viewType);
         }
+        console.log(demos)
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
             plugins: ['interaction', 'dayGrid', 'timeGrid'],
@@ -154,9 +155,16 @@ Dashboard
                 $('.session-popup').slideDown(500);
             },
             events: demos,
+            eventRender: function(event, element) {
+                if(event.event.rendering == "canceled" || event.event.rendering == "cancelled") {
+                    event.el.classList.add("bg-danger")
+                    event.el.classList.add("border-danger")
+                }
+            },
             eventClick: function (event, jsEvent, view) {
                 var cust_detail_url = `{{ url('trainer/add-customer-details/` + event.event
                     .extendedProps.description.customer_id + `')}}`;
+
                 var name = event.event.extendedProps.description.customer.first_name + ' ' + event
                     .event.extendedProps.description.customer.last_name;
 
@@ -166,9 +174,14 @@ Dashboard
                 $('#trainer_name').text(name);
                 $('#trainer_date').text(event.event.extendedProps.description.trainer_timezone_date);
                 $('#trainer_time').text(session_time);
-                $("#admin_time_zone").text(event.event.extendedProps.description.time_zone);
-                $('#session_status').text(event.event.extendedProps.description.status);
+                $("#admin_time_zone").text(event.event.extendedProps.description.time_zone.abbreviation);
                 $("#add_cust_url").attr("href", cust_detail_url);
+
+                let status = event.event.extendedProps.description.status == 'canceled' ? 'Cancelled' : event.event.extendedProps.description.status.toUpperCase(),
+                    requestSessionStatus = event.event.extendedProps.description.request_session !== null ? event.event.extendedProps.description.request_session.status : null,
+                    finalStatus = requestSessionStatus == 'pending' ? 'Applied for reschedule' : status;
+                $('#session_status').text(finalStatus);
+
                 $('#calendarModal').modal();
             },
 

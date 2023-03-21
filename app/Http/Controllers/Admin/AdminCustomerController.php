@@ -323,7 +323,6 @@ class AdminCustomerController extends Controller
 
     public function RescheduleRequests()
     {
-
         $all_requests = RescheduleRequest::with('sessions','timeZone')->orderBy('id', 'DESC')->where('status', 'pending')->get();
         return view('admin.rescheduled_requests', compact('all_requests'));
     }
@@ -336,25 +335,33 @@ class AdminCustomerController extends Controller
 
     public function ApproveRequest($reschedule_id)
     {
-        $reschedule_request = RescheduleRequest::find($reschedule_id);
-        $session = CustomerToTrainer::find($reschedule_request->customer_to_trainer_id);
-        $timezone = TimeZone::find($session->time_zone);
-        $date = new DateTime($reschedule_request->new_session_date . '' . $reschedule_request->new_session_time, new DateTimeZone($timezone->timezone_value));
-        $date->setTimezone(new DateTimeZone($timezone->timezone_value));
-        $sessionDate = $date->format('Y-m-d');
-        $sessionTime = $date->format('H:i:s');
-        $data = [
-            "topic" => $session->session_type,
-            "start_time" => $sessionDate . ' ' . $sessionTime,
-            "duration" => 60,
-            "agenda" => $reschedule_request->reason,
-            "host_video" => " ",
-            "participant_video" => " ",
-            "time_zone" => $timezone->timezone_value
-        ];
-
         try {
             DB::beginTransaction();
+
+            $reschedule_request = RescheduleRequest::find($reschedule_id);
+            $session = CustomerToTrainer::find($reschedule_request->customer_to_trainer_id);
+
+            if(empty($session)) {
+                DB::commit();
+                RescheduleRequest::find($reschedule_id)->delete();
+                return redirect()->back()->with('error', 'The session was not exits anymore therefore, the request is deleted.');
+            }
+
+            $timezone = TimeZone::find($session->time_zone);
+            $date = new DateTime($reschedule_request->new_session_date . '' . $reschedule_request->new_session_time, new DateTimeZone($timezone->timezone_value));
+            $date->setTimezone(new DateTimeZone($timezone->timezone_value));
+            $sessionDate = $date->format('Y-m-d');
+            $sessionTime = $date->format('H:i:s');
+            $data = [
+                "topic" => $session->session_type,
+                "start_time" => $sessionDate . ' ' . $sessionTime,
+                "duration" => 60,
+                "agenda" => $reschedule_request->reason,
+                "host_video" => " ",
+                "participant_video" => " ",
+                "time_zone" => $timezone->timezone_value
+            ];
+
             $resp = $this->update($session->meeting_id, $data);
             if ($resp['success']) {
                 $customer_id = $session->customer_id;

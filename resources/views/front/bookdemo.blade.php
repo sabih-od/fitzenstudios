@@ -101,19 +101,20 @@
                                                 <input type="time" name="session_time" class="form-control" placeholder="Select Time" required>
                                             </div>
                                         </div>
-
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="timezone">Time Zone<span style="color: red">*</span></label>
                                                 <select name="time_zone" id="time_zone" class="form-control" required>
                                                     <option value="">Select Time Zone</option>
-                                                      @forelse ($timezones as $time)
-                                                      {{--<option style="color: black !important" value="{{ $time->timezone_value }}">{{ $time->zone_name.' '.$time->time_zone }}</option>--}}
-
-                                                          <option style="color: black !important" value="{{ $time->id}}">{{ $time->zone_name.' '.$time->time_zone }}</option>
-                                                      @empty
-
-                                                      @endforelse
+                                                    @if(count($timezones) > 0)
+                                                        @foreach ($timezones as $time)
+                                                            @if(auth()->check() && isset(auth()->user()->customer))
+                                                                <option style="color: black !important" value="{{ $time->id }}" {{ auth()->user()->customer->time_zone == $time->id ? 'selected' : null }}>{{ $time->zone_name.' '.$time->time_zone }}</option>
+                                                            @else
+                                                                <option style="color: black !important" value="{{ $time->id }}">{{ $time->zone_name.' '.$time->time_zone }}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    @endif
                                                 </select>
                                             </div>
                                         </div>

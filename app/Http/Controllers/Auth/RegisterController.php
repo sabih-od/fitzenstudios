@@ -60,6 +60,7 @@ class RegisterController extends Controller
                 'email'      => $user->email,
                 'phone'      => $user->phone,
                 'timezone'  => $data["time_zone"],
+                'time_zone'  => $data["time_zone"],
                 "is_lead"    => 1,
             ]);
             Lead::create([
