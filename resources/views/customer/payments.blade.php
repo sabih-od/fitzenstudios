@@ -5,10 +5,10 @@ My Payments
 
 @section('content')
     <main>
-        <div class="content-wrap">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6">
-                    <h2 class="secHeading">Invoices & Payments</h2>
+                    <h2 class="secHeading mt-2">Invoices & Payments</h2>
                 </div>
                 <div class="col-md-6 text-right">
                     {{-- <a href="../admin-portal/contract.php" class="btnStyle addUserBtn">View Contract</a> --}}
@@ -52,7 +52,7 @@ My Payments
                                         @if($item->status == "unpaid")
                                             <!-- Button trigger modal -->
                                             <td><a href="javascript:;" data-id="{{ $item->id }}" data-payment="{{ $item->payment }}" class="btnStyle payNow">Pay Now</a></td>
-                                          
+
                                         @endif
                                         {{-- <td><a href="assets/images/pdf.pdf" target="_blank" class="btnStyle">VIEW DETAILS</a></td> --}}
                                     </tr>
@@ -113,7 +113,7 @@ My Payments
                                                 </div>
                                             </form>
                                         </div>
-                                       
+
                                     </div>
                                     </div>
                                 </div>
@@ -131,10 +131,10 @@ My Payments
 <script type = "text/javascript">
     $(document).ready(function(){
         $('.payNow').click(function(){
-            
+
             var payment_id = $(this).data('id');
             var payment    = $(this).data('payment');
-            
+
             $('#payment_id').val(payment_id);
             $('#payment').val(payment);
 

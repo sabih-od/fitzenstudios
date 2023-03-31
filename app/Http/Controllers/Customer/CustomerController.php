@@ -18,16 +18,15 @@ use Carbon\Carbon;
 
 use App\Models\Performance;
 
-
 class CustomerController extends Controller
 {
     public function dashboard()
     {
         $now = Carbon::now();
         $currentMonth_start = $now->startOfMOnth()->format('Y-m-d');
-        $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
-        $demos = BookDemoSession::where('customer_id', Auth::user()->customer->id)
-            ->with('Customer', 'Customer.trainer')->orderBy('id', 'DESC')->get();
+//        $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
+//        $demos = BookDemoSession::where('customer_id', Auth::user()->customer->id)
+//            ->with('Customer', 'Customer.trainer')->orderBy('id', 'DESC')->get();
         $demo_data = [];
         $i = 0;
         $user_id = Auth::user()->id;

@@ -32,8 +32,10 @@ Sessions
                                     <tr>
                                         <td><span>{{ $loop->iteration }}</span></td>
                                         <td><span>{{ $item->customer->first_name}}</span></td>
-                                        <td><span>{{ date('d-m-Y', strtotime(@$item->customer_timezone_date)) }}</span></td>
-                                        <td><span>{{ date('h:i A', strtotime(@$item->customer_timezone_time)) }}</span></td>
+{{--                                        <td><span>{{ date('d-m-Y', strtotime(@$item->customer_timezone_date)) }}</span></td>--}}
+{{--                                        <td><span>{{ date('h:i A', strtotime(@$item->customer_timezone_time)) }}</span></td>--}}
+                                        <td><span>{{ date('d-m-y', strtotime(@$item->trainer_date)) }}</span></td>
+                                        <td><span>{{ date('h:i A', strtotime(@$item->trainer_time)) }}</span></td>
                                         <td><span>{{ @$item->timeZone->abbreviation ?? '---'}}</span></td>
                                         <td><span>{{ $item["sessions"] != null ? $item["sessions"]["goals"] : $item->session_type }}</span></td>
                                         <td><span>{{ $item["sessions"] != null ? $item["sessions"]["message"] : $item->notes }}</span></td>

@@ -34,8 +34,7 @@ Re-Schedule Session Requests
                                     <td>{{ ucfirst($item->request_by) }}</td>
                                     <td>{{ isset($item["sessions"][0]) ? $item["sessions"][0]->session_type : '---' }}</td>
                                     <td>{{ date('d-m-Y', strtotime($item->new_session_date))}}</td>
-
-                                    <td>{{ $item->new_session_time}}</td>
+                                    <td>{{ date('h:i A', strtotime($item->new_session_time)) }}</td>
                                     <td>{{ $item->timeZone->abbreviation }}</td>
 
                                     <td>{{ $item->reason }}</td>
@@ -44,7 +43,7 @@ Re-Schedule Session Requests
                                        <!--<a href="{{ url('admin/approve-request/'.$item->id) }}" class="btn btn-success">Approve</a>-->
                                        <form action="{{ url('admin/approve-request/'.$item->id) }}" method="post">
                                             @csrf
-                                             <input type="hidden" name="time_zone" value="{{ $item->timeZone->id }} ">
+                                             <input type="hidden" name="time_zone" value="{{ $item->timeZone->id }}">
                                              <input type="submit"value="Approve" class="btn btn-success">
                                         </form>
                                         <button class="btn btn-danger" onclick="Delete('{{$item->id}}');" >
@@ -88,7 +87,8 @@ Re-Schedule Session Requests
         });
 
         $('#clockPicker2').clockpicker({
-            autoclose: true
+            autoclose: true,
+            twelvehour: true
         });
 
         $('#check-minutes').click(function(e){

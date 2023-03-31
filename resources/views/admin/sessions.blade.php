@@ -19,9 +19,7 @@
                             <tr class="thead-dark">
                                 <th><span>No.</span></th>
                                 <th><span>Customer Name</span></th>
-                                {{-- <th><span>Customer Email</span></th> --}}
                                 <th><span>Trainer Name</span></th>
-                                {{-- <th><span>Trainer Email</span></th> --}}
                                 <th><span>Session Date</span></th>
                                 <th><span>Session Time</span></th>
                                 <th><span>Time Zone</span></th>
@@ -35,24 +33,12 @@
                                     <td>
                                         <span>{{ $item["customer"]["first_name"].' '.$item["customer"]["last_name"] }}</span>
                                     </td>
-                                    {{-- <td><span>{{ $item["customer"]["email"] }}</span></td> --}}
                                     <td><span>{{ $item["trainer"]["name"].' '.$item["trainer"]["last_name"] }}</span>
                                     </td>
-                                    {{-- <td><span>{{ $item["trainer"]["email"] }}</span></td> --}}
                                     <td><span>{{ date('d-m-Y', strtotime(@$item->customer_timezone_date)) }}</span></td>
-{{--                                    <td>--}}
-{{--                                        <span>{{ $item->demo_session_id != null ? date('d-m-Y', strtotime(@$item["sessions"]["session_date"])) : date('d-m-Y', strtotime(@$item->trainer_date)) }}</span>--}}
-{{--                                    </td>--}}
-{{--                                    <td>--}}
-{{--                                        <span>{{ $item->demo_session_id != null ? date('H:i', strtotime(@$item["sessions"]["session_time"])) : date('H:i', strtotime(@$item->trainer_time)) }}</span>--}}
-{{--                                    </td>--}}
-                                    <td><span>{{ date('h:i A', strtotime(@$item->customer_timezone_time)) }}</span></td>
-                                    <td>
-                                        <span>{{ @$item->timeZone->abbreviation ?? '---'  }}</span>
-                                    </td>
-                                    {{-- @if($item->status == "completed" && $item->id != $item["reviews"]["cust_to_trainer_id"]) --}}
+                                    <td><span>{{ date('h:i A', strtotime(@$item->trainer_time)) }}</span></td>
+                                    <td><span>{{ @$item->timeZone->abbreviation ?? '---'  }}</span></td>
                                     @if($item->status == "completed")
-
                                         <td><a href="javascript:;" class="btn btn-success">Completed</a></td>
                                     @elseif($item->status == "upcoming" || $item->status == "re-scheduled")
                                         <td>

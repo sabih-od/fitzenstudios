@@ -103,7 +103,8 @@
 <script src="{{ asset('themes/admin/js/custom.min.js') }}"></script>
   <script>
       $('[name="session_time"]').clockpicker({
-          autoclose: true
+          autoclose: true,
+          twelvehour: true
       });
   </script>
 @yield('js')

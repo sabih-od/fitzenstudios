@@ -31,7 +31,7 @@ Demo Session Requests
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{$item->Customer->first_name .' '. $item->Customer->last_name}}</td>
                                     <td>{{ date('d-m-Y', strtotime($item->session_date))}}</td>
-                                    <td>{{ $item->session_time }}</td>
+                                    <td>{{ date('h:i A', strtotime($item->session_time)) }}</td>
                                     <td>{{ $item->goals }}</td>
                                     <td>{{ $item->message }}</td>
                                     <td>{{ isset($item->Customer->trainer) ? $item->Customer->trainer->name : '' }}</td>
@@ -155,7 +155,8 @@ Demo Session Requests
         });
 
         $('#clockPicker2').clockpicker({
-            autoclose: true
+            autoclose: true,
+            twelvehour: true
         });
 
         $('#check-minutes').click(function(e){
