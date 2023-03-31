@@ -649,8 +649,8 @@
                                             <h3>
                                                 <span>Trainer Name</span>{{ $item["trainer"]->name.' '.$item["trainer"]->last_name ?? '' }}
                                             </h3>
-                                            <h3><span>Time</span>{{ $item->trainer_time }}</h3>
-                                            <h3><span>Status</span>{{ $item->status}}</h3>
+                                            <h3><span>Time</span>{{ date('h:i A', strtotime($item->trainer_time)) }}</h3>
+                                            <h3><span>Status</span>{{ ucfirst($item->status) }}</h3>
                                             <a href="{{ url('admin/performance-detail/'.$item->id)}}" class="btnStyle">VIEW
                                                 DETAILS</a>
                                         </div>

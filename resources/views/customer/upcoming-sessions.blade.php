@@ -170,6 +170,7 @@
                                         @csrf
                                         <input type="hidden" name="request_by" id="request_by"
                                                value="customer">
+                                        <input type="hidden" name="request_by_timezone" id="request_by_timezone" value="{{ @$item->customer->time_zone }}">
                                         <input type="hidden" name="session_id" id="session_id"
                                                value="{{ $item->id }}">
                                         <div class="row">
@@ -223,6 +224,7 @@
 @endforelse
 <script>
     $('#new_session_time').clockpicker({
-        autoclose: true
+        autoclose: true,
+        twelvehour: true
     });
 </script>

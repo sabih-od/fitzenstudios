@@ -159,6 +159,7 @@
 @endforelse
 <script>
     $('#new_session_time').clockpicker({
-        autoclose: true
+        autoclose: true,
+        twelvehour: true
     });
 </script>

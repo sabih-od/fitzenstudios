@@ -26,7 +26,7 @@ Performance
                                 <h2>{{ date('d', strtotime($item->trainer_date))}}<span>{{ date('M', strtotime($item->trainer_date))}}</h2>
                             </div>
 
-                            <h3><span>Time</span> {{date("h:i ", strtotime($item->trainer_time ))}}; </h3>
+                            <h3><span>Time</span> {{date("h:i A", strtotime($item->trainer_time ))}} </h3>
 
                             <h3><span>Customer</span>{{ $item["customer"]->first_name.' '.$item["customer"]->last_name }}</h3>
 

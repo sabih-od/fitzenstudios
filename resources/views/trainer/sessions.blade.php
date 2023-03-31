@@ -36,7 +36,7 @@
                                     </td>
                                     <td><span>{{ $item["customer"]["email"] }}</span></td>
                                     <td><span>{{ date('d-m-Y', strtotime(@$item->trainer_timezone_date)) }}</span></td>
-                                    <td>{{ date("h:i", strtotime($item->trainer_time ))}}</td>
+                                    <td>{{ date("h:i A", strtotime($item->trainer_time ))}}</td>
                                     <td><span>{{ @$item->timeZone->abbreviation}}</span></td>
                                     <td>
                                         @if ($item->status == 'canceled')

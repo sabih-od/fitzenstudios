@@ -324,7 +324,7 @@
                     $('#trainer_name').text(name);
                     $('#trainer_date').text(event.event.extendedProps.description.trainer_date);
                     $('#trainer_time').text(getsessiontime);
-                    $('#session_status').text(event.event.extendedProps.description.status);
+                    $('#session_status').text(event.event.extendedProps.description.status.toUpperCase());
                     // $("#add_cust_url").attr("href", cust_detail_url);
                     $('#calendarModal').modal();
                 },
