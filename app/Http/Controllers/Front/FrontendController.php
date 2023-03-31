@@ -195,16 +195,11 @@ class FrontendController extends Controller
     public function RescheduleRequest(Request $request) {
         try {
             DB::beginTransaction();
-            $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->first();
+            $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->where('request_by', $request->request_by == 'customer' ? 'customer' : 'trainer')->first();
             $session = CustomerToTrainer::where('id', $request->session_id)->first();
             //$time_zone = $session->time_zone;
             $time_zone = $request->request_by_timezone;
-            //dd($time_zone);
-//        if ($request->request_by == "customer") {
-//            $time_zone = Customer::select('time_zone')->where('id', $session->customer_id)->first();
-//        } else {
-//            $time_zone = Trainer::select('time_zone')->where('id', $session->trainer_id)->first();
-//        }
+
             if ($check == null) {
                 $session_request                         = new RescheduleRequest();
                 $session_request->customer_to_trainer_id = $request->session_id;
