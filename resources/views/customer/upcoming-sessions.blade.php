@@ -81,7 +81,7 @@
                             @endif
                         @endif
                     </div>
-                    @if(isset($item->request_session) && $item->request_session->status === 'pending')
+                    @if(isset($item->request_session) && $item->request_session->request_by === 'customer' && $item->request_session->status === 'pending')
                         <span class="badge badge-danger">Applied for reschedule</span>
                     @else
                         @if($item->status == "completed")
@@ -117,7 +117,7 @@
                             $diff = $date->diffInHours($now);
                         @endphp
 
-                        @if(empty($item->request_session))
+                        @if(empty($item->request_session) || !empty($item->request_session) && $item->request_session->request_by !== 'customer')
                             @if($diff >= 6)
                                 <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}"style="width: 150px;">RE-SCHEDULE</a>
                             @else

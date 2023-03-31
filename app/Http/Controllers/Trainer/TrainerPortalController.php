@@ -36,7 +36,9 @@ class TrainerPortalController extends Controller
 
         $user_id = Auth::user()->id;
         $get_trainer_id = Trainer::where('user_id', $user_id)->pluck('id')->first();
-        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer', 'request_session')
+        $upcoming_sessions = CustomerToTrainer::with(['customer', 'trainer', 'request_session' => function ($q) {
+        $q->where('request_by', '!=', 'customer');
+        }])
             ->whereBetween('trainer_date', [$currentMonth_start, $currentMonth_end])
             ->where('trainer_id', $get_trainer_id)
             ->whereNotIn('status', ['completed', 'canceled', 'cancelled'])
@@ -102,7 +104,9 @@ class TrainerPortalController extends Controller
         $currentMonth_start_dates = $start_date->format('Y-m-d');
         $currentMonth_end_dates = $end_date->format('Y-m-d');
 
-        $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer', 'request_session')
+        $upcoming_sessions = CustomerToTrainer::with(['customer', 'trainer', 'request_session' => function ($q) {
+            $q->where('request_by', '!=', 'customer');
+        }])
             ->whereBetween('trainer_date', [$currentMonth_start_dates, $currentMonth_end_dates])
 //            ->where('trainer_date',$currentMonth_start_dates)
             ->where('trainer_id', $get_trainer_id)

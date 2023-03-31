@@ -179,7 +179,8 @@ Dashboard
 
                 let status = event.event.extendedProps.description.status == 'canceled' ? 'Cancelled' : event.event.extendedProps.description.status.toUpperCase(),
                     requestSessionStatus = event.event.extendedProps.description.request_session !== null ? event.event.extendedProps.description.request_session.status : null,
-                    finalStatus = requestSessionStatus == 'pending' ? 'Applied for reschedule' : status;
+                    isTrainerRequestBy = event.event.extendedProps.description.request_session !== 'customer' ? true : false,
+                    finalStatus = requestSessionStatus == 'pending' && isTrainerRequestBy ? 'Applied for reschedule' : status;
                 $('#session_status').text(finalStatus);
 
                 $('#calendarModal').modal();
@@ -223,7 +224,5 @@ Dashboard
 
 
         });
-
-
 </script>
 @endsection
