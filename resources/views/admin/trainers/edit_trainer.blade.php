@@ -1,6 +1,6 @@
 @extends('layouts.admin-portal')
 @section('page-title')
-    Edit Trainer
+    Edit Trainer Profile
 @endsection
 @section('style')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
@@ -230,7 +230,7 @@
                                         @endif
                                     </div>
                                 </div>
-                                <button type="submit" href="#" class="btnStyle">EDIT profile</button>
+                                <button type="submit" href="#" class="btnStyle">Update Trainer profile</button>
                             </form>
                         </div>
                     </div>
