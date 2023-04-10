@@ -17,6 +17,7 @@ use App\Models\Notification;
 use App\Models\Review;
 use File;
 use Auth;
+use Illuminate\Support\Facades\Mail;
 
 class TrainerController extends Controller
 {
@@ -60,11 +61,20 @@ class TrainerController extends Controller
                 'time_zone' => $request->time_zone,
             ]);
 
-            $view = view('trainer.emails.invitation')
-                ->with('to', $request->email)
-                ->with('token', $user->password)
-                ->render();
-            $this->customphpmailer('noreply@fitzenstudios.com', $request->email, 'Fitzen Studio - Invitation to join as trainer', $view);
+//            $view = view('trainer.emails.invitation')
+//                ->with('to', $request->email)
+//                ->with('token', $user->password)
+//                ->render();
+//            $this->customphpmailer('noreply@fitzenstudios.com', $request->email, 'Fitzen Studio - Invitation to join as trainer', $view);
+            $mailData = [
+                'to' => $request->email,
+                'token' => $user->password,
+            ];
+            Mail::send('trainer.emails.invitation', $mailData, function($message) use ($mailData) {
+                $message->to($mailData['to'])
+                    ->subject('Fitzen Studio - Invitation to join as trainer');
+            });
+
 
             DB::commit();
             return redirect()->back()->with('success', 'Trainer Created Successfully. An invitation link has sent to trainer to join.');
