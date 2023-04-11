@@ -118,7 +118,8 @@
             });
 
             $('#clockPicker2').clockpicker({
-                autoclose: true
+                autoclose: true,
+                twelvehour: true
             });
 
             $('#check-minutes').click(function (e) {

@@ -15,17 +15,12 @@
                 <a class="nav-link notiBell" href="{{ route($prefix . '.notification') }}"><i class="fas fa-bell"></i><span>{{ isset($unread_count) ? $unread_count : 0 }}</span></a>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{-- @if(isset($user->photo)) --}}
-                    <img src="{{ $user->photo ?  asset($user->photo) : asset('themes/customer/assets/images/default-user.jpg') }}" class="userImg rounded-circle" alt=""> 
-                    {{-- @else
-                    <img src="{{ asset('themes/customer/assets/images/user.jpg') }}" class="userImg rounded-circle" alt="">
-                    @endif --}}
-                    {{$user->first_name.' '.$user->last_name}} 
+                    <img src="{{ @$user->photo ?  asset($user->photo) : asset('themes/customer/assets/images/default-user.jpg') }}" class="userImg rounded-circle" alt="">
+                    {{@$user->first_name.' '.@$user->last_name}}
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-
                     <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#changePassword">Change Password</a>
-                    <div class="dropdown-divider"></div>                    
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                         document.getElementById('logout-form').submit();">
                         <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>

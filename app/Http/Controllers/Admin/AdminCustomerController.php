@@ -131,7 +131,8 @@ class AdminCustomerController extends Controller
         try {
             DB::beginTransaction();
 
-            $date = new DateTime($request->trainer_date . '' . $request->trainer_time, new DateTimeZone($timezone->timezone_value));
+            $trainerTime = date('h:i:s', strtotime($request->trainer_time));
+            $date = new DateTime($request->trainer_date . '' . $trainerTime, new DateTimeZone($timezone->timezone_value));
             $date->setTimezone(new DateTimeZone($timezone->timezone_value));
             $sessionDate = $date->format('Y-m-d');
             $sessionTime = $date->format('H:i:s');
@@ -235,31 +236,15 @@ class AdminCustomerController extends Controller
 //                $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Trainer');
 //            });
 
-//            $assignTrainerCustomerHtml = view('admin.emails.assigntrainer-customer')
-//                ->with('to', $customer['email'])
-//                ->with('name', $customer['first_name'] . ' ' . $customer['last_name'])
-//                ->with('trainer', $trainer['name'])
-//                ->with('join_url', $resp["data"]["join_url"])
-//                ->with('start_date', $customer_timezone_date)
-//                ->with('start_time', $customer_timezone_time)
-//                ->render();
-//            $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], 'Fitzen Studio - Assign Trainer', $assignTrainerCustomerHtml);
-            $assignTrainerCustomerData = [
-                'to' => $customer['email'],
-                'subject' => 'Fitzen Studio - Assign Trainer',
-                'view' => 'admin.emails.assigntrainer-customer',
-                'data' => [
-                    'name' => $customer['first_name'] . ' ' . $customer['last_name'],
-                    'trainer' => $trainer['name'],
-                    'join_url' => $resp["data"]["join_url"],
-                    'start_date' => $customer_timezone_date,
-                    'start_time' => $customer_timezone_time,
-                ],
-            ];
-            Mail::send($assignTrainerCustomerData['view'], $assignTrainerCustomerData['data'], function($message) use($assignTrainerCustomerData){
-                $message->to($assignTrainerCustomerData['to'])
-                    ->subject($assignTrainerCustomerData['subject']);
-            });
+            $assignTrainerCustomerHtml = view('admin.emails.assigntrainer-customer')
+                ->with('to', $customer['email'])
+                ->with('name', $customer['first_name'] . ' ' . $customer['last_name'])
+                ->with('trainer', $trainer['name'])
+                ->with('join_url', $resp["data"]["join_url"])
+                ->with('start_date', $customer_timezone_date)
+                ->with('start_time', $customer_timezone_time)
+                ->render();
+            $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], 'Fitzen Studio - Assign Trainer', $assignTrainerCustomerHtml);
 
 //            $assignTrainerHtml = view('admin.emails.assigntrainer-trainer')
 //                ->with('to', $trainer['email'])
@@ -296,7 +281,7 @@ class AdminCustomerController extends Controller
                     'meeting_id' => $resp["data"]["id"],
                     'trainer_id' => $trainer_id,
                     'trainer_date' => $request->trainer_date,
-                    'trainer_time' => $request->trainer_time,
+                    'trainer_time' => $trainerTime,
                     'notes' => $request->notes,
                     'session_type' => $request->session_type,
                     'trainer_timezone_date' => $trainer_timezone_date,

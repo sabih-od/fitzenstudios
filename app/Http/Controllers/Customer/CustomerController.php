@@ -18,21 +18,22 @@ use Carbon\Carbon;
 
 use App\Models\Performance;
 
-
 class CustomerController extends Controller
 {
     public function dashboard()
     {
         $now = Carbon::now();
         $currentMonth_start = $now->startOfMOnth()->format('Y-m-d');
-        $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
-        $demos = BookDemoSession::where('customer_id', Auth::user()->customer->id)
-            ->with('Customer', 'Customer.trainer')->orderBy('id', 'DESC')->get();
+//        $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
+//        $demos = BookDemoSession::where('customer_id', Auth::user()->customer->id)
+//            ->with('Customer', 'Customer.trainer')->orderBy('id', 'DESC')->get();
         $demo_data = [];
         $i = 0;
         $user_id = Auth::user()->id;
         $get_cust_id = Customer::where('user_id', $user_id)->first();
-        $upcoming_sessions = CustomerToTrainer::with('timeZone', 'customer', 'trainer', 'reviews', 'request_session')
+        $upcoming_sessions = CustomerToTrainer::with(['timeZone', 'customer', 'trainer', 'reviews', 'request_session' => function ($q) {
+            $q->where('request_by', '!=', 'trainer');
+        }])
             ->where('customer_id', $get_cust_id->id)
             ->whereDate('trainer_date', '>=', $currentMonth_start)
             ->whereNotIn('status', ['completed', 'canceled', 'cancelled'])
@@ -94,7 +95,9 @@ class CustomerController extends Controller
             }
             $currentMonth_start_dates = $start_date->format('Y-m-d');
             $currentMonth_end_dates = $end_date->format('Y-m-d');
-            $upcoming_sessions = CustomerToTrainer::with('customer', 'trainer', 'reviews')
+            $upcoming_sessions = CustomerToTrainer::with(['customer', 'trainer', 'reviews', 'request_session' => function ($q) {
+                $q->where('request_by', '!=', 'trainer');
+            }])
                 ->where('customer_id', $get_cust_id->id)
                 ->whereBetween('trainer_date', [$currentMonth_start_dates, $currentMonth_end_dates])
                 ->whereNotIn('status', ['completed', 'canceled', 'cancelled'])

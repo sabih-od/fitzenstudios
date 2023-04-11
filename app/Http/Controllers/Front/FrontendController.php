@@ -91,6 +91,7 @@ class FrontendController extends Controller
             //        Mail::send('front.emails.contact-us', $mailData, function($message) use($mailData){
 //            $message->to($mailData['to'])->subject('Fitzen Studio - Contact Us');
 //        });
+
             $view = view('front.emails.contact-us')
                 ->with('name', $name)
                 ->with('email', $request->email)
@@ -122,7 +123,7 @@ class FrontendController extends Controller
                 $demo->email        = $request->email;
                 $demo->phone        = $request->phone;
                 $demo->session_date = $request->session_date;
-                $demo->session_time = $request->session_time;
+                $demo->session_time = date('h:i:s', strtotime($request->session_time));
                 $demo->goals        = $request->goals;
                 $demo->message      = $request->message;
                 $demo->customer_id  = $customer->id;
@@ -203,21 +204,17 @@ class FrontendController extends Controller
     public function RescheduleRequest(Request $request) {
         try {
             DB::beginTransaction();
-            $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->first();
+            $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->where('request_by', $request->request_by == 'customer' ? 'customer' : 'trainer')->first();
             $session = CustomerToTrainer::where('id', $request->session_id)->first();
-            $time_zone = $session->time_zone;
-            //dd($time_zone);
-//        if ($request->request_by == "customer") {
-//            $time_zone = Customer::select('time_zone')->where('id', $session->customer_id)->first();
-//        } else {
-//            $time_zone = Trainer::select('time_zone')->where('id', $session->trainer_id)->first();
-//        }
+            //$time_zone = $session->time_zone;
+            $time_zone = $request->request_by_timezone;
+
             if ($check == null) {
                 $session_request                         = new RescheduleRequest();
                 $session_request->customer_to_trainer_id = $request->session_id;
                 $session_request->request_by             = $request->request_by;
                 $session_request->new_session_date       = $request->new_session_date;
-                $session_request->new_session_time       = $request->new_session_time;
+                $session_request->new_session_time       = date('h:i:s', strtotime($request->new_session_time));
                 $session_request->time_zone              = $time_zone;
                 $session_request->reason                 = $request->reason;
                 $session_request->save();
@@ -239,7 +236,7 @@ class FrontendController extends Controller
                 $session_request->customer_to_trainer_id = $request->session_id;
                 $session_request->request_by             = $request->request_by;
                 $session_request->new_session_date       = $request->new_session_date;
-                $session_request->new_session_time       = $request->new_session_time;
+                $session_request->new_session_time       = date('h:i:s', strtotime($request->new_session_time));
                 $session_request->time_zone              = $time_zone;
                 $session_request->reason                 = $request->reason;
                 $session_request->save();

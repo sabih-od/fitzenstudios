@@ -164,7 +164,7 @@ Edit Profile
                                     @endif
                                 </div>
                             </div>
-                            <button type="submit" href="#" class="btnStyle">EDIT profile</button>
+                            <button type="submit" href="#" class="btnStyle">Update Profile</button>
                         </form>
                     </div>
                 </div>

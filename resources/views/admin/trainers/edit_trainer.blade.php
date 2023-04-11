@@ -1,6 +1,6 @@
 @extends('layouts.admin-portal')
 @section('page-title')
-    Edit Trainer
+    Edit Trainer Profile
 @endsection
 @section('style')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
@@ -230,7 +230,7 @@
                                         @endif
                                     </div>
                                 </div>
-                                <button type="submit" href="#" class="btnStyle">EDIT profile</button>
+                                <button type="submit" href="#" class="btnStyle">Update Trainer profile</button>
                             </form>
                         </div>
                     </div>
@@ -252,8 +252,8 @@
                                         <h3>
                                             <span>Trainer Name</span>{{ $item["trainer"]->name.' '.$item["customer"]->last_name }}
                                         </h3>
-                                        <h3><span>Time</span>{{ $item->trainer_time }}</h3>
-                                        <h3><span>Status</span>{{$item->status}}</h3>
+                                        <h3><span>Time</span>{{ date('h:i A', strtotime($item->trainer_time)) }}</h3>
+                                        <h3><span>Status</span>{{ucfirst($item->status)}}</h3>
                                         <a href="{{ url('admin/performance-detail/'.$item->id) }}" class="btnStyle">VIEW
                                             DETAILS</a>
                                     </div>

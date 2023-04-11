@@ -58,6 +58,7 @@
                     @elseif($upcoming_session[0]->status == "upcoming")
                         <a href="#" data-toggle="modal" data-target="#joinMeetingModal{{$loop->iteration}}"
                            class="mb-3" style="width: 131px;!important;text-align: center;">JOIN</a>
+
                         @if(empty($upcoming_session[0]->request_session))
                             <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}">RE-SCHEDULE</a>
                         @endif
@@ -104,6 +105,7 @@
                                 <div class="modal-body" id="modalBodyText1">
                                     <form method="POST" action="{{ url('reschedule-request') }}">
                                         @csrf
+                                        <input type="hidden" name="request_by_timezone" id="request_by_timezone" value="{{ @$upcoming_session[0]->trainer->time_zone }}">
                                         <input type="hidden" name="request_by" value="trainer">
                                         <input type="hidden" name="session_id" value="{{ $upcoming_session[0]->id }}">
                                         <div class="row">
@@ -158,7 +160,8 @@
     <h2 style="text-align: center;">Currently No sessions available..!!</h2>
 @endforelse
 <script>
-    $('#new_session_time').clockpicker({
-        autoclose: true
+    $('[name="new_session_time"]').clockpicker({
+        autoclose: true,
+        twelvehour: true
     });
 </script>

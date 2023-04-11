@@ -81,7 +81,7 @@
                             @endif
                         @endif
                     </div>
-                    @if(isset($item->request_session) && $item->request_session->status === 'pending')
+                    @if(isset($item->request_session) && $item->request_session->request_by === 'customer' && $item->request_session->status === 'pending')
                         <span class="badge badge-danger">Applied for reschedule</span>
                     @else
                         @if($item->status == "completed")
@@ -117,7 +117,7 @@
                             $diff = $date->diffInHours($now);
                         @endphp
 
-                        @if(empty($item->request_session))
+                        @if(empty($item->request_session) || !empty($item->request_session) && $item->request_session->request_by !== 'customer')
                             @if($diff >= 6)
                                 <a href="#" data-toggle="modal" data-target="#rescheduleModal{{$loop->iteration}}"style="width: 150px;">RE-SCHEDULE</a>
                             @else
@@ -170,6 +170,7 @@
                                         @csrf
                                         <input type="hidden" name="request_by" id="request_by"
                                                value="customer">
+                                        <input type="hidden" name="request_by_timezone" id="request_by_timezone" value="{{ @$item->customer->time_zone }}">
                                         <input type="hidden" name="session_id" id="session_id"
                                                value="{{ $item->id }}">
                                         <div class="row">
@@ -223,6 +224,7 @@
 @endforelse
 <script>
     $('#new_session_time').clockpicker({
-        autoclose: true
+        autoclose: true,
+        twelvehour: true
     });
 </script>

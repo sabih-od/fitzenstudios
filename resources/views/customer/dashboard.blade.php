@@ -176,7 +176,8 @@
                     $('#demo_id').val(event.event._def.publicId);
                     let status = event.event.extendedProps.description.status == 'canceled' ? 'Cancelled' : event.event.extendedProps.description.status.toUpperCase(),
                         requestSessionStatus = event.event.extendedProps.description.request_session !== null ? event.event.extendedProps.description.request_session.status : null,
-                        finalStatus = requestSessionStatus == 'pending' ? 'Applied for reschedule' : status;
+                        isCustomerRequestBy = event.event.extendedProps.description.request_session !== 'trainer' ? true : false,
+                        finalStatus = requestSessionStatus == 'pending' && isCustomerRequestBy ? 'Applied for reschedule' : status;
                     $('#status').html(finalStatus);
                     $('#calendarModal').modal();
                 }

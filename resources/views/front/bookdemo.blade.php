@@ -165,7 +165,8 @@
         <script>
               $('.js-example-basic-single').select2();
               $('[name="session_time"]').clockpicker({
-                  autoclose: true
+                  autoclose: true,
+                  twelvehour: true
               });
         </script>
     </body>

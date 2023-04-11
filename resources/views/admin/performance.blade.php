@@ -21,7 +21,7 @@ Training Sessions
                         </div>
 
 
-                        <h3><span>Time</span>{{ date("g:i a", strtotime($item->trainer_time ))}}</h3>
+                        <h3><span>Time</span>{{ date("h:i A", strtotime($item->trainer_time ))}}</h3>
                         <h3><span>Customer</span>{{ $item["customer"]->first_name.' '.$item["customer"]->last_name }}</h3>
 
                         <div class="statusBox">
