@@ -108,7 +108,8 @@ class AdminCustomerController extends Controller
             //$this->customphpmailer('noreply@fitzenstudios.com', $mailData['to'], 'Fitzen Studio - Signing Up', $view);
             Mail::send('front.emails.thankyou-signup-customer', $mailData, function($message) use($mailData){
                 $message->to($mailData['email'])
-                    ->subject('Fitzen Studio - Signing Up');
+                    ->subject('Fitzen Studio - Signing Up')
+                    ->from('noreply@fitzenstudio.com');
             });
 
             DB::commit();
@@ -236,16 +237,33 @@ class AdminCustomerController extends Controller
 //                $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Trainer');
 //            });
 
-            $assignTrainerCustomerHtml = view('admin.emails.assigntrainer-customer')
-                ->with('to', $customer['email'])
-                ->with('name', $customer['first_name'] . ' ' . $customer['last_name'])
-                ->with('trainer', $trainer['name'])
-                ->with('join_url', $resp["data"]["join_url"])
-                ->with('start_date', $customer_timezone_date)
-                ->with('start_time', $customer_timezone_time)
-                ->render();
-            $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], 'Fitzen Studio - Assign Trainer', $assignTrainerCustomerHtml);
+//            $assignTrainerCustomerHtml = view('admin.emails.assigntrainer-customer')
+//                ->with('to', $customer['email'])
+//                ->with('name', $customer['first_name'] . ' ' . $customer['last_name'])
+//                ->with('trainer', $trainer['name'])
+//                ->with('join_url', $resp["data"]["join_url"])
+//                ->with('start_date', $customer_timezone_date)
+//                ->with('start_time', $customer_timezone_time)
+//                ->render();
+//            $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], 'Fitzen Studio - Assign Trainer', $assignTrainerCustomerHtml);
 
+            $assignTrainerCustomerData = [
+                'to' => $customer['email'],
+                'subject' => 'Fitzen Studio - Assign Trainer',
+                'view' => 'admin.emails.assigntrainer-customer',
+                'data' => [
+                    'name' => $customer['first_name'] . ' ' . $customer['last_name'],
+                    'trainer' => $trainer['name'],
+                    'join_url' => $resp["data"]["join_url"],
+                    'start_date' => $customer_timezone_date,
+                    'start_time' => $customer_timezone_time,
+                ],
+            ];
+            Mail::send($assignTrainerCustomerData['view'], $assignTrainerCustomerData['data'], function($message) use($assignTrainerCustomerData){
+                $message->to($assignTrainerCustomerData['to'])
+                    ->from('noreply@fitzenstudios.com')
+                    ->subject($assignTrainerCustomerData['subject']);
+            });
 //            $assignTrainerHtml = view('admin.emails.assigntrainer-trainer')
 //                ->with('to', $trainer['email'])
 //                ->with('name', $trainer['first_name'] . ' ' . $customer['last_name'])
@@ -270,7 +288,8 @@ class AdminCustomerController extends Controller
             ];
             Mail::send($assignTrainerData['view'], $assignTrainerData['data'], function($message) use($assignTrainerData){
                 $message->to($assignTrainerData['to'])
-                    ->subject($assignTrainerData['subject']);
+                    ->subject($assignTrainerData['subject'])
+                    ->from('noreply@fitzenstudio.com');
             });
 
 
@@ -454,7 +473,8 @@ class AdminCustomerController extends Controller
 
                 Mail::send($assignTrainerData['view'], $assignTrainerData['data'], function($message) use($assignTrainerData){
                     $message->to($assignTrainerData['to'])
-                        ->subject($assignTrainerData['subject']);
+                        ->subject($assignTrainerData['subject'])
+                        ->from('noreply@fitzenstudio.com');
                 });
 //                $subject = 'Fitzen Studio - Assign Trainer';
 //                $assignTrainerCustomerTemplate = view('admin.emails.assigntrainer-customer')
@@ -491,7 +511,8 @@ class AdminCustomerController extends Controller
 
                 Mail::send($assignTrainerData['view'], $assignTrainerData['data'], function($message) use($assignTrainerData){
                     $message->to($assignTrainerData['to'])
-                        ->subject($assignTrainerData['subject']);
+                        ->subject($assignTrainerData['subject'])
+                        ->from('noreply@fitzenstudio.com');
                 });
 
                 $notification_to_trainer = new Notification();
@@ -745,6 +766,7 @@ class AdminCustomerController extends Controller
                     Mail::send([], [], function($message) use ($value, $subject, $assignTrainerCustomerView) {
                         $message->to($value->email)
                             ->subject($subject)
+                            ->from('noreply@fitzenstudio.com')
                             ->setBody($assignTrainerCustomerView, 'text/html');
                     });
 
