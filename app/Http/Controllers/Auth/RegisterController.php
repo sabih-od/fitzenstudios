@@ -81,10 +81,23 @@ class RegisterController extends Controller
             $notification->type         = "New Customer Registration";
             $notification->save();
 
-            $view = view('front.emails.thankyou-signup')
-                ->with('to', $data['email'])
-                ->render();
-            $this->customphpmailer('noreply@fitzenstudios.com', $data['email'], 'Fitzen Studio - Thank you for Signing Up', $view);
+            $mailData = [
+                'to' => $data['email'],
+                'subject' => 'Fitzen Studio - Thank you for Signing Up',
+                'view' => 'front.emails.thankyou-signup',
+            ];
+
+            Mail::send($mailData['view'], [], function($message) use($mailData){
+                $message->to($mailData['to'])
+                    ->subject($mailData['subject']);
+            });
+
+//            $view = view('front.emails.thankyou-signup')
+//                ->with('to', $data['email'])
+//                ->render();
+//            $this->customphpmailer('noreply@fitzenstudios.com', $data['email'], 'Fitzen Studio - Thank you for Signing Up', $view);
+
+
             return $user;
 
         } else {
