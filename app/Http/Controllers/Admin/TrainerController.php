@@ -72,7 +72,8 @@ class TrainerController extends Controller
             ];
             Mail::send('trainer.emails.invitation', $mailData, function($message) use ($mailData) {
                 $message->to($mailData['to'])
-                    ->subject('Fitzen Studio - Invitation to join as trainer');
+                    ->subject('Fitzen Studio - Invitation to join as trainer')
+                    ->from('noreply@fitzenstudios.com');
             });
 
 

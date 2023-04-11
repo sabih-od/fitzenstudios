@@ -770,6 +770,7 @@ class AdminCustomerController extends Controller
                             ->setBody($assignTrainerCustomerView, 'text/html');
                     });
 
+
 //                    $assignTrainerView = view('admin.emails.assigntrainer-trainer')
 //                        ->with('to', $trainer['email'])
 //                        ->with('name', $trainer['name'])
@@ -778,19 +779,23 @@ class AdminCustomerController extends Controller
 //                        ->with('start_time', $trainer_timezone_time)
 //                        ->render();
 //                    $this->customphpmailer('noreply@fitzenstudios.com', $trainer['email'], 'Fitzen Studio - Assign Customer', $assignTrainerView);
-                    $assignTrainerView = view('admin.emails.assigntrainer-trainer')
-                        ->with('to', $trainer['email'])
-                        ->with('name', $trainer['name'])
-                        ->with('start_url', $resp["data"]["start_url"])
-                        ->with('start_date', date('d-m-Y', strtotime($trainer_timezone_date)))
-                        ->with('start_time', $trainer_timezone_time)
-                        ->render();
-                    Mail::send([], [], function ($message) use ($assignTrainerView, $trainer, $subject) {
-                        $message->to($trainer['email'])
-                            ->subject($subject)
-                            ->setBody($assignTrainerView, 'text/html')
-                            ->from('noreply@fitzenstudios.com', 'Fitzen Studio');
+                    $assignTrainerView = [
+                        'to' => $trainer['email'],
+                        'subject' => 'Fitzen Studio - Assign Trainer',
+                        'view' => 'admin.emails.assigntrainer-trainer',
+                        'data' => [
+                            'name' => $trainer['name'],
+                            'start_url' => $resp["data"]["start_url"],
+                            'start_date' => $trainer_timezone_date,
+                            'start_time' => $trainer_timezone_time,
+                        ],
+                    ];
+                    Mail::send($assignTrainerView['view'], $assignTrainerView['data'], function ($message) use ($assignTrainerView) {
+                        $message->to($assignTrainerView['to'])
+                            ->subject($assignTrainerView['subject'])
+                            ->from('noreply@fitzenstudios.com');
                     });
+
                     $cust_to_trainer = new CustomerToTrainer();
                     $cust_to_trainer->start_url = $resp["data"]["start_url"];
                     $cust_to_trainer->join_url = $resp["data"]["join_url"];
