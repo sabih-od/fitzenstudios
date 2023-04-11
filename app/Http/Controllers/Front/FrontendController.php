@@ -101,6 +101,7 @@ class FrontendController extends Controller
             Mail::send([], [], function ($message) use ($view) {
                 $message->to(env('to_email'))
                     ->subject('Fitzen Studio - Contact Us')
+                    ->from('noreply@fitzenstudios.com')
                     ->setBody($view, 'text/html');
             });
             return redirect()->back()->with('success', 'Your inquiry has been submitted successfully. We will contact you shortly!');
@@ -140,7 +141,8 @@ class FrontendController extends Controller
                     'to'           => config("app.mail_from_address"),
                 );
                 Mail::send('front.emails.session_request', $mailData, function($message) use($mailData){
-                    $message->to($mailData['to'])->subject('Fitzen Studio - Session Request');
+                    $message->to($mailData['to'])->subject('Fitzen Studio - Session Request')
+                        ->from('noreply@fitzenstudios.com');
                 });
 
 //                $view = view('front.emails.session_request')
@@ -192,7 +194,8 @@ class FrontendController extends Controller
             ];
             Mail::send('front.emails.session_request', $mailData, function($message) use($mailData) {
                 $message->to(env('to_email'))
-                    ->subject('Fitzen Studio - Session Request Updated');
+                    ->subject('Fitzen Studio - Session Request Updated')
+                    ->from('noreply@fitzenstudios.com');
             });
 
             return redirect()->back()->with('success','Demo session schedule updated.');

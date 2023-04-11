@@ -89,7 +89,8 @@ class RegisterController extends Controller
 
             Mail::send($mailData['view'], [], function($message) use($mailData){
                 $message->to($mailData['to'])
-                    ->subject($mailData['subject']);
+                    ->subject($mailData['subject'])
+                    ->from('noreply@fitzenstudios.com');
             });
 
 //            $view = view('front.emails.thankyou-signup')
