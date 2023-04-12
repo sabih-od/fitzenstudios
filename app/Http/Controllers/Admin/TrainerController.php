@@ -144,6 +144,7 @@ class TrainerController extends Controller
         try {
             DB::beginTransaction();
             $trainer = Trainer::find($id);
+            CustomerToTrainer::where('trainer_id', $id)->delete();
             User::where('id', $trainer->user_id)->delete();
 
 

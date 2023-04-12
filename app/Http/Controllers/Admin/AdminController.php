@@ -127,12 +127,21 @@ class AdminController extends Controller
     {
         $customers = Customer::get();
         $trainers = Trainer::all();
-        $zones = TimeZone::all();
 
         // Check if any customer or trainer has been deleted
-        if ($customers->isEmpty() || $trainers->isEmpty()) {
-            // Cancel the session and redirect to some other page
-            return redirect()->route('some_other_page');
+        if($customers->isEmpty() || $trainers->isEmpty()) {
+            $message = null;
+            $route = null;
+            if($customers->isEmpty()) {
+                $message = 'No customer found. Please add customer.';
+                $route = 'customer.index';
+            }
+
+            if($trainers->isEmpty()) {
+                $message = 'No trainer found. Please add trainer.';
+                $route = 'trainer.index';
+            }
+            return redirect()->route($route)->with('error', $message);
         }
 
         return view('admin.create_session')
