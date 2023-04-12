@@ -100,7 +100,6 @@ class AdminCustomerController extends Controller
                 'to' => $request->email,
                 'pass' => $request->password
             );
-
 //            $view = view('front.emails.thankyou-signup-customer')
 //                ->with('to', $request->email)
 //                ->with('pass', $request->password)
@@ -684,18 +683,19 @@ class AdminCustomerController extends Controller
 
     public function adminAssignTrainer(Request $request)
     {
+//        dd($request->all());
         $request->validate(
             [
-            'trainer_id' => ['required', Rule::exists('trainers', 'id')],
-            'customer_id' => ['required', 'array', function ($attr, $value, $fail) {
-                if (!$value || !is_array($value)) {
-                    return;
-                }
-            }],
-            'session_type' => 'required',
-            'trainer_date.*' => 'required',
-            'trainer_time.*' => 'required',
-            'time_zone' => ['required', Rule::exists('time_zones', 'id')],
+                'trainer_id' => ['required', Rule::exists('trainers', 'id')],
+                'customer_id' => ['required', 'array', function ($attr, $value, $fail) {
+                    if (!$value || !is_array($value)) {
+                        return;
+                    }
+                }],
+                'session_type' => 'required',
+                'trainer_date.*' => 'required',
+                'trainer_time.*' => 'required',
+                'time_zone' => ['required', Rule::exists('time_zones', 'id')],
             ],
             [
                 'trainer_id.required' => 'The trainer field is required.',
@@ -763,7 +763,7 @@ class AdminCustomerController extends Controller
                         ->with('start_date', date('d-m-Y', strtotime($customer_timezone_date)))
                         ->with('start_time', $customer_timezone_time)
                         ->render();
-                    Mail::send([], [], function($message) use ($value, $subject, $assignTrainerCustomerView) {
+                    Mail::send([], [], function ($message) use ($value, $subject, $assignTrainerCustomerView) {
                         $message->to($value->email)
                             ->subject($subject)
                             ->from('noreply@fitzenstudio.com')
@@ -779,6 +779,7 @@ class AdminCustomerController extends Controller
 //                        ->with('start_time', $trainer_timezone_time)
 //                        ->render();
 //                    $this->customphpmailer('noreply@fitzenstudios.com', $trainer['email'], 'Fitzen Studio - Assign Customer', $assignTrainerView);
+
                     $assignTrainerView = [
                         'to' => $trainer['email'],
                         'subject' => 'Fitzen Studio - Assign Trainer',
@@ -828,6 +829,8 @@ class AdminCustomerController extends Controller
                     $notification_trainer->notification = $notify;
                     $notification_trainer->type = "Session Request";
                     $notification_trainer->save();
+
+
                 }
             }
             DB::commit();

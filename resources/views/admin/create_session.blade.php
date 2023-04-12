@@ -34,6 +34,7 @@ Create Session
                             </ul>
                         </div>
                     @endif
+{{--                    @dd('here')--}}
                     <div class="profile-wrap">
                         <form method="POST" action="{{ route('admin.adminAssignTrainer') }}" enctype="multipart/form-data" id="assignTrainer">
                             @csrf
