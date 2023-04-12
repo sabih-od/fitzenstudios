@@ -125,9 +125,27 @@ class AdminController extends Controller
 
     public function CreateSession(Request $request)
     {
+        $customers = Customer::get();
+        $trainers = Trainer::all();
+        $zones = TimeZone::all();
+
+        // Check if any customer or trainer has been deleted
+        if ($customers->isEmpty() || $trainers->isEmpty()) {
+            // Cancel the session and redirect to some other page
+            return redirect()->route('some_other_page');
+        }
+
         return view('admin.create_session')
-            ->with('customers', Customer::get())
-            ->with('trainers', Trainer::all())
-            ->with('zones', TimeZone::all());
+            ->with('customers', $customers)
+            ->with('trainers', $trainers)
+            ->with('zones', $zones);
     }
+
+//    public function CreateSession(Request $request)
+//    {
+//        return view('admin.create_session')
+//            ->with('customers', Customer::get())
+//            ->with('trainers', Trainer::all())
+//            ->with('zones', TimeZone::all());
+//    }
 }
