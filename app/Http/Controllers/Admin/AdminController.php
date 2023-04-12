@@ -125,6 +125,25 @@ class AdminController extends Controller
 
     public function CreateSession(Request $request)
     {
+        $customers = Customer::get();
+        $trainers = Trainer::all();
+
+        // Check if any customer or trainer has been deleted
+        if($customers->isEmpty() || $trainers->isEmpty()) {
+            $message = null;
+            $route = null;
+            if($customers->isEmpty()) {
+                $message = 'No customer found. Please add customer.';
+                $route = 'customer.index';
+            }
+
+            if($trainers->isEmpty()) {
+                $message = 'No trainer found. Please add trainer.';
+                $route = 'trainer.index';
+            }
+            return redirect()->route($route)->with('error', $message);
+        }
+
         return view('admin.create_session')
             ->with('customers', Customer::get())
             ->with('trainers', Trainer::all())

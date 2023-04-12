@@ -4,11 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CustomerToTrainer extends Model
 {
     // protected $fillable = ['customer_id', 'trainer_id', 'trainer_date', 'trainer_time', 'notes', 'session_type', 'status'];
     use HasFactory;
+    use SoftDeletes;
+
+    protected $softDelete = true;
     protected $guarded = [];
 
     public function getFormattedStatusAttribute() {
@@ -41,6 +45,14 @@ class CustomerToTrainer extends Model
 
     public function timeZone() {
         return $this->hasOne(TimeZone::class, 'id','time_zone');
+    }
+
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($customerToTrainer) {
+            $customerToTrainer->request_session->delete();
+        });
     }
 
 }
