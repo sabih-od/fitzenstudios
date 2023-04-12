@@ -72,7 +72,8 @@ class TrainerController extends Controller
             ];
             Mail::send('trainer.emails.invitation', $mailData, function($message) use ($mailData) {
                 $message->to($mailData['to'])
-                    ->subject('Fitzen Studio - Invitation to join as trainer');
+                    ->subject('Fitzen Studio - Invitation to join as trainer')
+                    ->from('noreply@fitzenstudios.com');
             });
 
 
@@ -145,8 +146,9 @@ class TrainerController extends Controller
             $trainer = Trainer::find($id);
             CustomerToTrainer::where('trainer_id', $id)->delete();
             User::where('id', $trainer->user_id)->delete();
-            $trainer->delete();
 
+
+            $trainer->delete();
             DB::commit();
             return redirect()->back()->with('success', 'Trainer Deleted Successfully.');
         } catch (\Exception $e) {

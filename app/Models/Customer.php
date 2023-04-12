@@ -22,4 +22,10 @@ class Customer extends Model
     public function timeZone() {
         return $this->hasOne(TimeZone::class, 'id', 'time_zone');
     }
+
+    public function sessions()
+    {
+        return $this->hasMany(CustomerToTrainer::class)->onDelete('cascade');
+    }
+
 }

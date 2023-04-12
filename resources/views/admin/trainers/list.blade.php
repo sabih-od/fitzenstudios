@@ -50,9 +50,9 @@
                             <a href="{{ url('admin/edit-trainer/'.$item->id) }}">
                                 <i class="far fa-edit"></i>
                             </a>
-                            <button onclick="Delete({{$item->id}});">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                                <button onclick="Delete({{$item->id}});">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             <form action="{{route('trainer.destroy',$item->id)}}" method="POST" style="display: none;"
                                   id="delete-form-{{$item->id}}">
                                 @csrf

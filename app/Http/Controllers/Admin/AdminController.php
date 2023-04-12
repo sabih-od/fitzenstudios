@@ -145,8 +145,16 @@ class AdminController extends Controller
         }
 
         return view('admin.create_session')
-            ->with('customers', Customer::get())
-            ->with('trainers', Trainer::all())
-            ->with('zones', TimeZone::all());
+            ->with('customers', $customers)
+            ->with('trainers', $trainers)
+            ->with('zones', $zones);
     }
+
+//    public function CreateSession(Request $request)
+//    {
+//        return view('admin.create_session')
+//            ->with('customers', Customer::get())
+//            ->with('trainers', Trainer::all())
+//            ->with('zones', TimeZone::all());
+//    }
 }
