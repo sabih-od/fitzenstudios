@@ -15,22 +15,22 @@ class CustomerToTrainer extends Model
         return ucfirst($this->status);
     }
 
-    public function customer()
-    {
-        return $this->belongsTo(Customer::class)->withTrashed();
-    }
-
-    public function trainer()
-    {
-        return $this->belongsTo(Trainer::class)->withTrashed();
-    }
-//    public function customer(){
-//        return $this->hasOne(Customer::class, 'id', 'customer_id')->withDefault();
+//    public function customer()
+//    {
+//        return $this->belongsTo(Customer::class)->withTrashed();
 //    }
 //
-//    public function trainer(){
-//        return $this->hasOne(Trainer::class, 'id', 'trainer_id')->withDefault();
+//    public function trainer()
+//    {
+//        return $this->belongsTo(Trainer::class)->withTrashed();
 //    }
+    public function customer(){
+        return $this->hasOne(Customer::class, 'id', 'customer_id')->withTrashed();
+    }
+
+    public function trainer(){
+        return $this->hasOne(Trainer::class, 'id', 'trainer_id')->withTrashed();
+    }
 
     public function sessions() {
         return $this->hasOne(BookDemoSession::class, 'id', 'demo_session_id');
