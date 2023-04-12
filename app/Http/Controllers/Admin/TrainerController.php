@@ -145,8 +145,9 @@ class TrainerController extends Controller
             DB::beginTransaction();
             $trainer = Trainer::find($id);
             User::where('id', $trainer->user_id)->delete();
-            $trainer->delete();
 
+
+            $trainer->delete();
             DB::commit();
             return redirect()->back()->with('success', 'Trainer Deleted Successfully.');
         } catch (\Exception $e) {

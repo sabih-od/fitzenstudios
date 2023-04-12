@@ -86,7 +86,6 @@ class RegisterController extends Controller
                 'subject' => 'Fitzen Studio - Thank you for Signing Up',
                 'view' => 'front.emails.thankyou-signup',
             ];
-
             Mail::send($mailData['view'], [], function($message) use($mailData){
                 $message->to($mailData['to'])
                     ->subject($mailData['subject'])
