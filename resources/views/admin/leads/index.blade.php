@@ -30,7 +30,7 @@
         </div>
 
         <div class="row align-items-center mt-4">
-            @foreach($leads as $lead)
+            @forelse($leads as $lead)
                 <div class="col-md-4">
                     <div class="userCard">
                         <div class="delBtn inrBtn">
@@ -65,7 +65,13 @@
                         {{-- </a> --}}
                     </div>
                 </div>
-            @endforeach
+                @empty
+                <div class="col-md-12">
+                    <ul class="list-group">
+                        <li class="list-group-item"><h6 class="text-center">No record found.</h6></li>
+                    </ul>
+                </div>
+            @endforelse
         </div>
     </div>
 </main>

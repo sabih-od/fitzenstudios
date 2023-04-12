@@ -210,10 +210,10 @@ Customers
                 </a>
             </div>
         @empty
-            <div class="col-md-12 col-sm-12">
-                <h5 class="text-center">
-                    No record found.
-                </h5>
+            <div class="col-md-12">
+                <ul class="list-group">
+                    <li class="list-group-item"><h6 class="text-center">No record found.</h6></li>
+                </ul>
             </div>
         @endforelse
     </div>
