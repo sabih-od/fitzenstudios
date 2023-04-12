@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CustomerToTrainer extends Model
 {
-     protected $fillable = ['customer_id', 'trainer_id', 'trainer_date', 'trainer_time', 'notes', 'session_type', 'status'];
+    // protected $fillable = ['customer_id', 'trainer_id', 'trainer_date', 'trainer_time', 'notes', 'session_type', 'status'];
     use HasFactory;
     protected $guarded = [];
 
@@ -15,21 +15,12 @@ class CustomerToTrainer extends Model
         return ucfirst($this->status);
     }
 
-//    public function customer()
-//    {
-//        return $this->belongsTo(Customer::class)->withTrashed();
-//    }
-//
-//    public function trainer()
-//    {
-//        return $this->belongsTo(Trainer::class)->withTrashed();
-//    }
     public function customer(){
-        return $this->hasOne(Customer::class, 'id', 'customer_id')->withTrashed();
+        return $this->hasOne(Customer::class, 'id', 'customer_id')->withDefault();
     }
 
     public function trainer(){
-        return $this->hasOne(Trainer::class, 'id', 'trainer_id')->withTrashed();
+        return $this->hasOne(Trainer::class, 'id', 'trainer_id')->withDefault();
     }
 
     public function sessions() {
