@@ -127,6 +127,7 @@ class AdminController extends Controller
     {
         $customers = Customer::get();
         $trainers = Trainer::all();
+        $zones = TimeZone::all();
 
         // Check if any customer or trainer has been deleted
         if($customers->isEmpty() || $trainers->isEmpty()) {
@@ -149,12 +150,4 @@ class AdminController extends Controller
             ->with('trainers', $trainers)
             ->with('zones', $zones);
     }
-
-//    public function CreateSession(Request $request)
-//    {
-//        return view('admin.create_session')
-//            ->with('customers', Customer::get())
-//            ->with('trainers', Trainer::all())
-//            ->with('zones', TimeZone::all());
-//    }
 }
