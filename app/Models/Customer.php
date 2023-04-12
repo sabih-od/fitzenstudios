@@ -14,10 +14,10 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'user_id', 'id')->withDefault();
     }
 
-//    public function trainer()
-//    {
-//        return $this->hasOne(CustomerToTrainer::class, 'customer_id', 'id')->join('trainers', 'trainers.id', 'customer_to_trainers.trainer_id')->withDefault();
-//    }
+    public function trainer()
+    {
+        return $this->hasOne(CustomerToTrainer::class, 'customer_id', 'id')->join('trainers', 'trainers.id', 'customer_to_trainers.trainer_id')->withDefault();
+    }
 
     public function timeZone() {
         return $this->hasOne(TimeZone::class, 'id', 'time_zone');
