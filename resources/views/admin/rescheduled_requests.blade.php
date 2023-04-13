@@ -16,8 +16,8 @@ Re-Schedule Session Requests
                 <div class="">
                     <table class="table" id = "gridView">
                         <thead class="thead-light" >
-                            <th >#</th>
-                            <th >Request By</th>
+                            <th>#</th>
+                            <th>Request By</th>
                             <th>Session Name</th>
                             <th>New Session Date</th>
                             <th>Time</th>
@@ -31,7 +31,7 @@ Re-Schedule Session Requests
                             @forelse ($all_requests as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ ucfirst($item->request_by) }}</td>
+                                    <td>{{ !empty($item->request_by) ? ucfirst($item->request_by) : '---' }}</td>
                                     <td>{{ isset($item["sessions"][0]) ? $item["sessions"][0]->session_type : '---' }}</td>
                                     <td>{{ date('d-m-Y', strtotime($item->new_session_date))}}</td>
                                     <td>{{ date('h:i A', strtotime($item->new_session_time)) }}</td>

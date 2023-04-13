@@ -58,8 +58,7 @@ class ForgotPasswordController extends Controller
                 'url'  => $url,
             );
             Mail::send('front.email.reset_password', $mailData, function($message) use($mailData){
-                $message->to($mailData['email'])
-                    ->subject('Password Reset - Fitzen');
+                $message->to($mailData['email'])->subject('Password Reset - Fitzen');
             });
 
 

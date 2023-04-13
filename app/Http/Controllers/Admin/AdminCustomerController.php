@@ -43,7 +43,7 @@ class AdminCustomerController extends Controller
 
     public function index(Request $request)
     {
-        return view('admin.customers.index')->with('customers', Customer::where('is_lead', 0)->orderBy('id', 'DESC')->get());
+        return view('admin.customers.index')->with('customers', Customer::where('is_lead', 0)->latest()->get());
     }
 
     public function customerRegistration(Request $request)
@@ -78,6 +78,20 @@ class AdminCustomerController extends Controller
                 'message' => $request->message,
             ]);
 
+            $isLead = 0;
+            if($request->has('is_lead')) {
+                Lead::create([
+                    'user_id' => $user->id,
+                    'is_customer' => 0,
+                    'first_name' => $request->f_name,
+                    'last_name' => $request->l_name,
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'note' => $request->message,
+                ]);
+                $isLead = 1;
+            }
+
             Customer::create([
                 'user_id' => $user->id,
                 'first_name' => $request->f_name,
@@ -85,17 +99,7 @@ class AdminCustomerController extends Controller
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'time_zone' => $request->time_zone,
-                "is_lead" => 0,
-            ]);
-
-            Lead::create([
-                'user_id' => $user->id,
-                'is_customer' => 0,
-                'first_name' => $request->f_name,
-                'last_name' => $request->l_name,
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'note' => $request->message,
+                "is_lead" => $isLead,
             ]);
 
             $mailData = array(
@@ -103,15 +107,8 @@ class AdminCustomerController extends Controller
                 'pass' => $request->password,
                 'from' => 'noreply@fitzenstudios.com'
             );
-//            $view = view('front.emails.thankyou-signup-customer')
-//                ->with('to', $request->email)
-//                ->with('pass', $request->password)
-//                ->render();
-            //$this->customphpmailer('noreply@fitzenstudios.com', $mailData['to'], 'Fitzen Studio - Signing Up', $view);
             Mail::send('front.emails.thankyou-signup-customer', $mailData, function($message) use($mailData){
-                $message->to($mailData['to'])
-                    ->subject('Fitzen Studio - Signing Up')
-                    ->from($mailData['to']);
+                $message->to($mailData['to'])->subject('Fitzen Studio - Signing Up');
             });
 
             DB::commit();
@@ -210,90 +207,33 @@ class AdminCustomerController extends Controller
             //     $customer_timezone_date =  $newdatetime->format('d-m-Y');
             //     $customer_timezone_time =  $newdatetime->format('H:i');
             // }
-//            $mailData_customer = array(
-//                'to' => $customer['email'],
-//                'name' => $customer['first_name'] . ' ' . $customer['last_name'],
-//                'trainer' => $trainer['name'],
-//                'join_url' => $resp["data"]["join_url"],
-//                // "start_date" => date('d-m-Y', strtotime($request->input('trainer_date'))),
-//                // "start_time" => $request->input('trainer_time'),
-//                "start_date" => $customer_timezone_date,
-//                "start_time" => $customer_timezone_time
-//            );
-//            Mail::send('admin.emails.assigntrainer-customer', $mailData_customer, function ($message) use ($mailData_customer) {
-//                $message->to($mailData_customer['to'])->subject('Fitzen Studio - Assign Trainer');
-//            });
-
-
-//            $mailData_trainer = array(
-//                'to' => $trainer['email'],
-//                'name' => $trainer['name'],
-//                'customer' => $customer['first_name'] . ' ' . $customer['last_name'],
-//                'start_url' => $resp["data"]["start_url"],
-//                // "start_date" => date('d-m-Y', strtotime($request->input('trainer_date'))),
-//                // "start_time" => $request->input('trainer_time'),
-//                "start_date" => $trainer_timezone_date,
-//                "start_time" => $trainer_timezone_time
-//            );
-//            Mail::send('admin.emails.assigntrainer-trainer', $mailData_trainer, function ($message) use ($mailData_trainer) {
-//                $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Trainer');
-//            });
-
-//            $assignTrainerCustomerHtml = view('admin.emails.assigntrainer-customer')
-//                ->with('to', $customer['email'])
-//                ->with('name', $customer['first_name'] . ' ' . $customer['last_name'])
-//                ->with('trainer', $trainer['name'])
-//                ->with('join_url', $resp["data"]["join_url"])
-//                ->with('start_date', $customer_timezone_date)
-//                ->with('start_time', $customer_timezone_time)
-//                ->render();
-//            $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], 'Fitzen Studio - Assign Trainer', $assignTrainerCustomerHtml);
-
-            $assignTrainerCustomerData = [
+            $mailData_customer = array(
                 'to' => $customer['email'],
-                'subject' => 'Fitzen Studio - Assign Trainer',
-                'view' => 'admin.emails.assigntrainer-customer',
-                'data' => [
-                    'name' => $customer['first_name'] . ' ' . $customer['last_name'],
-                    'trainer' => $trainer['name'],
-                    'join_url' => $resp["data"]["join_url"],
-                    'start_date' => $customer_timezone_date,
-                    'start_time' => $customer_timezone_time,
-                ],
-            ];
-            Mail::send($assignTrainerCustomerData['view'], $assignTrainerCustomerData['data'], function($message) use($assignTrainerCustomerData){
-                $message->to($assignTrainerCustomerData['to'])
-                    ->from('noreply@fitzenstudios.com')
-                    ->subject($assignTrainerCustomerData['subject']);
+                'name' => $customer['first_name'] . ' ' . $customer['last_name'],
+                'trainer' => $trainer['name'],
+                'join_url' => $resp["data"]["join_url"],
+                // "start_date" => date('d-m-Y', strtotime($request->input('trainer_date'))),
+                // "start_time" => $request->input('trainer_time'),
+                "start_date" => $customer_timezone_date,
+                "start_time" => $customer_timezone_time
+            );
+            Mail::send('admin.emails.assigntrainer-customer', $mailData_customer, function ($message) use ($mailData_customer) {
+                $message->to($mailData_customer['to'])->subject('Fitzen Studio - Assign Trainer');
             });
-//            $assignTrainerHtml = view('admin.emails.assigntrainer-trainer')
-//                ->with('to', $trainer['email'])
-//                ->with('name', $trainer['first_name'] . ' ' . $customer['last_name'])
-//                ->with('customer', $customer['first_name'] . ' ' . $customer['last_name'])
-//                ->with('start_url', $resp["data"]["start_url"])
-//                ->with('start_date', $trainer_timezone_date)
-//                ->with('start_time', $trainer_timezone_time)
-//                ->render();
-//            $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], 'Fitzen Studio - Assign Trainer', $assignTrainerHtml);
 
-            $assignTrainerData = [
+            $mailData_trainer = array(
                 'to' => $trainer['email'],
-                'subject' => 'Fitzen Studio - Assign Trainer',
-                'view' => 'admin.emails.assigntrainer-trainer',
-                'data' => [
-                    'name' => $trainer['first_name'] . ' ' . $trainer['last_name'],
-                    'customer' => $customer['first_name'] . ' ' . $customer['last_name'],
-                    'start_url' => $resp["data"]["start_url"],
-                    'start_date' => $trainer_timezone_date,
-                    'start_time' => $trainer_timezone_time,
-                ],
-            ];
-            Mail::send($assignTrainerData['view'], $assignTrainerData['data'], function($message) use($assignTrainerData){
-                $message->to($assignTrainerData['to'])
-                    ->subject($assignTrainerData['subject'])
-                    ->from('noreply@fitzenstudio.com');
+                'name' => $trainer['name'],
+                'customer' => $customer['first_name'] . ' ' . $customer['last_name'],
+                'start_url' => $resp["data"]["start_url"],
+                // "start_date" => date('d-m-Y', strtotime($request->input('trainer_date'))),
+                // "start_time" => $request->input('trainer_time'),
+                "start_date" => $trainer_timezone_date,
+                "start_time" => $trainer_timezone_time
+            );
+            Mail::send('admin.emails.assigntrainer-trainer', $mailData_trainer, function ($message) use ($mailData_trainer) {
+                $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Trainer');
             });
-
 
             if ($exist != null) {
                 CustomerToTrainer::where('customer_id', $customer_id)->update([
@@ -436,85 +376,28 @@ class AdminCustomerController extends Controller
                 $update_status->status = "Approved";
                 $update_status->save();
 
-//                $mailData_customer = array(
-//                    'to' => $customer['email'],
-//                    'name' => $customer['first_name'] . ' ' . $customer['last_name'],
-//                    'trainer' => $trainer['name'],
-//                    'join_url' => $update_session->join_url,
-//                    "start_date" => date('d-m-Y', strtotime($customerDate)),
-//                    "start_time" => $customerTime
-//                );
-//                Mail::send('admin.emails.assigntrainer-customer', $mailData_customer, function ($message) use ($mailData_customer) {
-//                    $message->to($mailData_customer['to'])->subject('Fitzen Studio - Assign Trainer');
-//                });
-
-//                $mailData_trainer = array(
-//                    'to' => $trainer['email'],
-//                    'name' => $trainer['name'],
-//                    'customer' => $customer['first_name'] . ' ' . $customer['last_name'],
-//                    'start_url' => $update_session->start_url,
-//                    "start_date" => date('d-m-Y', strtotime($trainerDate)),
-//                    "start_time" => $trainerTime
-//                );
-//                Mail::send('admin.emails.assigntrainer-trainer', $mailData_trainer, function ($message) use ($mailData_trainer) {
-//                    $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Trainer');
-//                });
-
-                $assignTrainerData = [
+                $mailData_customer = array(
                     'to' => $customer['email'],
-                    'subject' => 'Fitzen Studio - Assign Trainer',
-                    'view' => 'admin.emails.assigntrainer-customer',
-                    'data' => [
-                        'name' => $customer['first_name'] . ' ' . $customer['last_name'],
-                        'trainer' => $trainer['name'],
-                        'join_url' => $update_session->join_url,
-                        'start_date' => date('d-m-Y', strtotime($customerDate)),
-                        'start_time' => $customerTime,
-                    ],
-                ];
-
-                Mail::send($assignTrainerData['view'], $assignTrainerData['data'], function($message) use($assignTrainerData){
-                    $message->to($assignTrainerData['to'])
-                        ->subject($assignTrainerData['subject'])
-                        ->from('noreply@fitzenstudio.com');
+                    'name' => $customer['first_name'] . ' ' . $customer['last_name'],
+                    'trainer' => $trainer['name'],
+                    'join_url' => $update_session->join_url,
+                    "start_date" => date('d-m-Y', strtotime($customerDate)),
+                    "start_time" => $customerTime
+                );
+                Mail::send('admin.emails.assigntrainer-customer', $mailData_customer, function ($message) use ($mailData_customer) {
+                    $message->to($mailData_customer['to'])->subject('Fitzen Studio - Assign Trainer');
                 });
-//                $subject = 'Fitzen Studio - Assign Trainer';
-//                $assignTrainerCustomerTemplate = view('admin.emails.assigntrainer-customer')
-//                    ->with('to', $customer['email'])
-//                    ->with('name', $customer['first_name'] . ' ' . $customer['last_name'])
-//                    ->with('trainer', $trainer['name'])
-//                    ->with('join_url', $update_session->join_url)
-//                    ->with('start_date', date('d-m-Y', strtotime($customerDate)))
-//                    ->with('start_time', $customerTime)
-//                    ->render();
-//                $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], $subject, $assignTrainerCustomerTemplate);
 
-//                $assignTrainerTemplate = view('admin.emails.assigntrainer-trainer')
-//                    ->with('to', $trainer['email'])
-//                    ->with('name', $trainer['first_name'] . ' ' . $customer['last_name'])
-//                    ->with('customer', $customer['first_name'] . ' ' . $customer['last_name'])
-//                    ->with('start_url', $update_session->start_url)
-//                    ->with('start_date', date('d-m-Y', strtotime($trainerDate)))
-//                    ->with('start_time', $trainerTime)
-//                    ->render();
-//                $this->customphpmailer('noreply@fitzenstudios.com', $customer['email'], $subject, $assignTrainerTemplate);
-                $assignTrainerData = [
+                $mailData_trainer = array(
                     'to' => $trainer['email'],
-                    'subject' => 'Fitzen Studio - Assign Trainer',
-                    'view' => 'admin.emails.assigntrainer-trainer',
-                    'data' => [
-                        'name' => $trainer['first_name'] . ' ' . $customer['last_name'],
-                        'customer' => $customer['first_name'] . ' ' . $customer['last_name'],
-                        'start_url' => $update_session->start_url,
-                        'start_date' => date('d-m-Y', strtotime($trainerDate)),
-                        'start_time' => $trainerTime,
-                    ],
-                ];
-
-                Mail::send($assignTrainerData['view'], $assignTrainerData['data'], function($message) use($assignTrainerData){
-                    $message->to($assignTrainerData['to'])
-                        ->subject($assignTrainerData['subject'])
-                        ->from('noreply@fitzenstudio.com');
+                    'name' => $trainer['name'],
+                    'customer' => $customer['first_name'] . ' ' . $customer['last_name'],
+                    'start_url' => $update_session->start_url,
+                    "start_date" => date('d-m-Y', strtotime($trainerDate)),
+                    "start_time" => $trainerTime
+                );
+                Mail::send('admin.emails.assigntrainer-trainer', $mailData_trainer, function ($message) use ($mailData_trainer) {
+                    $message->to($mailData_trainer['to'])->subject('Fitzen Studio - Assign Trainer');
                 });
 
                 $notification_to_trainer = new Notification();
@@ -648,7 +531,6 @@ class AdminCustomerController extends Controller
 
     public function Contracts()
     {
-
         $contracts = Contract::with('customers')->orderBy('id', 'DESC')->get();
         return view('admin.contracts', compact('contracts'));
     }
@@ -690,7 +572,6 @@ class AdminCustomerController extends Controller
 
     public function adminAssignTrainer(Request $request)
     {
-//        dd($request->all());
         $request->validate(
             [
                 'trainer_id' => ['required', Rule::exists('trainers', 'id')],
@@ -813,8 +694,7 @@ class AdminCustomerController extends Controller
 
     public function Sessions()
     {
-        return view('admin.sessions')
-            ->with('upcoming_sessions', CustomerToTrainer::with('customer', 'trainer', 'sessions', 'timeZone')->orderBy('id', 'DESC')->get());
+        return view('admin.sessions')->with('upcoming_sessions', CustomerToTrainer::has(['customer', 'trainer'])->with('customer', 'trainer', 'sessions', 'timeZone')->orderBy('id', 'DESC')->get());
     }
 
     public function CancelSession(Request $request)
