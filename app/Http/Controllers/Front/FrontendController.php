@@ -80,30 +80,30 @@ class FrontendController extends Controller
             $inquiry->save();
 
             $name     = $request->first_name.' '.$request->last_name;
-//        $mailData = array(
-//            'name'        => $name,
-//            'email'       => $request->email,
-//            'userMessage' => $request->message,
-//            'phone'       => $request->phone,
-//            // 'to'          => $setting->email,
-//            'to'          => "info@fitzen.studio",
-//        );
-            //        Mail::send('front.emails.contact-us', $mailData, function($message) use($mailData){
-//            $message->to($mailData['to'])->subject('Fitzen Studio - Contact Us');
-//        });
+        $mailData = array(
+            'name'        => $name,
+            'email'       => $request->email,
+            'userMessage' => $request->message,
+            'phone'       => $request->phone,
+            // 'to'          => $setting->email,
+            'to'          => "info@fitzen.studio",
+        );
+        Mail::send('front.emails.contact-us', $mailData, function($message) use($mailData){
+            $message->to($mailData['to'])->subject('Fitzen Studio - Contact Us');
+        });
 
-            $view = view('front.emails.contact-us')
-                ->with('name', $name)
-                ->with('email', $request->email)
-                ->with('userMessage', $request->message)
-                ->with('phone', $request->phone)
-                ->render();
-            Mail::send([], [], function ($message) use ($view) {
-                $message->to(env('to_email'))
-                    ->subject('Fitzen Studio - Contact Us')
-                    ->from('noreply@fitzenstudios.com')
-                    ->setBody($view, 'text/html');
-            });
+//            $view = view('front.emails.contact-us')
+//                ->with('name', $name)
+//                ->with('email', $request->email)
+//                ->with('userMessage', $request->message)
+//                ->with('phone', $request->phone)
+//                ->render();
+//            Mail::send([], [], function ($message) use ($view) {
+//                $message->to(env('to_email'))
+//                    ->subject('Fitzen Studio - Contact Us')
+//                    ->from('noreply@fitzenstudios.com')
+//                    ->setBody($view, 'text/html');
+//            });
             return redirect()->back()->with('success', 'Your inquiry has been submitted successfully. We will contact you shortly!');
 
         } catch (\Exception $exception) {
@@ -141,8 +141,7 @@ class FrontendController extends Controller
                     'to'           => config("app.mail_from_address"),
                 );
                 Mail::send('front.emails.session_request', $mailData, function($message) use($mailData){
-                    $message->to($mailData['to'])->subject('Fitzen Studio - Session Request')
-                        ->from('noreply@fitzenstudios.com');
+                    $message->to($mailData['to'])->subject('Fitzen Studio - Session Request');
                 });
 
 //                $view = view('front.emails.session_request')
@@ -193,9 +192,7 @@ class FrontendController extends Controller
                 'user_message' => $request->message,
             ];
             Mail::send('front.emails.session_request', $mailData, function($message) use($mailData) {
-                $message->to(env('to_email'))
-                    ->subject('Fitzen Studio - Session Request Updated')
-                    ->from('noreply@fitzenstudios.com');
+                $message->to(env('to_email'))->subject('Fitzen Studio - Session Request Updated');
             });
 
             return redirect()->back()->with('success','Demo session schedule updated.');
@@ -283,9 +280,7 @@ class FrontendController extends Controller
                         'email' => $request->email,
                     ];
                     Mail::send('front.emails.newsletter', $mailData, function($message) {
-                        $message->to(env('to_email'))
-                            ->from('noreply@fitzenstudios.com')
-                            ->subject('Fitzen Studio - Newsletter');
+                        $message->to(env('to_email'))->subject('Fitzen Studio - Newsletter');
                     });
 //                    $view = view('front.emails.newsletter')
 //                        ->with('email', $request->email)

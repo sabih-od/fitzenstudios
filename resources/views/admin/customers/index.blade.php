@@ -69,7 +69,7 @@ Customers
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form method="POST" action="{{ url('admin/customer-register') }}" >
+                        <form method="POST" action="{{ url('admin/customer-register') }}">
                             @csrf
                             <div class="modal-body">
                                 <div class="row">
@@ -104,7 +104,7 @@ Customers
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="emailAddress">Email Address<span style="color: red">*</span></label>
-                                            <input type="email" maxlength="30" class="form-control  @error('email') is-invalid @enderror" name="email"
+                                            <input type="email" maxlength="60" class="form-control  @error('email') is-invalid @enderror" name="email"
                                                 id="register-email" aria-describedby="register-email" value="{{ old('email') }}" placeholder="your email" required>
                                             @if ($errors->has('email'))
                                                 <span class="invalid-feedback" role="alert">

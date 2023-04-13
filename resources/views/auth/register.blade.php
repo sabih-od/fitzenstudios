@@ -51,6 +51,7 @@
                 <div class="container-fluid">
                     <form method="POST" class="row" action="{{ route('register') }}">
                         @csrf
+                        <input type="hidden" name="is_lead" value="1">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="username">First name<span style="color: red">*</span></label>
@@ -118,10 +119,10 @@
                                 <select name="time_zone" id="time_zone" required class=" form-control">
                                     <option value="">Select Time Zone</option>
                                     @forelse ($timezones as $time)
-                                    
+
                                     {{--<option value="{{ $time->timezone_value }}">
                                         {{ $time->zone_name.' '.$time->time_zone }}</option>--}}
-                                        
+
                                     <option value="{{ $time->id}}">
                                         {{ $time->zone_name.' '.$time->time_zone }}</option>
                                     @empty
