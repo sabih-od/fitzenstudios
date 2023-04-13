@@ -694,7 +694,7 @@ class AdminCustomerController extends Controller
 
     public function Sessions()
     {
-        return view('admin.sessions')->with('upcoming_sessions', CustomerToTrainer::has(['customer', 'trainer'])->with('customer', 'trainer', 'sessions', 'timeZone')->orderBy('id', 'DESC')->get());
+        return view('admin.sessions')->with('upcoming_sessions', CustomerToTrainer::has('customer')->with('customer', 'trainer', 'sessions', 'timeZone')->orderBy('id', 'DESC')->get());
     }
 
     public function CancelSession(Request $request)
