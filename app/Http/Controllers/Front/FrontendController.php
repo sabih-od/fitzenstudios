@@ -282,10 +282,6 @@ class FrontendController extends Controller
                     Mail::send('front.emails.newsletter', $mailData, function($message) {
                         $message->to(env('to_email'))->subject('Fitzen Studio - Newsletter');
                     });
-//                    $view = view('front.emails.newsletter')
-//                        ->with('email', $request->email)
-//                        ->render();
-//                    $this->customphpmailer('noreply@fitzenstudios.com', env('to_email'), 'Fitzen Studio - Newsletter', $view);
 
                     $notification               = new Notification();
                     $notification->sender_id    = 1;
