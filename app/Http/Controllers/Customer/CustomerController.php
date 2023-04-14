@@ -22,6 +22,12 @@ class CustomerController extends Controller
 {
     public function dashboard()
     {
+        if(Auth::check() && Auth::user()->customer->is_lead === 1) {
+            Auth::guard()->logout();
+            return redirect('/login')->with('info', 'Dear customer, your account is successfully created and awaiting for the approval by the administration.');
+        }
+
+        $user_id = Auth::user()->id;
         $now = Carbon::now();
         $currentMonth_start = $now->startOfMOnth()->format('Y-m-d');
 //        $currentMonth_end = $now->endOfMOnth()->format('Y-m-d');
@@ -29,7 +35,6 @@ class CustomerController extends Controller
 //            ->with('Customer', 'Customer.trainer')->orderBy('id', 'DESC')->get();
         $demo_data = [];
         $i = 0;
-        $user_id = Auth::user()->id;
         $get_cust_id = Customer::where('user_id', $user_id)->first();
         $upcoming_sessions = CustomerToTrainer::with(['timeZone', 'customer', 'trainer', 'reviews', 'request_session' => function ($q) {
             $q->where('request_by', '!=', 'trainer');
