@@ -125,7 +125,7 @@ class AdminController extends Controller
 
     public function CreateSession(Request $request)
     {
-        $customers = Customer::get();
+        $customers = Customer::where('is_lead', 0)->get();
         $trainers = Trainer::all();
         $zones = TimeZone::all();
 
