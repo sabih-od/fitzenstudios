@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Mail\AdminAssignCustomer;
 use App\Mail\AdminAssignTrainer;
+use Carbon\Carbon;
 use DataTables;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -603,8 +604,9 @@ class AdminCustomerController extends Controller
             $customer = Customer::whereIn('id', $request->customer_id)->get();
             foreach ($customer as $value) {
                 foreach ($request->trainer_date as $key => $trainer_date) {
+                    $trainerAssignedTime = Carbon::parse($request->trainer_time[$key])->format('H:i:s');
                     $timezone = TimeZone::find($request->time_zone);
-                    $date = new DateTime($request->trainer_date[$key] . '' . $request->trainer_time[$key], new DateTimeZone($timezone->timezone_value));
+                    $date = new DateTime($request->trainer_date[$key] . '' . $trainerAssignedTime, new DateTimeZone($timezone->timezone_value));
                     $date->setTimezone(new DateTimeZone($timezone->timezone_value));
                     $sessionDate = $date->format('Y-m-d');
                     $sessionTime = $date->format('H:i:s');
@@ -655,7 +657,7 @@ class AdminCustomerController extends Controller
                     $cust_to_trainer->customer_id = $value->id;
                     $cust_to_trainer->trainer_id = $trainer_id;
                     $cust_to_trainer->trainer_date = $request->trainer_date[$key];
-                    $cust_to_trainer->trainer_time = $request->trainer_time[$key];
+                    $cust_to_trainer->trainer_time = $trainerAssignedTime;
                     $cust_to_trainer->time_zone = $request->time_zone;
                     $cust_to_trainer->notes = $request->notes;
                     $cust_to_trainer->session_type = $request->session_type;
