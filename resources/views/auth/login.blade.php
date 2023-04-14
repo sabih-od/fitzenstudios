@@ -21,6 +21,9 @@ Login
 
   <section class="loginModal" id="login">
     <div class="container">
+        @if(Session::has('info'))
+            <p class="alert alert-info">{{ Session::get('info') }}</p>
+        @endif
       <div class="row justify-content-center">
         <div class="col-lg-4 col-md-6">
           <form action="{{ route('login') }}" method="POST">

@@ -112,7 +112,7 @@ class AdminCustomerController extends Controller
             });
 
             DB::commit();
-            return redirect()->back()->with('success', 'Customer is successfully created.');
+            return redirect()->back()->with('success', 'Dear customer, your account is successfully created and awaiting for the approval by the administration.');
         } catch (\Exception $exception) {
             DB::rollBack();
             return redirect()->back()->with('error', $exception->getMessage());
