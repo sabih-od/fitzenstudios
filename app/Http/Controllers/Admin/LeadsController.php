@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -116,10 +118,17 @@ class LeadsController extends Controller
      */
     public function destroy($id)
     {
-        $lead = Lead::findOrFail($id);
-        $lead->delete();
+        try {
+            $lead = Lead::findOrFail($id);
+            if(!empty($lead)) {
+                Customer::where('user_id', $lead->user_id)->delete();
+                User::where('id', $lead->user_id)->delete();
+            }
+            $lead->delete();
 
-        return redirect()->back()
-            ->with('success','Lead Deleted successfully');
+            return redirect()->back()->with('success','Lead Deleted successfully');
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
     }
 }
