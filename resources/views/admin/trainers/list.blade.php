@@ -62,7 +62,7 @@
                         <a href="{{ url('admin/edit-trainer/'.$item->id) }}">
                             <div class="imgWrap">
                                 <img src="{{ $item->photo ? asset($item->photo) : asset('assets/images/user1.jpg')}}"
-                                     alt="">
+                                     alt="" class="rounded-circle">
                             </div>
                             <div class="content">
                                 <h3>{{ $item->name.' '.$item->last_name }}</h3>
