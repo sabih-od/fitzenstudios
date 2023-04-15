@@ -1025,6 +1025,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     transition: 0.3s ease-in-out;
     text-align: center;
     border: 3px solid #373737;
+    height: 420px;
 }
 
 .userCard .content {
