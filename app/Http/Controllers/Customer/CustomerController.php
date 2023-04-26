@@ -22,11 +22,6 @@ class CustomerController extends Controller
 {
     public function dashboard()
     {
-        if(Auth::check() && Auth::user()->customer->is_lead === 1) {
-            Auth::guard()->logout();
-            return redirect('/login')->with('info', 'Dear customer, your account is successfully created and awaiting for the approval by the administration.');
-        }
-
         $user_id = Auth::user()->id;
         $now = Carbon::now();
         $currentMonth_start = $now->startOfMOnth()->format('Y-m-d');
