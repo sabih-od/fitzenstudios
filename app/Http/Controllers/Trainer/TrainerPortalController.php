@@ -39,7 +39,7 @@ class TrainerPortalController extends Controller
         $upcoming_sessions = CustomerToTrainer::with(['customer', 'trainer', 'request_session' => function ($q) {
         $q->where('request_by', '!=', 'customer');
         }])
-            ->whereBetween('trainer_date', [$currentMonth_start, $currentMonth_end])
+            //->whereBetween('trainer_date', [$currentMonth_start, $currentMonth_end])
             ->where('trainer_id', $get_trainer_id)
             ->whereNotIn('status', ['completed', 'canceled', 'cancelled'])
             ->get()
