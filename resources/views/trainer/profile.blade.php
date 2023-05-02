@@ -133,19 +133,19 @@ Edit Profile
                                         <!--<input type="text" name="time_zone" value="{{ $trainer->time_zone ?? ' ' }}" class="form-control">-->
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Days Available <span id="selectedId"></span></label>
-                                        <select id="selecteddays" multiple name="days_available[]">
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="">No. of Sessions in a Week</label>
-                                        <input type="text" name="no_of_session_in_week" value="{{ $trainer->no_of_session_in_week }}" class="form-control">
-                                    </div>
-                                </div>
+{{--                                <div class="col-md-6">--}}
+{{--                                    <div class="form-group">--}}
+{{--                                        <label>Days Available <span id="selectedId"></span></label>--}}
+{{--                                        <select id="selecteddays" multiple name="days_available[]">--}}
+{{--                                        </select>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-md-6">--}}
+{{--                                    <div class="form-group">--}}
+{{--                                        <label for="">No. of Sessions in a Week</label>--}}
+{{--                                        <input type="text" name="no_of_session_in_week" value="{{ $trainer->no_of_session_in_week }}" class="form-control">--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="">Description</label>
