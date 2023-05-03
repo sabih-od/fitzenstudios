@@ -157,7 +157,7 @@
         </div>
     </div>
 @empty
-    <h2 style="text-align: center;">Currently No sessions available..!!</h2>
+    <h2 style="text-align: center;">No sessions available this month</h2>
 @endforelse
 <script>
     $('[name="new_session_time"]').clockpicker({

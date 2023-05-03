@@ -219,7 +219,7 @@
     </div>
 @empty
     <div class="col-md-12">
-        <h4>Currently no sessions available..!!</h4>
+        <h4>No sessions available this month</h4>
     </div>
 @endforelse
 <script>
