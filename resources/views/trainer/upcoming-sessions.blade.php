@@ -10,11 +10,12 @@
             <div class="content">
                 <div>
                     <h3>{{ $upcoming_session[0]->session_type }}</h3>
-                    <p>Attendant(s): <strong>{{ count($upcoming_session) }}</strong></p>
+                    <small>Attendant(s): <strong>{{ count($upcoming_session) }}</strong></small>
                     <br>
-{{--                    @foreach($upcoming_session as $key => $upcoming_session[0])--}}
-{{--                        <p> {{ $upcoming_session[0]["customer"]->first_name.' '.$upcoming_session[0]["customer"]->last_name }}</p>--}}
-{{--                    @endforeach--}}
+                    @foreach($upcoming_session as $key => $upcoming_session[0])
+                        <small> - {{ $upcoming_session[0]["customer"]->first_name.' '.$upcoming_session[0]["customer"]->last_name }}</small>
+                        <br>
+                    @endforeach
 
                     @if(isset($upcoming_session[0]->request_session) && $upcoming_session[0]->request_session->status === 'pending')
                         <span class="badge badge-danger">Applied for reschedule</span>

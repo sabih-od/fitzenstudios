@@ -12,7 +12,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-  
+
     protected $fillable = [
         'name',
         'email',
@@ -32,6 +32,10 @@ class User extends Authenticatable
     ];
 
     public function customer(){
-        return $this->hasOne(Customer::class, 'user_id', 'id')->withDefault();  
+        return $this->hasOne(Customer::class, 'user_id', 'id')->withDefault();
+    }
+
+    public function trainer(){
+        return $this->hasOne(Trainer::class, 'user_id', 'id')->withDefault();
     }
 }

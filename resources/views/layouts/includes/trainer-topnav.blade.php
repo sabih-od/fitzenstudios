@@ -17,7 +17,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
-                    <img src="{{ Auth::user()->photo ? asset(Auth::user()->photo) : asset('themes/customer/assets/images/profileImg.jpg')  }}" class="userImg rounded-circle" alt="">
+                    <img src="{{ isset(Auth::user()->trainer->photo) ? asset(Auth::user()->trainer->photo) : asset('themes/customer/assets/images/profileImg.jpg')  }}" class="userImg rounded-circle" alt="">
 
 {{--                    <img src="{{ $user->photo ? asset($user->photo) : asset('themes/customer/assets/images/profileImg.jpg')  }}" class="userImg rounded-circle" alt="">--}}
 

@@ -89,27 +89,24 @@ class TrainerPortalController extends Controller
     {
         $now = Carbon::now();
         $user_id = \Illuminate\Support\Facades\Auth::user()->id;
-        $get_trainer_id = Trainer::where('user_id', $user_id)->pluck('id')->first();
+        $get_trainer_id = Trainer::where('user_id', $user_id)->first();
         $trainer_zone = $get_trainer_id->timeZone->timezone_value ?? $now->getTimezone();
         $now->setTimezone($trainer_zone);
 
         $start_date = Carbon::createFromFormat('D M d Y', $request->start_date, $trainer_zone);
         $end_date = Carbon::createFromFormat('D M d Y', $request->end_date, $trainer_zone)->subDay();
-
-        $subDates = $now->diffInDays($start_date, false);
-        if ($subDates < 0) {
-            $start_date = $start_date->subtract('days', $subDates);
-        }
-
+//        $subDates = $now->diffInDays($start_date, false);
+//        if ($subDates < 0) {
+//            $start_date = $start_date->subtract('days', $subDates);
+//        }
         $currentMonth_start_dates = $start_date->format('Y-m-d');
         $currentMonth_end_dates = $end_date->format('Y-m-d');
 
         $upcoming_sessions = CustomerToTrainer::with(['customer', 'trainer', 'request_session' => function ($q) {
             $q->where('request_by', '!=', 'customer');
         }])
+            ->where('trainer_id', $get_trainer_id->id)
             ->whereBetween('trainer_date', [$currentMonth_start_dates, $currentMonth_end_dates])
-//            ->where('trainer_date',$currentMonth_start_dates)
-            ->where('trainer_id', $get_trainer_id)
             ->whereNotIn('status', ['completed', 'canceled', 'cancelled'])
             ->orderBy('trainer_date','ASC')
             ->orderBy('trainer_time', 'ASC')
@@ -134,7 +131,6 @@ class TrainerPortalController extends Controller
                     );
                     $item->converted_time = (clone $item->date_time_carbon)->setTimezone($zone);
                 }
-
                 return $item;
             });
         $new_upcoming_sessions = $upcoming_sessions->groupBy(function ($item) {
