@@ -99,7 +99,7 @@ class CustomerController extends Controller
                 $q->where('request_by', '!=', 'trainer');
             }])
                 ->where('customer_id', $get_cust_id->id)
-                ->whereBetween('trainer_date', [$currentMonth_start_dates, $currentMonth_end_dates])
+                //->whereBetween('trainer_date', [$currentMonth_start_dates, $currentMonth_end_dates])
                 ->whereNotIn('status', ['completed', 'canceled', 'cancelled'])
                 ->orderBy('trainer_date','ASC')
                 ->orderBy('trainer_time', 'ASC')
