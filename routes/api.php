@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\TrainerController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
