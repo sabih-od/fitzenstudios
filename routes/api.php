@@ -20,13 +20,19 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::middleware(['auth:api'])->group(function () {
+//Route::middleware(['auth:api'])->group(function () {
+Route::middleware([])->group(function () {
     Route::post('/login',[UserController::class,'login']);
     Route::post('/register',[UserController::class,'register']);
-    Route::post('/profile-update',[UserController::class,'profileUpdate']);
-    Route::post('/register',[UserController::class,'register']);
+//    Route::post('/profile-update',[UserController::class,'profileUpdate']);
+//    Route::post('/register',[UserController::class,'register']);
+//
+//    Route::post('/get/trainers',[TrainerController::class,'getTrainer']);
+});
 
-    Route::post('/get/trainers',[TrainerController::class,'getTrainer']);
+Route::middleware('auth:sanctum')->group(function () {
+    // Protected routes here
+    Route::post('me', [UserController::class,'me']);
 });
 
 

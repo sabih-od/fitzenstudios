@@ -7,50 +7,75 @@ use App\Models\User;
 use App\Models\Customer;
 use App\Models\CustomerDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function login(Request $request){    
+    public function login(Request $request) {
+//        if ($request->user_email == "") {
+//            return response()->json(["status" => 0, "message" => 'Email Required'], 400);
+//        }
+//        if ($request->user_pass == "") {
+//            return response()->json(["status" => 0, "message" => 'Password Required'], 400);
+//        }
+//
+//        $user = User::where('email','=',$request->user_email)->first();
+//
+//        if($user !== null){
+//
+//            $check =  Hash::check($request->user_pass, $user->password);
+//
+//            if($check){
+//                return response()->json(['status' => 1, 'message' => 'login successfully', 'step' => $user->profile_status, 'user_detail' => $user], 200);
+//            }else{
+//                return response()->json(['status' => 0, 'message' => 'Incorrect User Name Or Password'], 200);
+//            }
+//        }else{
+//            return response()->json(['status' => 0, 'message' => 'login Fail'], 404);
+//        }
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-        if ($request->user_email == "") {
-            return response()->json(["status" => 0, "message" => 'Email Required'], 400);
+        if (Auth::attempt($credentials)) {
+            $token = Auth::user()->createToken('authToken')->plainTextToken;
+            return response()->json(['token' => $token], 200);
         }
-        if ($request->user_pass == "") {
-            return response()->json(["status" => 0, "message" => 'Password Required'], 400);
-        }
 
-        $user = User::where('email','=',$request->user_email)->first();
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
 
-        if($user !== null){
-
-            $check =  Hash::check($request->user_pass, $user->password);
-
-            if($check){
-                return response()->json(['status' => 1, 'message' => 'login successfully', 'step' => $user->profile_status, 'user_detail' => $user], 200);
-            }else{
-                return response()->json(['status' => 0, 'message' => 'Incorrect User Name Or Password'], 200);
-            }
-        }else{
-            return response()->json(['status' => 0, 'message' => 'login Fail'], 404);
-        }
+    public function me(Request $request) {
+        return Auth::user();
     }
 
     public function register(Request $request){
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:4|confirmed',
+        ]);
 
-    
-        if ($request->email == "") {
-            return response()->json(["status" => 0, "message" => 'Email Required'], 400);
-        }
-        if ($request->password == "") {
-            return response()->json(["status" => 0, "message" => 'Password Required'], 400);
+        if ($validator->fails()) {
+            return response()->json($validator->getMessageBag());
         }
 
-        $uniqueEmail = User::where('email','=',$request->email)->first();
-
-        if($uniqueEmail){
-            return response()->json(["status" => 0, "message" => 'Email Already Exist'], 400);
-        }
+//        if ($request->email == "") {
+//            return response()->json(["status" => 0, "message" => 'Email Required'], 400);
+//        }
+//        if ($request->password == "") {
+//            return response()->json(["status" => 0, "message" => 'Password Required'], 400);
+//        }
+//
+//        $uniqueEmail = User::where('email','=',$request->email)->first();
+//
+//        if($uniqueEmail){
+//            return response()->json(["status" => 0, "message" => 'Email Already Exist'], 400);
+//        }
 
 
         $user = new User;
@@ -62,7 +87,7 @@ class UserController extends Controller
 
         $customer = new Customer;
         $customer->user_id =  $user->id;
-        $customer->email = $request->email;        
+        $customer->email = $request->email;
         $customer->type = 'new';
         $customer->save();
 
@@ -76,7 +101,7 @@ class UserController extends Controller
     public function profileUpdate(Request $request){
 
         $user = User::where('id','=',$request->user_id)->first();
-        
+
         if($user  == null){
             return response()->json(['status' => 0, 'message' => 'User Not Found'], 404);
         }
@@ -158,9 +183,9 @@ class UserController extends Controller
         $customers->city = $request->city;
         $customers->timezone  = $request->timezone;
         $customers->days = $request->days;
-        $customers->sessions_in_week = $request->sessions_in_week; 	
-        $customers->training_type = $request->training_type;  
-        $customers->tariner_id = $request->tariner_id;       
+        $customers->sessions_in_week = $request->sessions_in_week;
+        $customers->training_type = $request->training_type;
+        $customers->tariner_id = $request->tariner_id;
         $customers->is_lead = 1;
         $customers->save();
 
@@ -182,7 +207,7 @@ class UserController extends Controller
         if ($request->period == "") {
             return response()->json(["status" => 0, "message" => 'Period Required'], 400);
         }
-        $customers = Customer::where('user_id',$user_id)->first();        
+        $customers = Customer::where('user_id',$user_id)->first();
 
         $customers = CustomerDetail::where('customer_id',$customers->id)->first();
         $customers->life_style  =  $request->life_style;
@@ -203,7 +228,7 @@ class UserController extends Controller
         if ($request->focus_of_workout == "") {
             return response()->json(["status" => 0, "message" => 'Focus of workout Required'], 400);
         }
-        $customers = Customer::where('user_id',$user_id)->first();     
+        $customers = Customer::where('user_id',$user_id)->first();
 
         $customers = CustomerDetail::where('customer_id',$customers->id)->first();
         $customers->injuries = $request->injuries;
@@ -224,7 +249,7 @@ class UserController extends Controller
         if ($request->sleep == "") {
             return response()->json(["status" => 0, "message" => 'Sleep Required'], 400);
         }
-        $customers = Customer::where('user_id',$user_id)->first();  
+        $customers = Customer::where('user_id',$user_id)->first();
 
         $customers = CustomerDetail::where('customer_id',$customers->id)->first();
         $customers->med_conditions = $request->med_conditions;
