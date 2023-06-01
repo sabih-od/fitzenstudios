@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('me', [UserController::class,'me']);
     Route::get('sessions', [SessionController::class,'index']);
     Route::post('reschedule-session', [SessionController::class,'reschedule']);
+    Route::post('join-zoom-meeting', [SessionController::class,'joinZoomMeeting']);
 });
 
 
