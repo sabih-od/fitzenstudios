@@ -10,7 +10,7 @@
             "description": "Local 1"
         },
         {
-            "url": "https://service.demowebsitelinks.com/fitzenstudios/public/api",
+            "url": "http://service.demowebsitelinks.com:3004/api",
             "description": "Staging"
         },
         {
