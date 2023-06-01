@@ -11,6 +11,7 @@ use App\Models\TimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class SessionController extends Controller
 {
@@ -30,6 +31,19 @@ class SessionController extends Controller
 
     public function reschedule (Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'session_id' => 'required',
+            'request_by' => 'required',
+            'request_by_timezone' => 'required',
+            'new_session_date' => 'required',
+            'new_session_time' => 'required',
+            'reason' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->getMessageBag());
+        }
+
         try {
             DB::beginTransaction();
             $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->where('request_by', $request->request_by == 'customer' ? 'customer' : 'trainer')->first();
@@ -79,6 +93,33 @@ class SessionController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
+            return response()->json([
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function joinZoomMeeting (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'session_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->getMessageBag());
+        }
+
+        try {
+            $session = CustomerToTrainer::find($request->session_id);
+
+            if (!$session || is_null($session->start_url)) {
+                return response()->json([
+                    'error' => 'Session/Meeting Url not found'
+                ]);
+            }
+
+            return response()->json($session->start_url);
+        } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()
             ]);

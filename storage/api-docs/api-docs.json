@@ -203,6 +203,42 @@
                     }
                 ]
             }
+        },
+        "/join-zoom-meeting": {
+            "post": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Join zoom meeting of session",
+                "operationId": "route-join-zoom-meeting",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": {
+                                    "session_id": 1
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
