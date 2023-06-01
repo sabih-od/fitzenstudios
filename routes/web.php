@@ -21,7 +21,7 @@ use App\Http\Controllers\Admin\TrainerController;
 use App\Http\Controllers\Admin\AdminCustomerController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Trainer\TrainerPortalController;
-use App\Http\Controllers\Admin\ZoomMeetingController;
+//use App\Http\Controllers\Admin\ZoomMeetingController;
 use App\Http\Controllers\Admin\LeadsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SignaturePadController;
@@ -71,7 +71,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('footercms',FooterCMSController::class);
     Route::resource('headercms',HeaderCMSController::class);
     Route::resource('demosessioncms',BookDemoSessionController::class);
-    Route::resource('meetings',ZoomMeetingController::class);
+//    Route::resource('meetings',ZoomMeetingController::class);
 
     Route::get('create-session',[AdminController::class, "CreateSession"])->name('CreateSession');
     Route::get('demo-session/{id}',[AdminController::class, "DemoSession"]);
