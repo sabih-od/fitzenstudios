@@ -7,7 +7,17 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
+/**
+ * @OA\Info(
+ *     version="1.0",
+ *     title="Fitzenstudios API Documentation"
+ * )
+ */
 class Controller extends BaseController
 {
+
+    /**
+     * @OA\PathItem(path="/api")
+     */
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }
