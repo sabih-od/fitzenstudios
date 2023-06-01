@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\TrainerController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -32,7 +33,9 @@ Route::middleware([])->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     // Protected routes here
-    Route::post('me', [UserController::class,'me']);
+    Route::get('me', [UserController::class,'me']);
+    Route::get('sessions', [SessionController::class,'index']);
+    Route::post('reschedule-session', [SessionController::class,'reschedule']);
 });
 
 

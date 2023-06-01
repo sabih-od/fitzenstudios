@@ -3,38 +3,32 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Lead;
+use App\Models\Notification;
+use App\Models\TimeZone;
 use App\Models\User;
 use App\Models\Customer;
 use App\Models\CustomerDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     public function login(Request $request) {
-//        if ($request->user_email == "") {
-//            return response()->json(["status" => 0, "message" => 'Email Required'], 400);
-//        }
-//        if ($request->user_pass == "") {
-//            return response()->json(["status" => 0, "message" => 'Password Required'], 400);
-//        }
-//
-//        $user = User::where('email','=',$request->user_email)->first();
-//
-//        if($user !== null){
-//
-//            $check =  Hash::check($request->user_pass, $user->password);
-//
-//            if($check){
-//                return response()->json(['status' => 1, 'message' => 'login successfully', 'step' => $user->profile_status, 'user_detail' => $user], 200);
-//            }else{
-//                return response()->json(['status' => 0, 'message' => 'Incorrect User Name Or Password'], 200);
-//            }
-//        }else{
-//            return response()->json(['status' => 0, 'message' => 'login Fail'], 404);
-//        }
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->getMessageBag());
+        }
+
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -49,7 +43,7 @@ class UserController extends Controller
     }
 
     public function me(Request $request) {
-        return Auth::user();
+        return response()->json(Auth::user());
     }
 
     public function register(Request $request){
@@ -57,7 +51,8 @@ class UserController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:4|confirmed',
+            'password' => 'required|min:4',
+            'phone' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -78,24 +73,89 @@ class UserController extends Controller
 //        }
 
 
-        $user = new User;
-        $user->role_id = 2;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->profile_status = 'SIGN_UP';
-        $user->save();
+//        $user = new User;
+//        $user->role_id = 2;
+//        $user->email = $request->email;
+//        $user->password = Hash::make($request->password);
+//        $user->profile_status = 'SIGN_UP';
+//        $user->save();
+//
+//        $customer = new Customer;
+//        $customer->user_id =  $user->id;
+//        $customer->email = $request->email;
+//        $customer->type = 'new';
+//        $customer->save();
+//
+//        return response([
+//            'status' => true,
+//            'profile_status' => 'SIGN_UP',
+//            'user_id' => $user->id
+//        ]);
 
-        $customer = new Customer;
-        $customer->user_id =  $user->id;
-        $customer->email = $request->email;
-        $customer->type = 'new';
-        $customer->save();
+        try {
+            DB::beginTransaction();
+            $user = User::create([
+                'name' => $request->first_name . ' ' . $request->last_name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'role_id' => '2',
+                'password' => Hash::make($request->password),
+                'message' => $request->message,
+            ]);
 
-        return response([
-            'status' => true,
-            'profile_status' => 'SIGN_UP',
-            'user_id' => $user->id
-        ]);
+            $timezone = TimeZone::where('timezone_value', $request->time_zone)->first();
+
+            Customer::create([
+                'user_id' => $user->id,
+                'first_name' => $request->first_name,//explode(' ', $user->name)[0],
+                'last_name' => $request->last_name,//substr( $user->name, strpos( $user->name, " ") + 1),
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'timezone' => $timezone->id ?? null ,
+                'time_zone' => $timezone->id ?? null ,
+                "is_lead" => 1,
+            ]);
+            Lead::create([
+                'user_id' => $user->id,
+                'is_customer' => 0,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'note' => $request->message,
+
+            ]);
+
+            $notification = new Notification();
+            $notification->sender_id = $user->id;
+            $notification->receiver_id = 1;
+            $notification->notification = $request->last_name . " is registered on your website as a customer.";
+            $notification->type = "New Customer Registration";
+            $notification->save();
+
+            $mailData = [
+                'to' => $request->email,
+                'subject' => 'Fitzen Studio - Thank you for Signing Up',
+                'view' => 'front.emails.thankyou-signup',
+            ];
+
+            try {
+                Mail::send($mailData['view'], [], function ($message) use ($mailData) {
+                    $message->to($mailData['to'])->subject($mailData['subject']);
+                });
+            } catch (\Exception $e){
+                Log::error('register: mail not sent registering '.$user->name.'. Error: ' . $e->getMessage());
+            }
+
+            DB::commit();
+
+            Auth::login($user);
+            $token = Auth::user()->createToken('authToken')->plainTextToken;
+            return response()->json(['token' => $token], 200);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json($exception->getMessage());
+        }
     }
 
     public function profileUpdate(Request $request){
