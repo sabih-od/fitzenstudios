@@ -55,7 +55,7 @@ class UserController extends Controller
             'last_name' => 'nullable',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:4',
-            'phone' => 'required',
+            'phone' => 'nullable',
         ]);
 
         if ($validator->fails()) {
