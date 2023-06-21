@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
@@ -42,14 +43,16 @@ class UserController extends Controller
         return response()->json(['message' => 'Unauthorized'], 401);
     }
 
-    public function me(Request $request) {
+    public function me(Request $request)
+    {
         return response()->json(Auth::user());
     }
 
-    public function register(Request $request){
+    public function register(Request $request)
+    {
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
+            'first_name' => 'nullable',
+            'last_name' => 'nullable',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:4',
             'phone' => 'required',
@@ -95,7 +98,7 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
             $user = User::create([
-                'name' => $request->first_name . ' ' . $request->last_name,
+                'name' => isset($request->first_name) ? $request->first_name : $request->email,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'role_id' => '2',
@@ -107,19 +110,19 @@ class UserController extends Controller
 
             Customer::create([
                 'user_id' => $user->id,
-                'first_name' => $request->first_name,//explode(' ', $user->name)[0],
-                'last_name' => $request->last_name,//substr( $user->name, strpos( $user->name, " ") + 1),
+                'first_name' => isset($request->first_name) ? $request->first_name : $request->email,//explode(' ', $user->name)[0],
+                'last_name' => isset($request->last_name) ? $request->last_name : $request->email,//substr( $user->name, strpos( $user->name, " ") + 1),
                 'email' => $user->email,
                 'phone' => $user->phone,
-                'timezone' => $timezone->id ?? null ,
-                'time_zone' => $timezone->id ?? null ,
+                'timezone' => $timezone->id ?? null,
+                'time_zone' => $timezone->id ?? null,
                 "is_lead" => 1,
             ]);
             Lead::create([
                 'user_id' => $user->id,
                 'is_customer' => 0,
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
+                'first_name' => isset($request->first_name) ? $request->first_name : $request->email,
+                'last_name' => isset($request->last_name) ? $request->last_name : $request->email,
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'note' => $request->message,
@@ -143,8 +146,8 @@ class UserController extends Controller
                 Mail::send($mailData['view'], [], function ($message) use ($mailData) {
                     $message->to($mailData['to'])->subject($mailData['subject']);
                 });
-            } catch (\Exception $e){
-                Log::error('register: mail not sent registering '.$user->name.'. Error: ' . $e->getMessage());
+            } catch (\Exception $e) {
+                Log::error('register: mail not sent registering ' . $user->name . '. Error: ' . $e->getMessage());
             }
 
             DB::commit();
@@ -158,36 +161,38 @@ class UserController extends Controller
         }
     }
 
-    public function profileUpdate(Request $request){
+    public function profileUpdate(Request $request)
+    {
 
-        $user = User::where('id','=',$request->user_id)->first();
+        $user = User::where('id', '=', $request->user_id)->first();
 
-        if($user  == null){
+        if ($user == null) {
             return response()->json(['status' => 0, 'message' => 'User Not Found'], 404);
         }
-        if($request->step == "STEP_ONE"){
-            $this->stepOne($request,$user->id);
+        if ($request->step == "STEP_ONE") {
+            $this->stepOne($request, $user->id);
             $user->profile_status = "STEP_ONE";
             $user->save();
-        }elseif($request->step == "STEP_TWO"){
-            $this->stepTwo($request,$user->id);
+        } elseif ($request->step == "STEP_TWO") {
+            $this->stepTwo($request, $user->id);
             $user->profile_status = "STEP_TWO";
             $user->save();
-        }elseif($request->step == "STEP_THREE"){
+        } elseif ($request->step == "STEP_THREE") {
             $user->profile_status = "STEP_THREE";
-            $this->stepThree($request,$user->id);
+            $this->stepThree($request, $user->id);
             $user->save();
-        }elseif($request->step == "STEP_FOUR"){
-            $this->stepFour($request,$user->id);
+        } elseif ($request->step == "STEP_FOUR") {
+            $this->stepFour($request, $user->id);
             $user->profile_status = "STEP_FOUR";
             $user->save();
         }
 
-        return response()->json(['status' => 1, 'message' => 'Profile Updated','step' =>  $user->profile_status, 'user_id' => $user->id], 200);
+        return response()->json(['status' => 1, 'message' => 'Profile Updated', 'step' => $user->profile_status, 'user_id' => $user->id], 200);
     }
 
 
-    private function stepOne($request,$user_id){
+    private function stepOne($request, $user_id)
+    {
 
 
         if ($request->first_name == "") {
@@ -230,18 +235,18 @@ class UserController extends Controller
             return response()->json(["status" => 0, "message" => 'Training type Required'], 400);
         }
 
-        $customers = Customer::where('user_id',$user_id)->first();
-        $customers->first_name =  $request->first_name;
+        $customers = Customer::where('user_id', $user_id)->first();
+        $customers->first_name = $request->first_name;
         $customers->last_name = $request->last_name;
         $customers->phone = $request->phone;
-        $customers->dob    = $request->dob;
+        $customers->dob = $request->dob;
         $customers->gender = $request->gender;
-        $customers->weight    = $request->weight;
+        $customers->weight = $request->weight;
         $customers->residence = $request->residence;
         $customers->age = $request->age;
         $customers->nationality = $request->nationality;
         $customers->city = $request->city;
-        $customers->timezone  = $request->timezone;
+        $customers->timezone = $request->timezone;
         $customers->days = $request->days;
         $customers->sessions_in_week = $request->sessions_in_week;
         $customers->training_type = $request->training_type;
@@ -256,7 +261,8 @@ class UserController extends Controller
         return true;
     }
 
-    private function stepTwo($request,$user_id){
+    private function stepTwo($request, $user_id)
+    {
 
         if ($request->life_style == "") {
             return response()->json(["status" => 0, "message" => 'Life style Required'], 400);
@@ -267,17 +273,18 @@ class UserController extends Controller
         if ($request->period == "") {
             return response()->json(["status" => 0, "message" => 'Period Required'], 400);
         }
-        $customers = Customer::where('user_id',$user_id)->first();
+        $customers = Customer::where('user_id', $user_id)->first();
 
-        $customers = CustomerDetail::where('customer_id',$customers->id)->first();
-        $customers->life_style  =  $request->life_style;
+        $customers = CustomerDetail::where('customer_id', $customers->id)->first();
+        $customers->life_style = $request->life_style;
         $customers->workout_experience = $request->workout_experience;
         $customers->period = $request->period;
         $customers->save();
         return true;
     }
 
-    private function stepThree($request,$user_id){
+    private function stepThree($request, $user_id)
+    {
 
         if ($request->injuries == "") {
             return response()->json(["status" => 0, "message" => 'Injuries Required'], 400);
@@ -288,9 +295,9 @@ class UserController extends Controller
         if ($request->focus_of_workout == "") {
             return response()->json(["status" => 0, "message" => 'Focus of workout Required'], 400);
         }
-        $customers = Customer::where('user_id',$user_id)->first();
+        $customers = Customer::where('user_id', $user_id)->first();
 
-        $customers = CustomerDetail::where('customer_id',$customers->id)->first();
+        $customers = CustomerDetail::where('customer_id', $customers->id)->first();
         $customers->injuries = $request->injuries;
         $customers->workout_type = $request->workout_type;
         $customers->focus_of_workout = $request->focus_of_workout;
@@ -298,7 +305,8 @@ class UserController extends Controller
         return true;
     }
 
-    private function stepFour($request,$user_id){
+    private function stepFour($request, $user_id)
+    {
 
         if ($request->med_conditions == "") {
             return response()->json(["status" => 0, "message" => 'Medical conditions Required'], 400);
@@ -309,9 +317,9 @@ class UserController extends Controller
         if ($request->sleep == "") {
             return response()->json(["status" => 0, "message" => 'Sleep Required'], 400);
         }
-        $customers = Customer::where('user_id',$user_id)->first();
+        $customers = Customer::where('user_id', $user_id)->first();
 
-        $customers = CustomerDetail::where('customer_id',$customers->id)->first();
+        $customers = CustomerDetail::where('customer_id', $customers->id)->first();
         $customers->med_conditions = $request->med_conditions;
         $customers->on_medication = $request->on_medication;
         $customers->sleep = $request->sleep;
