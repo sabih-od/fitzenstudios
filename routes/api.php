@@ -25,7 +25,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware([])->group(function () {
     Route::post('/login',[UserController::class,'login']);
     Route::post('/register',[UserController::class,'register']);
-//    Route::post('/profile-update',[UserController::class,'profileUpdate']);
 //    Route::post('/register',[UserController::class,'register']);
 //
 //    Route::post('/get/trainers',[TrainerController::class,'getTrainer']);
@@ -37,6 +36,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('sessions', [SessionController::class,'index']);
     Route::post('reschedule-session', [SessionController::class,'reschedule']);
     Route::post('join-zoom-meeting', [SessionController::class,'joinZoomMeeting']);
+
+    Route::post('/profile-update',[UserController::class,'profileUpdate']);
+    Route::get('/profile',[UserController::class,'getProfile']);
 });
 
 

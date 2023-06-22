@@ -239,6 +239,93 @@
                     }
                 ]
             }
+        },
+        "/profile-update": {
+            "post": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Update Profile",
+                "operationId": "route-profile-update",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": {
+                                    "user_id": 1,
+                                    "first_name": "Name",
+                                    "last_name": "Name",
+                                    "phone": "1231 231 123",
+                                    "dob": "12-12-12",
+                                    "gender": "Male",
+                                    "weight": "123",
+                                    "residence": "abc example",
+                                    "age": "24",
+                                    "nationality": "U.S.",
+                                    "city": "N.Y.C.",
+                                    "timezone": "EST",
+                                    "days": "14",
+                                    "sessions_in_week": "10",
+                                    "training_type": "Training Type",
+                                    "trainer_id": 1
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/profile": {
+            "get": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Profile",
+                "operationId": "route-profile",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": {
+                                    "user_id": 1
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
