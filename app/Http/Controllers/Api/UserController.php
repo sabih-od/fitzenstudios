@@ -163,31 +163,120 @@ class UserController extends Controller
 
     public function profileUpdate(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->getMessageBag());
+        }
 
         $user = User::where('id', '=', $request->user_id)->first();
 
-        if ($user == null) {
-            return response()->json(['status' => 0, 'message' => 'User Not Found'], 404);
-        }
-        if ($request->step == "STEP_ONE") {
-            $this->stepOne($request, $user->id);
-            $user->profile_status = "STEP_ONE";
-            $user->save();
-        } elseif ($request->step == "STEP_TWO") {
-            $this->stepTwo($request, $user->id);
-            $user->profile_status = "STEP_TWO";
-            $user->save();
-        } elseif ($request->step == "STEP_THREE") {
-            $user->profile_status = "STEP_THREE";
-            $this->stepThree($request, $user->id);
-            $user->save();
-        } elseif ($request->step == "STEP_FOUR") {
-            $this->stepFour($request, $user->id);
-            $user->profile_status = "STEP_FOUR";
+        $customers = Customer::where('user_id', $request->user_id)->first();
+        $customers->first_name = $request->first_name;
+        $customers->last_name = $request->last_name;
+        $customers->phone = $request->phone;
+        $customers->dob = $request->dob;
+        $customers->gender = $request->gender;
+        $customers->weight = $request->weight;
+        $customers->residence = $request->residence;
+        $customers->age = $request->age;
+        $customers->nationality = $request->nationality;
+        $customers->city = $request->city;
+        $customers->timezone = $request->timezone;
+        $customers->days = $request->days;
+        $customers->sessions_in_week = $request->sessions_in_week;
+        $customers->training_type = $request->training_type;
+        $customers->tariner_id = $request->trainer_id;
+        $customers->is_lead = 1;
+        $customers->save();
+
+        if ($request->has('password')) {
+            $validator = Validator::make($request->all(), [
+                'current_password' => 'required',
+                'new_password' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json($validator->getMessageBag());
+            }
+
+            if (!Hash::check($request->current_password, $user->password)) {
+                return response()->json([
+                    'message' => 'The current password is incorrect.'
+                ]);
+            }
+
+            $user->password = Hash::make($request->new_password);
             $user->save();
         }
 
-        return response()->json(['status' => 1, 'message' => 'Profile Updated', 'step' => $user->profile_status, 'user_id' => $user->id], 200);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully!',
+        ]);
+
+//        $customerDetail = new CustomerDetail;
+//        $customerDetail->customer_name = $customers->first_name;
+//        $customerDetail->customer_id = $customers->id;
+//        $customerDetail->save();
+//        return true;
+//
+//        if ($user == null) {
+//            return response()->json(['status' => 0, 'message' => 'User Not Found'], 404);
+//        }
+//        if ($request->step == "STEP_ONE") {
+//            $this->stepOne($request, $user->id);
+//            $user->profile_status = "STEP_ONE";
+//            $user->save();
+//        } elseif ($request->step == "STEP_TWO") {
+//            $this->stepTwo($request, $user->id);
+//            $user->profile_status = "STEP_TWO";
+//            $user->save();
+//        } elseif ($request->step == "STEP_THREE") {
+//            $user->profile_status = "STEP_THREE";
+//            $this->stepThree($request, $user->id);
+//            $user->save();
+//        } elseif ($request->step == "STEP_FOUR") {
+//            $this->stepFour($request, $user->id);
+//            $user->profile_status = "STEP_FOUR";
+//            $user->save();
+//        }
+//
+//        return response()->json(['status' => 1, 'message' => 'Profile Updated', 'step' => $user->profile_status, 'user_id' => $user->id], 200);
+    }
+
+    public function getProfile (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->getMessageBag());
+        }
+
+        $customers = Customer::where('user_id', $request->user_id)->first();
+
+        return response()->json([
+            'first_name' => $customers->first_name,
+            'last_name' => $customers->last_name,
+            'phone' => $customers->phone,
+            'dob' => $customers->dob,
+            'gender' => $customers->gender,
+            'weight' => $customers->weight,
+            'residence' => $customers->residence,
+            'age' => $customers->age,
+            'nationality' => $customers->nationality,
+            'city' => $customers->city,
+            'timezone' => $customers->timezone,
+            'days' => $customers->days,
+            'sessions_in_week' => $customers->sessions_in_week,
+            'training_type' => $customers->training_type,
+            'trainer_id' => $customers->tariner_id,
+        ]);
     }
 
 
