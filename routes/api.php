@@ -33,12 +33,19 @@ Route::middleware([])->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     // Protected routes here
     Route::get('me', [UserController::class,'me']);
+
     Route::get('sessions', [SessionController::class,'index']);
+    Route::post('create-session', [SessionController::class,'createSession']);
+
     Route::post('reschedule-session', [SessionController::class,'reschedule']);
     Route::post('join-zoom-meeting', [SessionController::class,'joinZoomMeeting']);
 
     Route::post('/profile-update',[UserController::class,'profileUpdate']);
-    Route::get('/profile',[UserController::class,'getProfile']);
+    Route::post('/profile',[UserController::class,'getProfile']);
+
+    Route::get('/trainers',[TrainerController::class,'getTrainers']);
+    Route::get('/training-type',[TrainerController::class,'getTrainingType']);
+    Route::post('/add-training-type',[TrainerController::class,'addTrainingType']);
 });
 
 
