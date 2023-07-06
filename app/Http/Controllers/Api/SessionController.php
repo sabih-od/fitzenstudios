@@ -127,7 +127,7 @@ class SessionController extends Controller
 
 //                    Mail::to($value->email)->send(new AdminAssignCustomer($customerData));
 
-                    Mail::send('emails.admin.session.adminAssignCustomer', $customerData, function($message) use($customerData){
+                    Mail::send('front.emails.adminApiAssignCustomer', $customerData, function($message) use($customerData){
                         $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
                     });
 
@@ -140,7 +140,7 @@ class SessionController extends Controller
 
 //                    Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
 
-                    Mail::send('emails.admin.session.adminAssignTrainer', $trainerData, function($message) use($trainerData){
+                    Mail::send('front.emails.adminApiAssignTrainer', $trainerData, function($message) use($trainerData){
                         $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
                     });
 

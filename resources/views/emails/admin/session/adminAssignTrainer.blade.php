@@ -1,12 +1,12 @@
 @component('mail::message')
-# Dear {{ $name }},
+# Dear {{ $trainerData['name'] }},
 
 #This email is to inform you that you are assigned to customers for training session.
 
-Start Date: {{ $start_date }}
-Start Time: {{ $start_time }}
+Start Date: {{ $trainerData['start_date'] }}
+Start Time: {{ $trainerData['start_time'] }}
 
-@component('mail::button', ['url' => $start_url])
+@component('mail::button', ['url' => $trainerData['start_url']])
     Click Here to start the meeting
 @endcomponent
 
