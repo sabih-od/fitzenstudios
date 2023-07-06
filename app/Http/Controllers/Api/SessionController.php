@@ -123,7 +123,7 @@ class SessionController extends Controller
                         'start_time' => $customer_timezone_time
                     ];
 
-//                    Mail::to($value->email)->send(new AdminAssignCustomer($customerData));
+                    Mail::to($value->email)->send(new AdminAssignCustomer($customerData));
 
                     $trainerData = [
                         'name' => $trainer['name'],
@@ -131,7 +131,7 @@ class SessionController extends Controller
                         'start_date' => date('d-m-Y', strtotime($trainer_timezone_date)),
                         'start_time' => $trainer_timezone_time
                     ];
-//                    Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
+                    Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
 
                     $cust_to_trainer = new CustomerToTrainer();
                     $cust_to_trainer->start_url = $resp["data"]["start_url"];
