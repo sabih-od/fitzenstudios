@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AdminApiAssignCustomer;
 use App\Mail\AdminAssignCustomer;
 use App\Mail\AdminAssignTrainer;
 use App\Models\BookDemoSession;
@@ -116,20 +117,22 @@ class SessionController extends Controller
                     $customer_timezone_date = $customerDate->format('Y-m-d');
                     $customer_timezone_time = $customerDate->format('H:i:s');
 
-                    $customerData = array(
+                    $customerData = [
                         'name' => $value->first_name . ' ' . $value->last_name,
                         'trainer' => $trainer['name'],
                         'join_url' => $resp["data"]["join_url"],
                         'start_url' => $resp["data"]["start_url"],
                         'start_date' => date('d-m-Y', strtotime($customer_timezone_date)),
                         'start_time' => $customer_timezone_time
-                    );
+                    ];
 
-//                    Mail::to($value->email)->send(new AdminAssignCustomer($customerData));
+//                    return $customerData;
 
-                    Mail::send('front.emails.adminApiAssignCustomer', $customerData, function($message) use($customerData){
-                        $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
-                    });
+                    Mail::to($value->email)->send(new AdminApiAssignCustomer($customerData));
+//
+//                    Mail::send('front.emails.adminApiAssignCustomer', $customerData, function($message) use($customerData){
+//                        $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
+//                    });
 
                     $trainerData = array(
                         'name' => $trainer['name'],
