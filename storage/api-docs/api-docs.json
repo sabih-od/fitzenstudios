@@ -190,6 +190,49 @@
                 ]
             }
         },
+        "/book-demo-session": {
+            "post": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Create session.",
+                "operationId": "route-create-sessions",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": {
+                                    "time_zone" : "UTC -7",
+                                    "first_name": "Tester",
+                                    "last_name": "Demo",
+                                    "email": "demo@gmail.com",
+                                    "phone": "0934234234",
+                                    "session_date": "07/07/2023",
+                                    "session_time": "02:15PM",
+                                    "goals": "Testing",
+                                    "message": "Dummy Message"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/cancel-session": {
             "post": {
                 "tags": [

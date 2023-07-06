@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Mail\AdminAssignCustomer;
 use App\Mail\AdminAssignTrainer;
+use App\Models\BookDemoSession;
 use App\Models\Customer;
 use App\Models\CustomerToTrainer;
 use App\Models\Notification;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use DateTime;
 use DateTimeZone;
+use File;
 
 
 class SessionController extends Controller
@@ -131,6 +133,7 @@ class SessionController extends Controller
                         'start_date' => date('d-m-Y', strtotime($trainer_timezone_date)),
                         'start_time' => $trainer_timezone_time
                     ];
+
                     Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
 
                     $cust_to_trainer = new CustomerToTrainer();
@@ -299,6 +302,65 @@ class SessionController extends Controller
         } catch (\Exception $exception) {
             return response()->json([
                 'error' => $exception->getMessage()
+            ]);
+        }
+    }
+
+
+    public function bookDemoSession(Request $request) {
+        $customer = Customer::where('user_id', Auth::user()->id)->first();
+        $check    = BookDemoSession::where('customer_id', $customer->id)->first();
+        if($check == null) {
+            try {
+                //code...
+                $demo               = new BookDemoSession();
+                $demo->time_zone    = $request->time_zone;
+                $demo->first_name   = $request->first_name;
+                $demo->last_name    = $request->last_name;
+                $demo->email        = $request->email;
+                $demo->phone        = $request->phone;
+                $demo->session_date = $request->session_date;
+                $demo->session_time = date('h:i:s', strtotime($request->session_time));
+                $demo->goals        = $request->goals;
+                $demo->message      = $request->message;
+                $demo->customer_id  = $customer->id;
+//                $demo->save();
+                $mailData = array(
+                    'first_name'   => $request->first_name,
+                    'last_name'    => $request->last_name,
+                    'email'        => $request->email,
+                    'phone'        => $request->phone,
+                    'session_date' => $request->session_date,
+                    'session_time' => $request->session_time,
+                    'goals'        => $request->goals,
+                    'user_message' => $request->message,
+                    'to'           => config("app.mail_from_address"),
+                );
+
+                Mail::send('front.emails.session_request', $mailData, function($message) use($mailData){
+                    $message->to($mailData['to'])->subject('Fitzen Studio - Session Request');
+                });
+
+
+                $notify = "You have a new demo request from ".$request->first_name.' '.$request->last_name;
+                $notification               = new Notification();
+                $notification->sender_id    = Auth::user()->id;
+                $notification->receiver_id  = 1;
+                $notification->notification = $notify;
+                $notification->type         = "Demo Request";
+                $notification->save();
+                Customer::where('user_id', Auth::id())->update(['is_lead' => 0]);
+                return response()->json([
+                    'success' => 'Welcome you onboard! We will get back to you shortly.'
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => $e->getMessage()
+                ]);
+            }
+        } else {
+            return response()->json([
+                'error' => 'You already submitted request for demo session..!!'
             ]);
         }
     }

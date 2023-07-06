@@ -144,18 +144,6 @@ class FrontendController extends Controller
                     $message->to($mailData['to'])->subject('Fitzen Studio - Session Request');
                 });
 
-//                $view = view('front.emails.session_request')
-//                    ->with('first_name', $request->first_name)
-//                    ->with('last_name', $request->last_name)
-//                    ->with('email', $request->email)
-//                    ->with('phone', $request->phone)
-//                    ->with('session_date', $request->session_date)
-//                    ->with('session_time', $request->session_time)
-//                    ->with('goals', $request->goals)
-//                    ->with('user_message', $request->message)
-//                    ->render();
-//                $this->customphpmailer('noreply@fitzenstudios.com', env('to_email'), 'Fitzen Studio - Session Request', $view);
-
                 $notify = "You have a new demo request from ".$request->first_name.' '.$request->last_name;
                 $notification               = new Notification();
                 $notification->sender_id    = Auth::user()->id;
