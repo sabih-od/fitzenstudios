@@ -39,7 +39,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('cancel-session', [SessionController::class, 'CancelSession']);
     Route::post('book-demo-session',[SessionController::class,'bookDemoSession']);
 
-
     Route::post('reschedule-session', [SessionController::class,'reschedule']);
     Route::post('join-zoom-meeting', [SessionController::class,'joinZoomMeeting']);
 
