@@ -170,10 +170,20 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->getMessageBag());
         }
-
         $user = User::where('id', '=', $request->user_id)->first();
 
+        if(!$user){
+            return response()->json(['status' => 1, 'message' => 'User Not Found' , 'data' => []], 404);
+        }
+
+
         $customers = Customer::where('user_id', $request->user_id)->first();
+
+        if(!$customers){
+            return response()->json(['status' => 1, 'message' => 'Customer Not Found' , 'data' => []], 404);
+
+        }
+
         $customers->first_name = $request->first_name;
         $customers->last_name = $request->last_name;
         $customers->phone = $request->phone;
@@ -259,6 +269,12 @@ class UserController extends Controller
         }
 
         $customers = Customer::where('user_id', $request->user_id)->first();
+
+        if(!$customers){
+            return response()->json(['status' => 1, 'message' => 'Customer Not Found' , 'data' => []], 404);
+
+        }
+
 
         return response()->json([
             'first_name' => $customers->first_name,

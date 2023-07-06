@@ -51,11 +51,10 @@
                     }
                 },
                 "responses": {
-                    "200" : {
+                    "200": {
                         "description": "success",
                         "content": {
                             "application/json": {
-
                             }
                         }
                     }
@@ -83,11 +82,10 @@
                     }
                 },
                 "responses": {
-                    "200" : {
+                    "200": {
                         "description": "success",
                         "content": {
                             "application/json": {
-
                             }
                         }
                     }
@@ -104,16 +102,14 @@
                 "requestBody": {
                     "content": {
                         "application/json": {
-
                         }
                     }
                 },
                 "responses": {
-                    "200" : {
+                    "200": {
                         "description": "success",
                         "content": {
                             "application/json": {
-
                             }
                         }
                     }
@@ -135,16 +131,89 @@
                 "requestBody": {
                     "content": {
                         "application/json": {
-
                         }
                     }
                 },
                 "responses": {
-                    "200" : {
+                    "200": {
                         "description": "success",
                         "content": {
                             "application/json": {
-
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/create-session": {
+            "post": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Create session.",
+                "operationId": "route-create-sessions",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": {
+                                    "trainer_id" : "7",
+                                    "customer_id" : ["10"],
+                                    "session_type" : "Boxing ",
+                                    "trainer_date" : ["07/07/2023"],
+                                    "trainer_time" : ["02:15PM"],
+                                    "time_zone": "UTC -7"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/cancel-session": {
+            "post": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "cancel session.",
+                "operationId": "route-create-sessions",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": {
+                                    "customer_to_trainer_id" : "7"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
                             }
                         }
                     }
@@ -188,11 +257,10 @@
                     }
                 },
                 "responses": {
-                    "200" : {
+                    "200": {
                         "description": "success",
                         "content": {
                             "application/json": {
-
                             }
                         }
                     }
@@ -224,11 +292,10 @@
                     }
                 },
                 "responses": {
-                    "200" : {
+                    "200": {
                         "description": "success",
                         "content": {
                             "application/json": {
-
                             }
                         }
                     }
@@ -275,11 +342,10 @@
                     }
                 },
                 "responses": {
-                    "200" : {
+                    "200": {
                         "description": "success",
                         "content": {
                             "application/json": {
-
                             }
                         }
                     }
@@ -292,7 +358,7 @@
             }
         },
         "/profile": {
-            "get": {
+            "post": {
                 "tags": [
                     "Secured Routes"
                 ],
@@ -311,11 +377,103 @@
                     }
                 },
                 "responses": {
-                    "200" : {
+                    "200": {
                         "description": "success",
                         "content": {
                             "application/json": {
-
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/trainers": {
+            "get": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Trainer List.",
+                "operationId": "route-trainer-list",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/training-type": {
+            "get": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Training Type List.",
+                "operationId": "route-training-type-list",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/add-training-type": {
+            "post": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Add Training Type.",
+                "operationId": "route-add-training-type",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": {
+                                    "training_type": "Functional Training"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
                             }
                         }
                     }
