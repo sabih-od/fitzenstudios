@@ -11,7 +11,6 @@ class CustomerReport extends Model
 
     protected $fillable = [
         "customer_id",
-        "",
     ];
 
 }
