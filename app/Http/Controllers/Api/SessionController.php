@@ -11,6 +11,8 @@ use App\Models\Notification;
 use App\Models\RescheduleRequest;
 use App\Models\TimeZone;
 use App\Models\Trainer;
+use App\Traits\PHPCustomMail;
+use App\Traits\ZoomMeetingTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,9 +21,19 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use DateTime;
+use DateTimeZone;
+
 
 class SessionController extends Controller
 {
+    use ZoomMeetingTrait , PHPCustomMail;
+
+    const MEETING_TYPE_INSTANT = 1;
+    const MEETING_TYPE_SCHEDULE = 2;
+    const MEETING_TYPE_RECURRING = 3;
+    const MEETING_TYPE_FIXED_RECURRING_FIXED = 8;
+
     public function index(Request $request)
     {
         try {
@@ -50,9 +62,8 @@ class SessionController extends Controller
             'session_type' => 'required',
             'trainer_date.*' => 'required',
             'trainer_time.*' => 'required',
-//            'time_zone' => ['required', Rule::exists('time_zones', 'id')],
             'time_zone' => 'required',
-        ],);
+        ]);
 
         if ($validator->fails()) {
             return response()->json($validator->getMessageBag());
@@ -72,7 +83,12 @@ class SessionController extends Controller
             foreach ($customer as $value) {
                 foreach ($request->trainer_date as $key => $trainer_date) {
                     $trainerAssignedTime = Carbon::parse($request->trainer_time[$key])->format('H:i:s');
-                    $timezone = TimeZone::find($request->time_zone);
+                    $timezone = TimeZone::where('time_zone' , $request->time_zone)->first();
+                    if(!$timezone){
+                        return response()->json([
+                            'error' => 'Given Time Zone not found'
+                        ]);
+                    }
                     $date = new DateTime($request->trainer_date[$key] . '' . $trainerAssignedTime, new DateTimeZone($timezone->timezone_value));
                     $date->setTimezone(new DateTimeZone($timezone->timezone_value));
                     $sessionDate = $date->format('Y-m-d');
@@ -88,7 +104,6 @@ class SessionController extends Controller
                         "participant_video" => "",
                         "time_zone" => $timezone->timezone_value
                     ]);
-
                     $trainerDate = new DateTime($sessionDateTime, new DateTimeZone($resp['data']['timezone']));
                     $trainerDate->setTimezone(new DateTimeZone($trainer->timeZone->timezone_value));
                     $trainer_timezone_date = $trainerDate->format('Y-m-d');
@@ -107,6 +122,7 @@ class SessionController extends Controller
                         'start_date' => date('d-m-Y', strtotime($customer_timezone_date)),
                         'start_time' => $customer_timezone_time
                     ];
+
                     Mail::to($value->email)->send(new AdminAssignCustomer($customerData));
 
                     $trainerData = [
@@ -263,4 +279,28 @@ class SessionController extends Controller
             ]);
         }
     }
+
+    public function CancelSession(Request $request)
+    {
+        try {
+            $update_status = CustomerToTrainer::find($request->customer_to_trainer_id);
+
+            if(!$update_status){
+                return response()->json([
+                    'error' => 'Session Not Found..!!'
+                ]);
+            }
+
+            $update_status->status = "canceled";
+            $update_status->save();
+            return response()->json([
+                'success' => 'Session Cancelled Successfully..!!'
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'error' => $exception->getMessage()
+            ]);
+        }
+    }
+
 }
