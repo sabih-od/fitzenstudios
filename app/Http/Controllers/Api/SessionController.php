@@ -116,25 +116,33 @@ class SessionController extends Controller
                     $customer_timezone_date = $customerDate->format('Y-m-d');
                     $customer_timezone_time = $customerDate->format('H:i:s');
 
-                    $customerData = [
+                    $customerData = array(
                         'name' => $value->first_name . ' ' . $value->last_name,
                         'trainer' => $trainer['name'],
                         'join_url' => $resp["data"]["join_url"],
                         'start_url' => $resp["data"]["start_url"],
                         'start_date' => date('d-m-Y', strtotime($customer_timezone_date)),
                         'start_time' => $customer_timezone_time
-                    ];
+                    );
 
-                    Mail::to($value->email)->send(new AdminAssignCustomer($customerData));
+//                    Mail::to($value->email)->send(new AdminAssignCustomer($customerData));
 
-                    $trainerData = [
+                    Mail::send('emails.admin.session.adminAssignCustomer', $customerData, function($message) use($customerData){
+                        $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
+                    });
+
+                    $trainerData = array(
                         'name' => $trainer['name'],
                         'start_url' => $resp["data"]["start_url"],
                         'start_date' => date('d-m-Y', strtotime($trainer_timezone_date)),
                         'start_time' => $trainer_timezone_time
-                    ];
+                    );
 
-                    Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
+//                    Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
+
+                    Mail::send('emails.admin.session.adminAssignTrainer', $trainerData, function($message) use($trainerData){
+                        $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
+                    });
 
                     $cust_to_trainer = new CustomerToTrainer();
                     $cust_to_trainer->start_url = $resp["data"]["start_url"];
