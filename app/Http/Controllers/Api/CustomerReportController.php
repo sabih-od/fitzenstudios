@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\CustomerReport;
 
@@ -46,6 +47,7 @@ class CustomerReportController extends Controller
         }else{
 
             $customer_report = new CustomerReport();
+            $customer_report->customer_id = Auth::user()->id;
             $customer_report->generic_time_loging_in = $request->generic_time_loging_in;
             $customer_report->generic_time_loging_out = $request->generic_time_loging_out;
             $customer_report->generic_hours_sleep_prev_day = $request->generic_hours_sleep_prev_day;
@@ -81,7 +83,7 @@ class CustomerReportController extends Controller
             $customer_report->kind_weights = $request->kind_weights;
             $customer_report->porps = $request->porps;
             $customer_report->commments = $request->commments;
-            $customer_report->update();
+            $customer_report->save();
 
              if($customer_report){
                  return response()->json(['status'=> 200, 'message'=>'Customer Report Add Successfully',]);
