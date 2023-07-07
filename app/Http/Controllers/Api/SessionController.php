@@ -128,24 +128,24 @@ class SessionController extends Controller
 
 //                    return $customerData;
 
-                    Mail::to($value->email)->send(new AdminApiAssignCustomer($customerData));
+                    Mail::to($value->email)->send(new AdminAssignCustomer($customerData));
 //
 //                    Mail::send('front.emails.adminApiAssignCustomer', $customerData, function($message) use($customerData){
 //                        $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
 //                    });
 
-                    $trainerData = array(
+                    $trainerData = [
                         'name' => $trainer['name'],
                         'start_url' => $resp["data"]["start_url"],
                         'start_date' => date('d-m-Y', strtotime($trainer_timezone_date)),
                         'start_time' => $trainer_timezone_time
-                    );
+                    ];
 
-//                    Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
+                    Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
 
-                    Mail::send('front.emails.adminApiAssignTrainer', $trainerData, function($message) use($trainerData){
-                        $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
-                    });
+//                    Mail::send('front.emails.adminApiAssignTrainer', $trainerData, function($message) use($trainerData){
+//                        $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
+//                    });
 
                     $cust_to_trainer = new CustomerToTrainer();
                     $cust_to_trainer->start_url = $resp["data"]["start_url"];
