@@ -85,6 +85,7 @@ class TrainerController extends Controller
         if ($types) {
             return response([
                 'status' => 1,
+                'message' => "Training Type Created Successfully",
                 'data' => $types
             ], 200);
         } else {
