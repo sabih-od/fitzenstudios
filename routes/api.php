@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\TrainerController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ContactUsController;
+use App\Http\Controllers\Api\CustomerReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +31,9 @@ Route::middleware([])->group(function () {
 //
 //    Route::post('/get/trainers',[TrainerController::class,'getTrainer']);
 });
+Route::post('/contact-us',[ContactUsController::class,'contactUs']);
+Route::post('/customer-report',[CustomerReportController::class,'customerReport']);
+Route::get('/faqs',[ContactUsController::class,'fAQs']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Protected routes here
