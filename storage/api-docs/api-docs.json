@@ -14,7 +14,7 @@
             "description": "Staging"
         },
         {
-            "url": "https://beta.fitzen.studio/api",
+            "url": "https://fitzen.studio/api",
             "description": "Live"
         }
     ],
@@ -474,6 +474,136 @@
                 "requestBody": {
                     "content": {
                         "application/json": {
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/faqs": {
+            "get": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Faqs",
+                "operationId": "faqs",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/contact-us": {
+            "post": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Contact Form",
+                "operationId": "contact-us",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": {
+                                    "first_name": "Ragini Dravida",
+                                    "last_name": "Dravida",
+                                    "email": "rdravida@gmail.com",
+                                    "message": "Hi",
+                                    "phone": "12345678"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/customer-report": {
+            "post": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Customer report.",
+                "operationId": "customer-report",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": {
+                                    "customer_id": 1,
+                                    "generic_time_loging_in": ["02:15PM"],
+                                    "generic_time_loging_out":  ["05:15PM"],
+                                    "generic_pre_workout_meal": "banana",
+                                    "generic_hours_sleep_prev_day": ["05:15AM"],
+                                    "generic_count_prev_day": "5",
+                                    "generic_count_during_session" : "7",
+                                    "mobility_time_taken": ["05:15AM"],
+                                    "mobility_difficulty_notice": "sometimes",
+                                    "core_reps_workout": "abs",
+                                    "core_number_laps": "12345",
+                                    "core_count_prev_day": "7",
+                                    "core_difficulty_notice": "sometimes",
+                                    "core_comments": "Hi",
+                                    "speed_agility_reps_workout": "running",
+                                    "speed_agility_number_laps": "12345",
+                                    "speed_agility_count_prev_day": "8",
+                                    "speed_agility_difficulty_notice": "sometimes",
+                                    "speed_agility_comments": "Hi",
+                                    "speed_reps_workout": "swimming",
+                                    "speed_number_laps": "12345",
+                                    "speed_count_prev_day": "8",
+                                    "speed_difficulty_notice": "sometimes",
+                                    "speed_comments": "Hi",
+                                    "denomination": "Something",
+                                    "kind_weights": "5",
+                                    "porps": "No",
+                                    "comments": "Hi"
+                                }
+                            }
                         }
                     }
                 },
