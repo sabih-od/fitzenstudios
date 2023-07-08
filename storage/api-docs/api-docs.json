@@ -575,13 +575,17 @@
                                 "type": "object",
                                 "example": {
                                     "customer_id": 1,
-                                    "generic_time_loging_in": ["02:15PM"],
-                                    "generic_time_loging_out":  ["05:15PM"],
+                                    "generic_time_loging_in": "02:15PM",
+                                    "generic_time_loging_out": "05:15PM",
                                     "generic_pre_workout_meal": "banana",
-                                    "generic_hours_sleep_prev_day": ["05:15AM"],
+                                    "generic_hours_sleep_prev_day": "05:15AM",
                                     "generic_count_prev_day": "5",
+                                    "generic_activity_done_prev_day": "6",
                                     "generic_count_during_session" : "7",
-                                    "mobility_time_taken": ["05:15AM"],
+                                    "generic_pains_mindful": "sometimes",
+                                    "generic_mood_energy_level": "4",
+                                    "generic_average_during_session": "6",
+                                    "mobility_time_taken": "05:15AM",
                                     "mobility_difficulty_notice": "sometimes",
                                     "core_reps_workout": "abs",
                                     "core_number_laps": "12345",
@@ -603,6 +607,7 @@
                                     "porps": "No",
                                     "comments": "Hi"
                                 }
+
                             }
                         }
                     }
