@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\TrainerController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ContactUsController;
+use App\Http\Controllers\Api\CustomerReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,12 +30,16 @@ Route::middleware([])->group(function () {
 //    Route::post('/register',[UserController::class,'register']);
 //
 //    Route::post('/get/trainers',[TrainerController::class,'getTrainer']);
+
 });
+
 
 Route::middleware('auth:sanctum')->group(function () {
     // Protected routes here
     Route::get('me', [UserController::class,'me']);
-
+    Route::post('/customer-report',[CustomerReportController::class,'customerReport']);
+    Route::post('/contact-us',[ContactUsController::class,'contactUs']);
+    Route::get('/faqs',[ContactUsController::class,'fAQs']);
     Route::get('sessions', [SessionController::class,'index']);
     Route::post('create-session', [SessionController::class,'createSession']);
     Route::post('cancel-session', [SessionController::class, 'CancelSession']);
