@@ -51,6 +51,7 @@ class CustomerReportController extends Controller
             $customer_report->customer_id = Auth::user()->id;
             $customer_report->generic_time_loging_in = $request->generic_time_loging_in;
             $customer_report->generic_time_loging_out = $request->generic_time_loging_out;
+            $customer_report->generic_pre_workout_meal = $request->generic_pre_workout_meal;
             $customer_report->generic_hours_sleep_prev_day = $request->generic_hours_sleep_prev_day;
             $customer_report->generic_count_prev_day = $request->generic_count_prev_day;
             $customer_report->generic_activity_done_prev_day = $request->generic_activity_done_prev_day;
