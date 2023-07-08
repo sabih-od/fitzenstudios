@@ -19,6 +19,7 @@ class CustomerReportController extends Controller
             'generic_hours_sleep_prev_day'=>'required',
             'generic_count_prev_day'=>'required',
             'generic_count_during_session'=>'required',
+            'generic_pains_mindful'=>'required',
             'mobility_time_taken'=>'required',
             'mobility_difficulty_notice'=>'required',
             'core_reps_workout'=>'required',
@@ -82,7 +83,7 @@ class CustomerReportController extends Controller
             $customer_report->denomination = $request->denomination;
             $customer_report->kind_weights = $request->kind_weights;
             $customer_report->porps = $request->porps;
-            $customer_report->commments = $request->commments;
+            $customer_report->comments = $request->comments;
             $customer_report->save();
 
              if($customer_report){

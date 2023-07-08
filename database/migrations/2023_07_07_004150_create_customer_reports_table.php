@@ -6,52 +6,46 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateCustomerReportsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('customer_reports', function (Blueprint $table) {
             $table->id();
-            $table->string('customer_id')->nullable();
-            $table->string('generic_time_loging_in')->nullable();
-            $table->string('generic_time_loging_out')->nullable();
-            $table->string('generic_pre_workout_meal')->nullable();
-            $table->string('generic_hours_sleep_prev_day')->nullable();
-            $table->string('generic_count_prev_day')->nullable();
-            $table->string('generic_count_during_session')->nullable();
-            $table->string('mobility_time_taken')->nullable();
-            $table->string('mobility_difficulty_notice')->nullable();
-            $table->string('core_reps_workout')->nullable();
-            $table->string('core_number_laps')->nullable();
-            $table->string('core_count_prev_day')->nullable();
-            $table->string('core_difficulty_notice')->nullable();
-            $table->longText('core_comments')->nullable();
-            $table->string('speed_agility_reps_workout')->nullable();
-            $table->string('speed_agility_number_laps')->nullable();
-            $table->string('speed_agility_count_prev_day')->nullable();
-            $table->string('speed_agility_difficulty_notice')->nullable();
-            $table->longText('speed_agility_comments')->nullable();
-            $table->string('speed_reps_workout')->nullable();
-            $table->string('speed_number_laps')->nullable();
-            $table->string('speed_count_prev_day')->nullable();
-            $table->string('speed_difficulty_notice')->nullable();
-            $table->longText('speed_comments')->nullable();
-            $table->string('denomination')->nullable();
-            $table->string('kind_weights')->nullable();
-            $table->string('porps')->nullable();
-            $table->longText('comments')->nullable();
+            $table->unsignedBigInteger('customer_id');
+            $table->string('generic_time_loging_in');
+            $table->string('generic_time_loging_out');
+            $table->string('generic_pre_workout_meal');
+            $table->string('generic_hours_sleep_prev_day');
+            $table->string('generic_count_prev_day');
+            $table->string('generic_activity_done_prev_day');
+            $table->string('generic_count_during_session');
+            $table->string('generic_pains_mindful');
+            $table->string('generic_mood_energy_level');
+            $table->string('generic_average_during_session');
+            $table->string('mobility_time_taken');
+            $table->string('mobility_difficulty_notice');
+            $table->string('core_reps_workout');
+            $table->string('core_number_laps');
+            $table->string('core_count_prev_day');
+            $table->string('core_difficulty_notice');
+            $table->string('core_comments');
+            $table->string('speed_agility_reps_workout');
+            $table->string('speed_agility_number_laps');
+            $table->string('speed_agility_count_prev_day');
+            $table->string('speed_agility_difficulty_notice');
+            $table->string('speed_agility_comments');
+            $table->string('speed_reps_workout');
+            $table->string('speed_number_laps');
+            $table->string('speed_count_prev_day');
+            $table->string('speed_difficulty_notice');
+            $table->string('speed_comments');
+            $table->string('denomination');
+            $table->string('kind_weights');
+            $table->string('porps');
+            $table->string('comments');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('customer_reports');
