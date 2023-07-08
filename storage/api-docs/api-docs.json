@@ -14,7 +14,7 @@
             "description": "Staging"
         },
         {
-            "url": "https://fitzen.studio/api",
+            "url": "https://beta.fitzen.studio/api",
             "description": "Live"
         }
     ],
