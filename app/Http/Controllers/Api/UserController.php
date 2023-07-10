@@ -63,39 +63,6 @@ class UserController extends Controller
             return response()->json($validator->getMessageBag());
         }
 
-//        if ($request->email == "") {
-//            return response()->json(["status" => 0, "message" => 'Email Required'], 400);
-//        }
-//        if ($request->password == "") {
-//            return response()->json(["status" => 0, "message" => 'Password Required'], 400);
-//        }
-//
-//        $uniqueEmail = User::where('email','=',$request->email)->first();
-//
-//        if($uniqueEmail){
-//            return response()->json(["status" => 0, "message" => 'Email Already Exist'], 400);
-//        }
-
-
-//        $user = new User;
-//        $user->role_id = 2;
-//        $user->email = $request->email;
-//        $user->password = Hash::make($request->password);
-//        $user->profile_status = 'SIGN_UP';
-//        $user->save();
-//
-//        $customer = new Customer;
-//        $customer->user_id =  $user->id;
-//        $customer->email = $request->email;
-//        $customer->type = 'new';
-//        $customer->save();
-//
-//        return response([
-//            'status' => true,
-//            'profile_status' => 'SIGN_UP',
-//            'user_id' => $user->id
-//        ]);
-
         try {
             DB::beginTransaction();
             $user = User::create([
@@ -432,4 +399,33 @@ class UserController extends Controller
         $customers->save();
         return true;
     }
+
+    public  function changePassword(Request $request){
+
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'new_password' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->getMessageBag());
+        }
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'message' => 'The current password is incorrect.'
+            ]);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json([
+            'data' => "200",
+            'message' => 'Password changed successfully'
+        ]);
+
+    }
+
 }
