@@ -641,7 +641,9 @@
                                     "denomination": "Something",
                                     "kind_weights": "5",
                                     "porps": "No",
-                                    "comments": "Hi"
+                                    "comments": "Hi",
+                                    "cool_time_taken": "04:15PM",
+                                    "cool_difficulty_notice": "sometimes"
                                 }
 
                             }
