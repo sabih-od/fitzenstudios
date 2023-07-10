@@ -27,21 +27,23 @@ class CreateCustomerReportsTable extends Migration
             $table->string('core_number_laps');
             $table->string('core_count_prev_day');
             $table->string('core_difficulty_notice');
-            $table->string('core_comments');
+            $table->longText('core_comments');
             $table->string('speed_agility_reps_workout');
             $table->string('speed_agility_number_laps');
             $table->string('speed_agility_count_prev_day');
             $table->string('speed_agility_difficulty_notice');
-            $table->string('speed_agility_comments');
+            $table->longText('speed_agility_comments');
             $table->string('speed_reps_workout');
             $table->string('speed_number_laps');
             $table->string('speed_count_prev_day');
             $table->string('speed_difficulty_notice');
-            $table->string('speed_comments');
+            $table->longText('speed_comments');
             $table->string('denomination');
             $table->string('kind_weights');
             $table->string('porps');
-            $table->string('comments');
+            $table->longText('comments');
+            $table->string('cool_time_taken');
+            $table->string('cool_difficulty_notice');
             $table->timestamps();
         });
     }
