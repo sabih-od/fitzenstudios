@@ -41,6 +41,8 @@ class CustomerReportController extends Controller
             'kind_weights'=>'required',
             'porps'=>'required',
             'comments'=>'required',
+            'cool_time_taken'=>'required',
+            'cool_difficulty_notice'=>'required',
         ]);
         if($validate->fails()){
             return response()->json(['validate_error'=>$validate->messages(),]);
@@ -85,6 +87,8 @@ class CustomerReportController extends Controller
             $customer_report->kind_weights = $request->kind_weights;
             $customer_report->porps = $request->porps;
             $customer_report->comments = $request->comments;
+            $customer_report->cool_time_taken = $request->cool_time_taken;
+            $customer_report->cool_difficulty_notice = $request->cool_difficulty_notice;
             $customer_report->save();
 
              if($customer_report){
