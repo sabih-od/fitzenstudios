@@ -50,6 +50,7 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
             'first_name' => 'nullable',
             'last_name' => 'nullable',
