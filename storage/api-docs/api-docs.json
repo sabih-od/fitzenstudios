@@ -92,6 +92,42 @@
                 }
             }
         },
+        "/change-password": {
+            "post": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Change password",
+                "operationId": "route-change-password",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": {
+                                    "current_password" : "12345678",
+                                    "new_password" : "password123"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/me": {
             "get": {
                 "tags": [
