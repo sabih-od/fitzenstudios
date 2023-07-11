@@ -30,7 +30,7 @@ use File;
 
 class SessionController extends Controller
 {
-    use ZoomMeetingTrait , PHPCustomMail;
+    use ZoomMeetingTrait, PHPCustomMail;
 
     const MEETING_TYPE_INSTANT = 1;
     const MEETING_TYPE_SCHEDULE = 2;
@@ -78,7 +78,7 @@ class SessionController extends Controller
             $trainer_id = $request->trainer_id;
             $trainer = Trainer::where('id', $trainer_id)->first();
             $customer = Customer::whereIn('id', $request->customer_id)->get();
-            if(!$customer){
+            if (count($customer) == 0) {
                 return response()->json([
                     'error' => 'Customer not found'
                 ]);
@@ -86,8 +86,8 @@ class SessionController extends Controller
             foreach ($customer as $value) {
                 foreach ($request->trainer_date as $key => $trainer_date) {
                     $trainerAssignedTime = Carbon::parse($request->trainer_time[$key])->format('H:i:s');
-                    $timezone = TimeZone::where('time_zone' , $request->time_zone)->first();
-                    if(!$timezone){
+                    $timezone = TimeZone::where('time_zone', $request->time_zone)->first();
+                    if (!$timezone) {
                         return response()->json([
                             'error' => 'Given Time Zone not found'
                         ]);
@@ -128,7 +128,7 @@ class SessionController extends Controller
 
 //                    return $customerData;
 
-                    Mail::to($value->email)->send(new AdminAssignCustomer($customerData));
+                    Mail::to("shayankhancs@gmail.com")->send(new AdminAssignCustomer($customerData));
 //
 //                    Mail::send('front.emails.adminApiAssignCustomer', $customerData, function($message) use($customerData){
 //                        $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
@@ -141,7 +141,10 @@ class SessionController extends Controller
                         'start_time' => $trainer_timezone_time
                     ];
 
-                    Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
+                    Mail::to("shayankhancs@gmail.com")->send(new AdminAssignTrainer($trainerData));
+
+
+//                    Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
 
 //                    Mail::send('front.emails.adminApiAssignTrainer', $trainerData, function($message) use($trainerData){
 //                        $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
@@ -299,7 +302,7 @@ class SessionController extends Controller
         try {
             $update_status = CustomerToTrainer::find($request->customer_to_trainer_id);
 
-            if(!$update_status){
+            if (!$update_status) {
                 return response()->json([
                     'error' => 'Session Not Found..!!'
                 ]);
@@ -308,6 +311,7 @@ class SessionController extends Controller
             $update_status->status = "canceled";
             $update_status->save();
             return response()->json([
+                'status' => '200',
                 'success' => 'Session Cancelled Successfully..!!'
             ]);
         } catch (\Exception $exception) {
@@ -318,47 +322,48 @@ class SessionController extends Controller
     }
 
 
-    public function bookDemoSession(Request $request) {
+    public function bookDemoSession(Request $request)
+    {
         $customer = Customer::where('user_id', Auth::user()->id)->first();
-        $check    = BookDemoSession::where('customer_id', $customer->id)->first();
-        if($check == null) {
+        $check = BookDemoSession::where('customer_id', $customer->id)->first();
+        if ($check == null) {
             try {
                 //code...
-                $demo               = new BookDemoSession();
-                $demo->time_zone    = $request->time_zone;
-                $demo->first_name   = $request->first_name;
-                $demo->last_name    = $request->last_name;
-                $demo->email        = $request->email;
-                $demo->phone        = $request->phone;
+                $demo = new BookDemoSession();
+                $demo->time_zone = $request->time_zone;
+                $demo->first_name = $request->first_name;
+                $demo->last_name = $request->last_name;
+                $demo->email = $request->email;
+                $demo->phone = $request->phone;
                 $demo->session_date = $request->session_date;
                 $demo->session_time = date('h:i:s', strtotime($request->session_time));
-                $demo->goals        = $request->goals;
-                $demo->message      = $request->message;
-                $demo->customer_id  = $customer->id;
+                $demo->goals = $request->goals;
+                $demo->message = $request->message;
+                $demo->customer_id = $customer->id;
 //                $demo->save();
                 $mailData = array(
-                    'first_name'   => $request->first_name,
-                    'last_name'    => $request->last_name,
-                    'email'        => $request->email,
-                    'phone'        => $request->phone,
+                    'first_name' => $request->first_name,
+                    'last_name' => $request->last_name,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
                     'session_date' => $request->session_date,
                     'session_time' => $request->session_time,
-                    'goals'        => $request->goals,
+                    'goals' => $request->goals,
                     'user_message' => $request->message,
-                    'to'           => config("app.mail_from_address"),
+                    'to' => config("app.mail_from_address"),
                 );
 
-                Mail::send('front.emails.session_request', $mailData, function($message) use($mailData){
+                Mail::send('front.emails.session_request', $mailData, function ($message) use ($mailData) {
                     $message->to($mailData['to'])->subject('Fitzen Studio - Session Request');
                 });
 
 
-                $notify = "You have a new demo request from ".$request->first_name.' '.$request->last_name;
-                $notification               = new Notification();
-                $notification->sender_id    = Auth::user()->id;
-                $notification->receiver_id  = 1;
+                $notify = "You have a new demo request from " . $request->first_name . ' ' . $request->last_name;
+                $notification = new Notification();
+                $notification->sender_id = Auth::user()->id;
+                $notification->receiver_id = 1;
                 $notification->notification = $notify;
-                $notification->type         = "Demo Request";
+                $notification->type = "Demo Request";
                 $notification->save();
                 Customer::where('user_id', Auth::id())->update(['is_lead' => 0]);
                 return response()->json([
