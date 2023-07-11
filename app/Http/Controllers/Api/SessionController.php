@@ -128,7 +128,7 @@ class SessionController extends Controller
 
 //                    return $customerData;
 
-                    Mail::to("shayankhancs@gmail.com")->send(new AdminAssignCustomer($customerData));
+                    Mail::to($value['email'])->send(new AdminAssignCustomer($customerData));
 //
 //                    Mail::send('front.emails.adminApiAssignCustomer', $customerData, function($message) use($customerData){
 //                        $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
@@ -141,10 +141,9 @@ class SessionController extends Controller
                         'start_time' => $trainer_timezone_time
                     ];
 
-                    Mail::to("shayankhancs@gmail.com")->send(new AdminAssignTrainer($trainerData));
 
 
-//                    Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
+                    Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
 
 //                    Mail::send('front.emails.adminApiAssignTrainer', $trainerData, function($message) use($trainerData){
 //                        $message->to("shayankhancs@gmail.com")->subject('Fitzen Studio - Session Request');
@@ -218,17 +217,25 @@ class SessionController extends Controller
         try {
             DB::beginTransaction();
             $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->where('request_by', $request->request_by == 'customer' ? 'customer' : 'trainer')->first();
+
             $session = CustomerToTrainer::where('id', $request->session_id)->first();
+
+            if (!$session) {
+                return response()->json([
+                    'message' => 'Session not found'
+                ]);
+            }
+
             //$time_zone = $session->time_zone;
 
 //            $time_zone = $request->request_by_timezone;
             $time_zone = TimeZone::where('timezone_value', $request->request_by_timezone)->first()->id ?? null;
-
+//return $request->all();
             if ($check == null) {
                 $session_request = new RescheduleRequest();
                 $session_request->customer_to_trainer_id = $request->session_id;
                 $session_request->request_by = $request->request_by;
-                $session_request->new_session_date = $request->new_session_date;
+                $session_request->new_session_date = date('Y-m-d', strtotime($request->new_session_date));
                 $session_request->new_session_time = date('h:i:s', strtotime($request->new_session_time));
                 $session_request->time_zone = $time_zone;
                 $session_request->reason = $request->reason;
@@ -243,13 +250,14 @@ class SessionController extends Controller
 
                 DB::commit();
                 return response()->json([
-                    'success' => 'Request Added successfully'
+                    'status' => '200',
+                    'success' => 'Request Added successfully',
                 ]);
             } else {
                 $session_request = RescheduleRequest::find($check->id);
                 $session_request->customer_to_trainer_id = $request->session_id;
                 $session_request->request_by = $request->request_by;
-                $session_request->new_session_date = $request->new_session_date;
+                $session_request->new_session_date = date('Y-m-d', strtotime($request->new_session_date));
                 $session_request->new_session_time = date('h:i:s', strtotime($request->new_session_time));
                 $session_request->time_zone = $time_zone;
                 $session_request->reason = $request->reason;
@@ -258,6 +266,7 @@ class SessionController extends Controller
                 DB::commit();
 
                 return response()->json([
+                    'status' => '200',
                     'success' => 'Request Added successfully'
                 ]);
             }
@@ -325,6 +334,7 @@ class SessionController extends Controller
     public function bookDemoSession(Request $request)
     {
         $customer = Customer::where('user_id', Auth::user()->id)->first();
+
         $check = BookDemoSession::where('customer_id', $customer->id)->first();
         if ($check == null) {
             try {
@@ -340,7 +350,7 @@ class SessionController extends Controller
                 $demo->goals = $request->goals;
                 $demo->message = $request->message;
                 $demo->customer_id = $customer->id;
-//                $demo->save();
+                $demo->save();
                 $mailData = array(
                     'first_name' => $request->first_name,
                     'last_name' => $request->last_name,
