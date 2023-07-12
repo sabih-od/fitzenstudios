@@ -345,7 +345,7 @@ class SessionController extends Controller
                 $demo->last_name = $request->last_name;
                 $demo->email = $request->email;
                 $demo->phone = $request->phone;
-                $demo->session_date = $request->session_date;
+                $demo->session_date = date('Y-m-d', strtotime($request->session_date));
                 $demo->session_time = date('h:i:s', strtotime($request->session_time));
                 $demo->goals = $request->goals;
                 $demo->message = $request->message;
