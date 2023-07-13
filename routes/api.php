@@ -55,6 +55,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile-update',[UserController::class,'profileUpdate']);
     Route::post('/profile',[UserController::class,'getProfile']);
 
+    Route::get('/get-time-zones',[SessionController::class,'getTimeZones']);
+
+
     Route::get('/trainers',[TrainerController::class,'getTrainers']);
     Route::get('/training-type',[TrainerController::class,'getTrainingType']);
     Route::post('/add-training-type',[TrainerController::class,'addTrainingType']);
