@@ -333,8 +333,19 @@ class SessionController extends Controller
 
     public function bookDemoSession(Request $request)
     {
-        $customer = Customer::where('user_id', Auth::user()->id)->first();
 
+        $validator = Validator::make($request->all(), [
+            'time_zone' => 'required',
+            'session_time' => 'required',
+            'session_date' => 'required',
+            'email' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->getMessageBag());
+        }
+
+        $customer = Customer::where('user_id', Auth::user()->id)->first();
         $check = BookDemoSession::where('customer_id', $customer->id)->first();
         if ($check == null) {
             try {
