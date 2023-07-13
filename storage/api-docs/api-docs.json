@@ -204,7 +204,7 @@
                                     "session_type" : "Boxing ",
                                     "trainer_date" : ["07/07/2023"],
                                     "trainer_time" : ["02:15PM"],
-                                    "time_zone": "UTC -7"
+                                    "time_zone": "1"
                                 }
                             }
                         }
@@ -239,7 +239,7 @@
                             "schema": {
                                 "type": "object",
                                 "example": {
-                                    "time_zone" : "UTC -7",
+                                    "time_zone" : "1",
                                     "first_name": "Tester",
                                     "last_name": "Demo",
                                     "email": "demo@gmail.com",
@@ -507,6 +507,35 @@
                 ],
                 "summary": "Training Type List.",
                 "operationId": "route-training-type-list",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/get-time-zones": {
+            "get": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Time Zones List.",
+                "operationId": "route-get-time-zones",
                 "requestBody": {
                     "content": {
                         "application/json": {
