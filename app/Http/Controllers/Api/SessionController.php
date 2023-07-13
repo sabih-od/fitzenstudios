@@ -13,6 +13,7 @@ use App\Models\Notification;
 use App\Models\RescheduleRequest;
 use App\Models\TimeZone;
 use App\Models\Trainer;
+use App\Models\TrainingType;
 use App\Traits\PHPCustomMail;
 use App\Traits\ZoomMeetingTrait;
 use Carbon\Carbon;
@@ -26,6 +27,7 @@ use Illuminate\Validation\Rule;
 use DateTime;
 use DateTimeZone;
 use File;
+use Ramsey\Uuid\Type\Time;
 
 
 class SessionController extends Controller
@@ -86,7 +88,7 @@ class SessionController extends Controller
             foreach ($customer as $value) {
                 foreach ($request->trainer_date as $key => $trainer_date) {
                     $trainerAssignedTime = Carbon::parse($request->trainer_time[$key])->format('H:i:s');
-                    $timezone = TimeZone::where('time_zone', $request->time_zone)->first();
+                    $timezone = TimeZone::find($request->time_zone);
                     if (!$timezone) {
                         return response()->json([
                             'error' => 'Given Time Zone not found'
@@ -400,6 +402,25 @@ class SessionController extends Controller
                 'error' => 'You already submitted request for demo session..!!'
             ]);
         }
+    }
+
+    public function getTimeZones()
+    {
+        $timeZones = TimeZone::all();
+
+        if ($timeZones) {
+            return response([
+                'status' => 1,
+                'data' => $timeZones,
+            ], 200);
+        } else {
+            return response([
+                'status' => 1,
+                'message' => 'No time zones',
+                'data' => [],
+            ], 200);
+        }
+
     }
 
 }
