@@ -56,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile',[UserController::class,'getProfile']);
 
     Route::get('/get-time-zones',[SessionController::class,'getTimeZones']);
+    Route::get('/get-my-notifications',[\App\Http\Controllers\NotificationController::class,'getMyNotifications']);
 
 
     Route::get('/trainers',[TrainerController::class,'getTrainers']);
