@@ -196,34 +196,6 @@ class UserController extends Controller
             'message' => 'Profile updated successfully!',
         ]);
 
-//        $customerDetail = new CustomerDetail;
-//        $customerDetail->customer_name = $customers->first_name;
-//        $customerDetail->customer_id = $customers->id;
-//        $customerDetail->save();
-//        return true;
-//
-//        if ($user == null) {
-//            return response()->json(['status' => 0, 'message' => 'User Not Found'], 404);
-//        }
-//        if ($request->step == "STEP_ONE") {
-//            $this->stepOne($request, $user->id);
-//            $user->profile_status = "STEP_ONE";
-//            $user->save();
-//        } elseif ($request->step == "STEP_TWO") {
-//            $this->stepTwo($request, $user->id);
-//            $user->profile_status = "STEP_TWO";
-//            $user->save();
-//        } elseif ($request->step == "STEP_THREE") {
-//            $user->profile_status = "STEP_THREE";
-//            $this->stepThree($request, $user->id);
-//            $user->save();
-//        } elseif ($request->step == "STEP_FOUR") {
-//            $this->stepFour($request, $user->id);
-//            $user->profile_status = "STEP_FOUR";
-//            $user->save();
-//        }
-//
-//        return response()->json(['status' => 1, 'message' => 'Profile Updated', 'step' => $user->profile_status, 'user_id' => $user->id], 200);
     }
 
     public function getProfile (Request $request)

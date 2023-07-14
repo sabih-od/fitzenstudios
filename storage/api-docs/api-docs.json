@@ -558,6 +558,35 @@
                 ]
             }
         },
+        "/get-my-notifications": {
+            "get": {
+                "tags": [
+                    "Secured Routes"
+                ],
+                "summary": "Notifications List.",
+                "operationId": "route-my-get-notifications",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/faqs": {
             "get": {
                 "tags": [
