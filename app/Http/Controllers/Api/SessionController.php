@@ -43,9 +43,13 @@ class SessionController extends Controller
     {
         try {
             $get_cust_id = Customer::where('user_id', Auth::user()->id)->pluck('id')->first();
-            $sessions = CustomerToTrainer::with('timeZone', 'customer', 'trainer', 'sessions', 'reviews')->where('customer_id', $get_cust_id)->get();
+            $sessions = CustomerToTrainer::with('timeZone', 'customer', 'trainer', 'sessions', 'reviews')->where('customer_id', $get_cust_id)->where('status' , '!=' , 'canceled')->get();
 
-            return response()->json($sessions);
+            return response()->json([
+                'data' => $sessions,
+                'message' => "Sessions Retrieved Successfully",
+                'status' => "200"
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()
@@ -144,7 +148,6 @@ class SessionController extends Controller
                     ];
 
 
-
                     Mail::to($trainer['email'])->send(new AdminAssignTrainer($trainerData));
 
 //                    Mail::send('front.emails.adminApiAssignTrainer', $trainerData, function($message) use($trainerData){
@@ -216,24 +219,21 @@ class SessionController extends Controller
             return response()->json($validator->getMessageBag());
         }
 
-        try {
-            DB::beginTransaction();
-            $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->where('request_by', $request->request_by == 'customer' ? 'customer' : 'trainer')->first();
+//        try {
+//        $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->where('request_by', $request->request_by == 'customer' ? 'customer' : 'trainer')->first();
+        $check = RescheduleRequest::where('customer_to_trainer_id', $request->session_id)->first();
 
-            $session = CustomerToTrainer::where('id', $request->session_id)->first();
-
+        $session = CustomerToTrainer::where('id', $request->session_id)->first();
             if (!$session) {
                 return response()->json([
                     'message' => 'Session not found'
                 ]);
             }
-
             //$time_zone = $session->time_zone;
-
 //            $time_zone = $request->request_by_timezone;
             $time_zone = TimeZone::where('timezone_value', $request->request_by_timezone)->first()->id ?? null;
-//return $request->all();
-            if ($check == null) {
+            if (!$check) {
+
                 $session_request = new RescheduleRequest();
                 $session_request->customer_to_trainer_id = $request->session_id;
                 $session_request->request_by = $request->request_by;
@@ -250,13 +250,13 @@ class SessionController extends Controller
                 $notification->type = "ReSchedule Session";
                 $notification->save();
 
-                DB::commit();
                 return response()->json([
                     'status' => '200',
                     'success' => 'Request Added successfully',
                 ]);
             } else {
-                $session_request = RescheduleRequest::find($check->id);
+                $check->forceDelete();
+                $session_request = new RescheduleRequest();
                 $session_request->customer_to_trainer_id = $request->session_id;
                 $session_request->request_by = $request->request_by;
                 $session_request->new_session_date = date('Y-m-d', strtotime($request->new_session_date));
@@ -265,20 +265,35 @@ class SessionController extends Controller
                 $session_request->reason = $request->reason;
                 $session_request->save();
 
-                DB::commit();
+                $notification = new Notification();
+                $notification->sender_id = Auth::user()->id;
+                $notification->receiver_id = 1;
+                $notification->notification = "Demo Request is Re-Scheduled by " . $request->request_by;
+                $notification->type = "ReSchedule Session";
+                $notification->save();
+
+//                $session_request = RescheduleRequest::find($check->id);
+//                $session_request->customer_to_trainer_id = $request->session_id;
+//                $session_request->request_by = $request->request_by;
+//                $session_request->new_session_date = date('Y-m-d', strtotime($request->new_session_date));
+//                $session_request->new_session_time = date('h:i:s', strtotime($request->new_session_time));
+//                $session_request->time_zone = $time_zone;
+//                $session_request->reason = $request->reason;
+//                $session_request->save();
+
 
                 return response()->json([
                     'status' => '200',
                     'success' => 'Request Added successfully'
                 ]);
             }
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json([
-                'error' => $e->getMessage()
-            ]);
-        }
+//        } catch (\Exception $e) {
+//            DB::rollBack();
+//
+//            return response()->json([
+//                'error' => $e->getMessage()
+//            ]);
+//        }
     }
 
     public function joinZoomMeeting(Request $request)
@@ -399,6 +414,7 @@ class SessionController extends Controller
             }
         } else {
             return response()->json([
+                'status' => "400",
                 'error' => 'You already submitted request for demo session..!!'
             ]);
         }
