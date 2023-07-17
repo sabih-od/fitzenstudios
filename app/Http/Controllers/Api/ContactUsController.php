@@ -8,6 +8,7 @@ use App\Traits\PHPCustomMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\Models\ContactInquiry;
 
 class ContactUsController extends Controller
 {
@@ -39,6 +40,13 @@ class ContactUsController extends Controller
 
             ];
 
+             $contactinquiry = new ContactInquiry();
+             $contactinquiry->first_name = $request->first_name;
+             $contactinquiry->last_name = $request->last_name;
+             $contactinquiry->phone = $request->phone;
+             $contactinquiry->email = $request->email;
+             $contactinquiry->message = $request->message;
+             $contactinquiry->save();
             try {
                 Mail::send('front.emails.contact-us', $mailData, function ($message) use ($mailData) {
                     $message->to($mailData['to'])->subject('Fitzen Studio - Contact Us');
